@@ -1,0 +1,59 @@
+#side-bar {
+  background-color: brown;
+  border: black solid;
+  border-width: 8px 8px 8px 0px;
+  display: inline-block;
+  height: 560px;
+  min-width: 50px;
+  padding: 5px;
+}
+
+.btn {
+  cursor: pointer;
+}
+
+.btn:disabled {
+  cursor: default;
+}
+
+#skip-button {
+  padding: 5px;
+  position: relative;
+  padding: 22px;
+}
+
+#undo-button {
+  padding: 5px;
+  position: relative;
+  padding: 22px;
+  top: 38%;
+}
+
+#right-arrow,
+#down-arrow {
+  margin: 20px;
+  border: solid black;
+  border-radius: 4px;
+  border-width: 0 8px 8px 0;
+  padding: 20px 0px 0px 20px;
+}
+
+.arrow.small {
+  position: relative;
+  border: solid black;
+  border-radius: 4px;
+  border-width: 0 4px 4px 0;
+  padding: 5px;
+  float: left;
+  left: 32%;
+}
+
+.right {
+  transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+}
+
+.down {
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}

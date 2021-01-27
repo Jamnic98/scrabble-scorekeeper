@@ -1,0 +1,45 @@
+table {
+  border: 1px solid black;
+  border-collapse: collapse;
+  display: inline-table;
+  align-content: center;
+  text-align: center;
+  align-items: center;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.left-column {
+  background-color: rgb(224, 255, 224);
+}
+
+.right-column {
+  background-color: rgb(160, 229, 160);
+}
+
+th.main-column-title {
+  font-size: 1em;
+}
+
+th.main-column-title.highlighted {
+  background-color: yellow;
+}
+
+th.sub-column-title {
+  font-size: 0.7em;
+}
+
+th,
+td {
+  border: 1px solid black;
+  text-align: center;
+  font-size: 0.7em;
+  max-width: 5em;
+  height: 1em;
+}
+
+tr {
+  height: 1.2em;
+}

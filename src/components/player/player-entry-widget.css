@@ -1,0 +1,17 @@
+#player-entry-widget {
+  min-width: 530px;
+}
+
+#player-entry-widget > label {
+  font-size: 20px;
+}
+
+#name-input {
+  width: 60px;
+  text-align: center;
+  height: 1.2em;
+}
+
+#generate-table-button {
+  padding: 5px;
+}

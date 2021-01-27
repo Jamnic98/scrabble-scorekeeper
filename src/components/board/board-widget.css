@@ -1,0 +1,6 @@
+#board-widget {
+  float: left;
+  min-width: 700px;
+  margin-right: 15px;
+  margin-bottom: 15px;
+}

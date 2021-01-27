@@ -1,0 +1,11 @@
+#board {
+  border: 8px solid black;
+  min-width: 555px;
+  float: left;
+}
+
+#board-row:after {
+  clear: both;
+  content: "";
+  display: table;
+}

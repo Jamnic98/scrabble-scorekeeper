@@ -1,7 +1,8 @@
 # Scrabble Scorekeeper
-> A program that calculates the number of points awarded for a move in the popular board game, *Scrabble*.
+> Built with React, this program calculates the number of points awarded for a move in the board game, *Scrabble*.
 > 
 > App link: https://scrabble-scorekeeper.netlify.app/
+
 
 ## Table of contents
 * [General info](#general-info)
@@ -38,7 +39,7 @@ To add a blank tile, use the space bar then type in the letter the blank tile re
 
 ## Features
 * Has built-in *Scrabble* rules.
-* Includes a dictionary to validate words.
+* Includes a dictionary to verify words.
 * Keeps track of the remaining tiles.
 
 

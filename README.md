@@ -3,15 +3,6 @@
 > 
 > App link: https://scrabble-scorekeeper.netlify.app/
 
-
-## Table of contents
-* [General info](#general-info)
-* [Screenshots](#screenshots)
-* [How to use](#how-to-use)
-* [Features](#features)
-* [Built with](#built-with)
-
-
 ## General info
 
 This project was designed to make playing the board game version of *Scrabble* more enjoyable, by providing a fast and reliable method of calculating turn scores. The program features an easy-to-use graphical user interface comprised of a virtual board and table. With the use of keystrokes, the user can place tiles on the virtual board to mirror the state of the actual board. 

@@ -23,8 +23,8 @@ Type in the player names in turn order, pressing the enter key to add a player t
 N.B. Player names are restricted to 6 letters so that when displayed as the column title in the table, they are guaranteed to fit within the width of the column.
 
 ### Adding tiles:
-Click the square on the board upon which the a is to be placed. The square should be selected and flashing yellow.
-A tile can now be added by typing the corresponding letter on the keyboard, however, if the number of tiles a player has placed is more than one, the program needs to know which direction to add the subsequent tiles. To set the direction, either click the respective button to the right of the board or use the arrow keys on the keyboard. After all the tiles have been placed, pressing the enter key will submit the move for validation. If the move is NOT deemed to be a valid *Scrabble* move, close the alert box then use the backspace key to remove tiles in reverse order of placement. 
+Click the square on the board upon which a tile is to be placed. The square should now be selected and flashing yellow.
+A tile can now be added by typing the corresponding letter on the keyboard, however, if the number of tiles a player has placed is more than one, the program needs to know which direction to add subsequent tiles. To set the direction, either click the respective button to the right of the board or use the arrow keys on the keyboard (either right or down arrow). After all the tiles have been placed, pressing the enter key will submit the move for validation. If the move is NOT deemed to be a valid *Scrabble* move, close the alert box then use the backspace key to remove tiles in reverse order of placement. 
 To add a blank tile, use the space bar then type in the letter the blank tile represents.
 
 

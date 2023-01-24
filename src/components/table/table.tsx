@@ -1,14 +1,13 @@
-import React, { useEffect } from "react"
-import Column from "./column"
-import "./table.css"
+import React, { useEffect } from 'react'
+import Column from './column'
+import './table.css'
 
 function Table({ players }) {
-
   const setOutput = () => {
     const numberOfPlayers = players.length
     if (numberOfPlayers > 0) {
       return (
-        <div id="table">
+        <div id='table'>
           {players.map((player, index) => (
             <Column
               key={index}
@@ -17,13 +16,13 @@ function Table({ players }) {
             />
           ))}
         </div>
-      );
+      )
     } else {
-      return null;
+      return null
     }
   }
 
-  return setOutput();
+  return setOutput()
 }
 
 export default Table

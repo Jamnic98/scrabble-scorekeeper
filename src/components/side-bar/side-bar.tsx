@@ -1,5 +1,5 @@
-import React from "react"
-import "./side-bar.css"
+import React from 'react'
+import './side-bar.css'
 
 export interface SideBarProps {
   wordDirection: any
@@ -119,7 +119,7 @@ export const SideBar: React.FC<SideBarProps> = ({
     const lettersRemaining = { ...remainingLetters }
     lettersAdded.map((letterObj) => {
       if (letterObj.isBlank) {
-        lettersRemaining[" "] += 1
+        lettersRemaining[' '] += 1
       } else {
         lettersRemaining[letterObj.letter] += 1
       }
@@ -134,7 +134,7 @@ export const SideBar: React.FC<SideBarProps> = ({
           onMouseDown={(e) => handleRightArrow(e)}
           className='btn'
           disabled={
-            wordDirection === "right" ||
+            wordDirection === 'right' ||
             letters.length > 0 ||
             activeSquareCoords.length === 0
           }
@@ -146,7 +146,7 @@ export const SideBar: React.FC<SideBarProps> = ({
           onMouseDown={(e) => handleDownArrow(e)}
           className='btn'
           disabled={
-            wordDirection === "down" ||
+            wordDirection === 'down' ||
             letters.length > 0 ||
             activeSquareCoords.length === 0
           }

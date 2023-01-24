@@ -1,6 +1,6 @@
-import React, { useEffect } from "react"
-import { BoardSquare } from "./board-square"
-import "./board.css"
+import React, { useEffect } from 'react'
+import { BoardSquare } from './board-square'
+import './board.css'
 
 export interface BoardProps {
   boardState: any
@@ -22,31 +22,32 @@ export const Board: React.FC<BoardProps> = ({
   letters
 }) => {
   // when component mounts, create the starting board UI
-  useEffect(() => setBoardState(createStartingBoard()), [])
+  useEffect(
+    () =>
+      setBoardState(
+        new Array(15).fill(null).map((_row, rowIndex) => {
+          return createRowOfSquares(rowIndex)
+        })
+      ),
+    [setBoardState]
+  )
 
   const scoreMultiplierArrays = [
-    ["tw", "", "", "dl", "", "", "", "tw", "", "", "", "dl", "", "", "tw"],
-    ["", "dw", "", "", "", "tl", "", "", "", "tl", "", "", "", "dw", ""],
-    ["", "", "dw", "", "", "", "dl", "", "dl", "", "", "", "dw", "", ""],
-    ["dl", "", "", "dw", "", "", "", "dl", "", "", "", "dw", "", "", "dl"],
-    ["", "", "", "", "dw", "", "", "", "", "", "dw", "", "", "", ""],
-    ["", "tl", "", "", "", "tl", "", "", "", "tl", "", "", "", "tl", ""],
-    ["", "", "dl", "", "", "", "dl", "", "dl", "", "", "", "dl", "", ""],
-    ["tw", "", "", "dl", "", "", "", "dw", "", "", "", "dl", "", "", "tw"]
+    ['tw', '', '', 'dl', '', '', '', 'tw', '', '', '', 'dl', '', '', 'tw'],
+    ['', 'dw', '', '', '', 'tl', '', '', '', 'tl', '', '', '', 'dw', ''],
+    ['', '', 'dw', '', '', '', 'dl', '', 'dl', '', '', '', 'dw', '', ''],
+    ['dl', '', '', 'dw', '', '', '', 'dl', '', '', '', 'dw', '', '', 'dl'],
+    ['', '', '', '', 'dw', '', '', '', '', '', 'dw', '', '', '', ''],
+    ['', 'tl', '', '', '', 'tl', '', '', '', 'tl', '', '', '', 'tl', ''],
+    ['', '', 'dl', '', '', '', 'dl', '', 'dl', '', '', '', 'dl', '', ''],
+    ['tw', '', '', 'dl', '', '', '', 'dw', '', '', '', 'dl', '', '', 'tw']
   ]
-
-  // returns a 15 x 15 array of the game board with each square as an object
-  const createStartingBoard = () => {
-    return new Array(15).fill(null).map((_row, rowIndex) => {
-      return createRowOfSquares(rowIndex)
-    })
-  }
 
   // returns an array of Square objects from the score multiplier arrays
   const createRowOfSquares = (rowIndex: number) => {
     return getRowScoreMultipliers(rowIndex)?.map((_scoreMultiplier) => {
       return {
-        letter: "",
+        letter: '',
         scoreMultiplier: _scoreMultiplier,
         isBlank: false,
         isFocused: false
@@ -55,7 +56,7 @@ export const Board: React.FC<BoardProps> = ({
   }
 
   // returns a row's point multipliers as an array of strings
-  const getRowScoreMultipliers = (rowIndex) => {
+  const getRowScoreMultipliers = (rowIndex: number) => {
     switch (rowIndex) {
       case 0:
       case 14:
@@ -88,7 +89,7 @@ export const Board: React.FC<BoardProps> = ({
       {boardState.map((row, y) => (
         <div key={y} id='board-row'>
           {row.map((square, x) => {
-            console.log(row )
+            console.log(row)
             return (
               <BoardSquare
                 key={y * 15 + x}

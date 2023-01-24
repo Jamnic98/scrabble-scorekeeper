@@ -1,18 +1,24 @@
-import React, { useEffect, useState } from "react"
-import { PlayerEntryWidget } from "./components/player/player-entry-widget"
-import { BoardWidget } from "./components/board/board-widget"
-import Table from "./components/table/table"
-import "./App.css"
+import React, { useEffect, useState } from 'react'
+import { PlayerEntryWidget } from './components/player/player-entry-widget'
+import { BoardWidget } from './components/board/board-widget'
+import Table from './components/table/table'
+import './App.css'
 
-function App() {
+export interface Player {
+  name: string
+  pointsPerMove: []
+  isCurrentPlayer: boolean
+}
+
+export const App = () => {
   const [lastTurnCount, setLastTurnCount] = useState(0)
   const [turnCount, setTurnCount] = useState(0)
   const [turnScore, setTurnScore] = useState(0)
   const [players, setPlayers]: any = useState([
-    { name: "A", pointsPerMove: Array(20).fill(null), isCurrentPlayer: true },
-    { name: "B", pointsPerMove: Array(20).fill(null), isCurrentPlayer: false },
-    { name: "C", pointsPerMove: Array(20).fill(null), isCurrentPlayer: false },
-    { name: "D", pointsPerMove: Array(20).fill(null), isCurrentPlayer: false }
+    { name: 'A', pointsPerMove: Array(20).fill(null), isCurrentPlayer: true },
+    { name: 'B', pointsPerMove: Array(20).fill(null), isCurrentPlayer: false },
+    { name: 'C', pointsPerMove: Array(20).fill(null), isCurrentPlayer: false },
+    { name: 'D', pointsPerMove: Array(20).fill(null), isCurrentPlayer: false }
   ])
 
   useEffect(() => {
@@ -42,7 +48,7 @@ function App() {
       updatedPlayers[updatedPlayers.length - 1].pointsPerMove
     if (lastPlayersPoints[lastPlayersPoints.length - 1] !== null) {
       // TODO: fix argument
-      return extendPointsArray(/* updatedPlayers */)
+      return extendPointsArray()
     } else {
       return updatedPlayers
     }
@@ -59,13 +65,9 @@ function App() {
 
   const addPoints = (playerPoints) => {
     const nullIndex = playerPoints.indexOf(null)
-    return playerPoints.map((points, pointsIndex) => {
-      if (nullIndex === pointsIndex) {
-        return turnScore
-      } else {
-        return points
-      }
-    })
+    return playerPoints.map((points: number, pointsIndex: number) =>
+      nullIndex === pointsIndex ? turnScore : points
+    )
   }
 
   const extendPointsArray = () => {
@@ -93,5 +95,3 @@ function App() {
     </div>
   )
 }
-
-export default App

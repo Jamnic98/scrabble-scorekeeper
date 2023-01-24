@@ -1,6 +1,6 @@
-import React from "react"
-import { Tile } from "../tile/tile"
-import "./board-square.css"
+import React from 'react'
+import { Tile } from '../tile/tile'
+import './board-square.css'
 
 export const BoardSquare = ({
   coords,
@@ -13,29 +13,28 @@ export const BoardSquare = ({
   boardState
 }) => {
   const setArrow = () => {
-    if (wordDirection === "") {
+    if (wordDirection === '') {
       return null
-    } else if (square.letter === "" && square.isFocused) {
+    } else if (square.letter === '' && square.isFocused) {
       return <span className={`${wordDirection} arrow small`}></span>
     }
   }
-  console.log(square)
   return (
     <button
       tabIndex={-1}
       className={`
         ${square.scoreMultiplier} 
-        ${square.isFocused ? "focused" : "unfocused"} 
-        ${square.letter === "" ? "empty" : "occupied"} board-square`}
+        ${square.isFocused ? 'focused' : 'unfocused'} 
+        ${square.letter === '' ? 'empty' : 'occupied'} board-square`}
       onMouseDown={() => {
         if (letters.length === 0) {
           if (
             coords[0] !== activeSquareCoords[0] ||
             coords[1] !== activeSquareCoords[1]
           ) {
-            setWordDirection("")
+            setWordDirection('')
           }
-          if (boardState[coords[1]][coords[0]].letter === "") {
+          if (boardState[coords[1]][coords[0]].letter === '') {
             setActiveSquareCoords(coords)
           }
         }
@@ -46,4 +45,3 @@ export const BoardSquare = ({
     </button>
   )
 }
-

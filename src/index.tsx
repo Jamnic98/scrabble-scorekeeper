@@ -1,24 +1,24 @@
-import React from "react";
-import { createRoot } from 'react-dom/client';
-import App from "./App";
+import React from 'react'
+import { App } from './App'
+import { createRoot } from 'react-dom/client'
 
 window.addEventListener(
-  "keydown",
+  'keydown',
   (e) => {
     switch (e.keyCode) {
       case 37:
       case 38:
       case 39:
       case 40:
-        e.preventDefault();
-        break;
+        e.preventDefault()
+        break
       default:
-        break;
+        break
     }
   },
   false
-);
+)
 
-const container = document.getElementById('root');
-const root = createRoot(container!); 
-root.render(<App />);
+const container = document.getElementById('root')
+const root = createRoot(container!)
+root.render(<App />)

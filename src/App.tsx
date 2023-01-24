@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
-import PlayerEntryWidget from "./components/player/player-entry-widget"
-import BoardWidget from "./components/board/board-widget"
+import { PlayerEntryWidget } from "./components/player/player-entry-widget"
+import { BoardWidget } from "./components/board/board-widget"
 import Table from "./components/table/table"
 import "./App.css"
 
@@ -8,11 +8,11 @@ function App() {
   const [lastTurnCount, setLastTurnCount] = useState(0)
   const [turnCount, setTurnCount] = useState(0)
   const [turnScore, setTurnScore] = useState(0)
-  const [players, setPlayers] = useState([
-    /*{ name: "A", pointsPerMove: Array(20).fill(null), isCurrentPlayer: true },
+  const [players, setPlayers]: any = useState([
+    { name: "A", pointsPerMove: Array(20).fill(null), isCurrentPlayer: true },
     { name: "B", pointsPerMove: Array(20).fill(null), isCurrentPlayer: false },
     { name: "C", pointsPerMove: Array(20).fill(null), isCurrentPlayer: false },
-    { name: "D", pointsPerMove: Array(20).fill(null), isCurrentPlayer: false }, */
+    { name: "D", pointsPerMove: Array(20).fill(null), isCurrentPlayer: false }
   ])
 
   useEffect(() => {
@@ -28,20 +28,23 @@ function App() {
   const updatePlayerScore = () => {
     const currentPlayer = getCurrentPlayer()
     const currentPlayerIndex = players.indexOf(currentPlayer)
-    const nextPlayerIndex = currentPlayerIndex === players.length - 1 ? 0 : currentPlayerIndex + 1
+    const nextPlayerIndex =
+      currentPlayerIndex === players.length - 1 ? 0 : currentPlayerIndex + 1
     const updatedPlayers = players.map((player, playerIndex) => {
       if (player.isCurrentPlayer) {
         player.pointsPerMove = addPoints(player.pointsPerMove)
       }
-      player.isCurrentPlayer = (playerIndex === nextPlayerIndex)
-      return player;
-    });
+      player.isCurrentPlayer = playerIndex === nextPlayerIndex
+      return player
+    })
 
-    const lastPlayersPoints = updatedPlayers[updatedPlayers.length - 1].pointsPerMove
+    const lastPlayersPoints =
+      updatedPlayers[updatedPlayers.length - 1].pointsPerMove
     if (lastPlayersPoints[lastPlayersPoints.length - 1] !== null) {
-      return extendPointsArray(updatedPlayers);
+      // TODO: fix argument
+      return extendPointsArray(/* updatedPlayers */)
     } else {
-      return updatedPlayers;
+      return updatedPlayers
     }
   }
 
@@ -49,7 +52,7 @@ function App() {
   const getCurrentPlayer = () => {
     for (const player of players) {
       if (player.isCurrentPlayer) {
-        return player;
+        return player
       }
     }
   }
@@ -58,29 +61,25 @@ function App() {
     const nullIndex = playerPoints.indexOf(null)
     return playerPoints.map((points, pointsIndex) => {
       if (nullIndex === pointsIndex) {
-        return turnScore;
+        return turnScore
       } else {
-        return points;
+        return points
       }
-    });
+    })
   }
 
   const extendPointsArray = () => {
     return players.map((player) => {
       player.pointsPerMove = [...player.pointsPerMove, null]
-      return player;
+      return player
     })
   }
 
   return (
     <div>
-      <h1 id="main-title">
-        Scrabble Scorekeeper
-      </h1>
-      <div id="main-content">
-        <PlayerEntryWidget
-          players={players}
-          setPlayers={setPlayers} />
+      <h1 id='main-title'>Scrabble Scorekeeper</h1>
+      <div id='main-content'>
+        <PlayerEntryWidget players={players} setPlayers={setPlayers} />
         <BoardWidget
           players={players}
           setPlayers={setPlayers}
@@ -89,12 +88,10 @@ function App() {
           setTurnCount={setTurnCount}
           setTurnScore={setTurnScore}
         />
-        <Table
-          players={players}
-        />
+        <Table players={players} />
       </div>
     </div>
-  );
+  )
 }
 
 export default App

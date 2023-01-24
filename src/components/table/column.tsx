@@ -1,17 +1,20 @@
 import React from 'react'
+import { Player } from '../../App'
 import './column.css'
 
-function Column({ player, numberOfPlayers }) {
-  const getCumulativeScore = (pointsIndex) => {
+export interface ColumnProps {
+  player: Player
+  playerCount: number
+}
+
+export const Column: React.FC<ColumnProps> = ({ player, playerCount }) => {
+  const getCumulativeScore = (pointsIndex: number) => {
     const nullIndex = player.pointsPerMove.indexOf(null)
-    if (nullIndex > pointsIndex || nullIndex === -1) {
-      // sum points
-      return player.pointsPerMove
-        .slice(0, ++pointsIndex)
-        .reduce((a, b) => a + b, 0)
-    } else {
-      return null
-    }
+    return nullIndex > pointsIndex || nullIndex === -1
+      ? player.pointsPerMove
+          .slice(0, ++pointsIndex)
+          .reduce((a, b) => (a !== null && b !== null ? a + b : null), 0)
+      : null
   }
 
   const setTableRow = () => {
@@ -24,7 +27,7 @@ function Column({ player, numberOfPlayers }) {
   }
 
   return (
-    <table style={{ width: 460 / numberOfPlayers }}>
+    <table style={{ width: 460 / playerCount }}>
       <thead>
         <tr>
           <th
@@ -45,5 +48,3 @@ function Column({ player, numberOfPlayers }) {
     </table>
   )
 }
-
-export default Column

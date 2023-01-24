@@ -7,13 +7,12 @@ export interface TileProps {
   isBlank: boolean
 }
 
-export const Tile: React.FC<TileProps> = ({ letter, isBlank }) =>
-  letter !== '' ? (
-    <div className='tile'>
-      <div className='tile-letter'>{letter.toUpperCase()}</div>
-      <div className='tile-value'>
-        {/* display digit */}
-        {isBlank ? null : getLetterValue(letter)}
-      </div>
+export const Tile: React.FC<TileProps> = ({ letter, isBlank }) => (
+  <div className='tile'>
+    <div className='tile-letter'>{letter.toUpperCase()}</div>
+    <div className='tile-value'>
+      {/* display digit */}
+      {isBlank ? null : getLetterValue(letter)}
     </div>
-  ) : null
+  </div>
+)

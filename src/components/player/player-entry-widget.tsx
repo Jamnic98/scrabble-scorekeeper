@@ -1,9 +1,6 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useLayoutEffect } from 'react'
+import { capatalizeText } from '../../utils/helpers'
 import './player-entry-widget.css'
-
-interface RefProps {
-  value: string | null
-}
 
 export interface PlayerEntryWidgetProps {
   players: any
@@ -15,14 +12,14 @@ export const PlayerEntryWidget: React.FC<PlayerEntryWidgetProps> = ({
   setPlayers
 }) => {
   const PPM_SIZE = 18
-  const nameInputRef = useRef<RefProps>({ value: '' })
-  const [playerNames, setPlayerNames]: any[] = useState([])
+  const nameInputRef = useRef<HTMLInputElement>(null)
+  const [playerNames, setPlayerNames] = useState<string[]>([])
 
   const handleGenerateButton = () => {
     const numberOfPlayers = playerNames.length
     if (2 <= numberOfPlayers && numberOfPlayers <= 4) {
       setPlayers(
-        playerNames.map((playerName: string, index: number) => {
+        playerNames.map((playerName, index: number) => {
           return {
             name: playerName,
             pointsPerMove: Array(PPM_SIZE).fill(null),
@@ -45,22 +42,23 @@ export const PlayerEntryWidget: React.FC<PlayerEntryWidgetProps> = ({
     }
   }
 
-  const addNameToPlayerNames = (playerName) => {
+  const addNameToPlayerNames = (name: string) => {
     switch (playerNames.length) {
       case 0:
       case 1:
       case 2:
       case 3:
-        setPlayerNames([...playerNames, capatalizeText(playerName.trim())])
+        setPlayerNames([...playerNames, capatalizeText(name.trim())])
+        if (null !== nameInputRef.current) {
+          nameInputRef.current.value = ''
+        }
         break
       default:
         alert('4 players maximum.')
     }
-
-    nameInputRef.current.value = ''
   }
 
-  const isPlayerNameValid = (playerName) => {
+  const isPlayerNameValid = (playerName: string) => {
     const captalizedPlayerName = capatalizeText(playerName.trim())
     if (playerNames.includes(captalizedPlayerName)) {
       alert(`Player name '${captalizedPlayerName}' taken.`)
@@ -72,17 +70,9 @@ export const PlayerEntryWidget: React.FC<PlayerEntryWidgetProps> = ({
     if (re.test(playerName)) {
       return true
     } else {
-      alert(`'${playerName}' is not a valid player name.`)
+      alert(playerName + ' is not a valid player name.')
       return false
     }
-  }
-
-  const capatalizeText = (text) => {
-    return text
-      .toLowerCase()
-      .split(' ')
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ')
   }
 
   return players.length === 0 ? (
@@ -98,8 +88,7 @@ export const PlayerEntryWidget: React.FC<PlayerEntryWidgetProps> = ({
           id='name-input'
           type='text'
           onKeyUp={(e) => handleKeyPress(e)}
-          // TODO:: fix
-          // ref={nameInputRef}
+          ref={nameInputRef}
         />
       </label>
       <br />
@@ -108,14 +97,14 @@ export const PlayerEntryWidget: React.FC<PlayerEntryWidgetProps> = ({
         <u>Players:</u>
       </h2>
       <ol>
-        {playerNames.map((name, index) => {
-          return <li key={index}>{name}</li>
-        })}
+        {playerNames.map((name: string, index: number) => (
+          <li key={index}>{name}</li>
+        ))}
       </ol>
       <button
         id='generate-table-button'
         className='btn'
-        onClick={() => handleGenerateButton()}
+        onClick={handleGenerateButton}
       >
         GENERATE
         <br />

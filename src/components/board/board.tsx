@@ -89,7 +89,6 @@ export const Board: React.FC<BoardProps> = ({
       {boardState.map((row, y) => (
         <div key={y} id='board-row'>
           {row.map((square, x) => {
-            console.log(row)
             return (
               <BoardSquare
                 key={y * 15 + x}

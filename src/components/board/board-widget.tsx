@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react'
 import { Board } from './board'
 import { SideBar } from '../side-bar/side-bar'
 import { getLetterValue } from '../../utils/helpers'
+import { Player } from '../../App'
 import './board-widget.css'
 
 import dict from 'an-array-of-english-words'
 
 export interface BoardWidgetProps {
   players: any
-  setPlayers: () => void
+  setPlayers: any
   getCurrentPlayer: () => any
   turnCount: number
   setTurnCount: (currentTurnCount: number) => void

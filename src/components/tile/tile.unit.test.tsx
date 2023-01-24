@@ -25,6 +25,10 @@ describe('Tile should render correctly', () => {
   })
 
   test('should render correct data when passed as props', () => {
-    drawTile()
+    const testLetter = 'a'
+    const testIsBlank = true
+    drawTile({ letter: testLetter, isBlank: testIsBlank })
+    expect(screen.getByText(new RegExp(testLetter))).toBeInTheDocument()
+    
   })
 })

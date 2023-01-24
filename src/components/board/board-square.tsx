@@ -19,6 +19,7 @@ export const BoardSquare = ({
       return <span className={`${wordDirection} arrow small`}></span>
     }
   }
+
   return (
     <button
       tabIndex={-1}
@@ -41,7 +42,9 @@ export const BoardSquare = ({
       }}
     >
       {setArrow()}
-      <Tile letter={square.letter} isBlank={square.isBlank} />
+      {square.letter !== '' && (
+        <Tile letter={square.letter} isBlank={square.isBlank} />
+      )}
     </button>
   )
 }

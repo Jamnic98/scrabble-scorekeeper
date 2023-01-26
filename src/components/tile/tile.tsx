@@ -1,6 +1,6 @@
 import React from 'react'
 import { getLetterValue } from '../../utils/helpers'
-import './tile.css'
+import styles from './tile.module.css'
 
 export interface TileProps {
   letter: string
@@ -8,11 +8,12 @@ export interface TileProps {
 }
 
 export const Tile: React.FC<TileProps> = ({ letter, isBlank }) => (
-  <div className='tile'>
-    <div className='tile-letter'>{letter.toUpperCase()}</div>
-    <div className='tile-value'>
-      {/* display digit */}
+  <div className={styles.tile}>
+    {/* display letter */}
+    <span className={styles.letter}>{letter.toUpperCase()}</span>
+    {/* display digit */}
+    <span className={styles.value}>
       {isBlank ? null : getLetterValue(letter)}
-    </div>
+    </span>
   </div>
 )

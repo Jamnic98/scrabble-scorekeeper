@@ -1,14 +1,11 @@
 .board-square {
-  background: white;
+  position: relative;
   border: 1px solid #999;
-  float: left;
-  font-size: 28px;
-  font-weight: bold;
-  line-height: 20px;
-  height: 38px;
-  padding: 0;
-  text-align: center;
   width: 38px;
+  height: 38px;
+  float: left;
+  padding: 0;
+  background: white;
 }
 
 .board-square:focus {
@@ -65,7 +62,7 @@
 
 .dw.focused {
   animation-name: dw-color-change;
-  animation-duration: 1s;
+  animation-duration: 1.2s;
   animation-iteration-count: infinite;
 }
 

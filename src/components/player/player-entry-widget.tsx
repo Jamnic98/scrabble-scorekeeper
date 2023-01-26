@@ -1,10 +1,11 @@
-import React, { useRef, useState, useLayoutEffect } from 'react'
+import React, { useRef, useState } from 'react'
+import { Player } from '../../App'
 import { capatalizeText } from '../../utils/helpers'
 import './player-entry-widget.css'
 
 export interface PlayerEntryWidgetProps {
-  players: any
-  setPlayers: any
+  players: Player[]
+  setPlayers: (players: Player[]) => void
 }
 
 export const PlayerEntryWidget: React.FC<PlayerEntryWidgetProps> = ({
@@ -85,7 +86,6 @@ export const PlayerEntryWidget: React.FC<PlayerEntryWidgetProps> = ({
       <label>
         Name:
         <input
-          id='name-input'
           type='text'
           onKeyUp={(e) => handleKeyPress(e)}
           ref={nameInputRef}

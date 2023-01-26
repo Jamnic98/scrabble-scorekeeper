@@ -22,9 +22,6 @@
     "noFallthroughCasesInSwitch": true, // Report errors for fallthrough cases in switch statement
     "plugins": [{ "name": "typescript-plugin-css-modules" }]
   },
-  "include": [
-    "src/**/*.test.ts*",
-    "global.d.ts",
-  ],
+  "include": ["src/setupTests.ts", "src/**/*.test.ts*", "global.d.ts"],
   "exclude": ["node_modules", "build"] // *** The files to not type check ***
 }

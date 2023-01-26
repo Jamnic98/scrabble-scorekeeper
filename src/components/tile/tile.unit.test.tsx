@@ -17,18 +17,18 @@ const drawTile = (props?: TileProps) => {
 describe('Tile should render correctly', () => {
   test('should render with empty props', () => {
     render(<Tile {...({} as TileProps)} />)
+    expect(screen.getByTestId('application-tile')).toBeInTheDocument()
   })
 
   test('should render default data', () => {
     drawTile()
-    expect(screen.getByText('J')).toBeInTheDocument()
+    expect(screen.getByText(defaultLetter.toUpperCase())).toBeInTheDocument()
   })
 
   test('should render correct data when passed as props', () => {
     const testLetter = 'a'
     const testIsBlank = true
     drawTile({ letter: testLetter, isBlank: testIsBlank })
-
-    // expect(screen.getByText('a')).toBeInTheDocument()
+    expect(screen.getByText(testLetter.toUpperCase())).toBeInTheDocument()
   })
 })

@@ -804,7 +804,7 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
 
   const handleSpaceKey = () => {
     if (isLetterAvailable(' ')) {
-      let standInLetter
+      let standInLetter: string | null = ''
       while (true) {
         const regex = /[a-z]/
         standInLetter = prompt('Input a letter for the blank tile:')

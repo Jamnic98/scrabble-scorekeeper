@@ -1,8 +1,19 @@
 import React from 'react'
-import { Tile } from '../tile/tile'
+import { Tile } from '../tile'
 import './board-square.css'
 
-export const BoardSquare = ({
+export interface BoardSquareProps {
+  coords: [x: number, y: number]
+  square: any
+  activeSquareCoords: any
+  setActiveSquareCoords: any
+  wordDirection: any
+  setWordDirection: any
+  letters: any
+  boardState: any
+}
+
+export const BoardSquare: React.FC<BoardSquareProps> = ({
   coords,
   square,
   activeSquareCoords,

@@ -8,7 +8,7 @@
     "allowSyntheticDefaultImports": true, // Allow default imports from modules with no default export
     "strict": true, // Enable all strict type checking options
     "forceConsistentCasingInFileNames": true, // Disallow inconsistently-cased references to the same file.
-    "module": "esnext", // Specify module code generation
+
     "moduleResolution": "node", // Resolve modules using Node.js style
     "isolatedModules": true, // Unconditionally emit imports for unresolved files
     "resolveJsonModule": true, // Include modules imported with .json extension
@@ -22,6 +22,6 @@
     "noFallthroughCasesInSwitch": true, // Report errors for fallthrough cases in switch statement
     "plugins": [{ "name": "typescript-plugin-css-modules" }]
   },
-  "include": ["src/setupTests.ts", "src/**/*.test.ts*", "global.d.ts"],
+  "include": ["src/setupTests.ts", "src/**/*.test.ts*", "src/global.d.ts"],
   "exclude": ["node_modules", "build"] // *** The files to not type check ***
 }

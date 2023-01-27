@@ -9,10 +9,6 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
-    "@types/jest": "^29.2.6",
-    "@types/node": "^18.11.9",
-    "@types/react": "^18.0.27",
-    "@types/react-dom": "^18.0.10",
     "an-array-of-english-words": "^2.0.0",
     "css-loader": "^6.7.3",
     "react": "^18.2.0",
@@ -23,6 +19,8 @@
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
+    "@types/jest": "^29.4.0",
+    "@types/react": "^18.0.27",
     "typescript-plugin-css-modules": "^4.1.1"
   },
   "overrides": {

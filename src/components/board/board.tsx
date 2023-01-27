@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { BoardSquare } from './board-square'
+import { BoardSquare, BoardSquareProps } from './board-square'
 import './board.css'
 
 export interface BoardProps {
@@ -25,9 +25,9 @@ export const Board: React.FC<BoardProps> = ({
   useEffect(
     () =>
       setBoardState(
-        new Array(15).fill(null).map((_row, rowIndex) => {
-          return createRowOfSquares(rowIndex)
-        })
+        new Array(15)
+          .fill(undefined)
+          .map((_row, rowIndex) => createRowOfSquares(rowIndex))
       ),
     [setBoardState]
   )

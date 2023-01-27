@@ -15,8 +15,8 @@ export const App = () => {
   const [turnCount, setTurnCount] = useState(0)
   const [turnScore, setTurnScore] = useState(0)
   const [players, setPlayers] = useState<Player[]>([
-    { name: 'A', pointsPerMove: Array(20).fill(null), isCurrentPlayer: true },
-    { name: 'B', pointsPerMove: Array(20).fill(null), isCurrentPlayer: false }
+    // { name: 'A', pointsPerMove: Array(20).fill(null), isCurrentPlayer: true },
+    // { name: 'B', pointsPerMove: Array(20).fill(null), isCurrentPlayer: false }
     // { name: 'C', pointsPerMove: Array(20).fill(null), isCurrentPlayer: false },
     // { name: 'D', pointsPerMove: Array(20).fill(null), isCurrentPlayer: false }
   ])

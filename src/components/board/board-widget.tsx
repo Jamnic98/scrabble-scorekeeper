@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Board } from './board'
 import { SideBar } from '../side-bar/side-bar'
-import { getLetterValue } from '../../utils/helpers'
-import { Player } from '../../App'
+import { getLetterValue, STARTING_LETTER_COUNTS } from '../../utils'
 import './board-widget.css'
 
 import dict from 'an-array-of-english-words'
@@ -308,35 +307,9 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
     ]
   ])
 
-  const [remainingLetters, setRemainingLetters] = useState<any>({
-    a: 9,
-    b: 2,
-    c: 2,
-    d: 4,
-    e: 12,
-    f: 2,
-    g: 3,
-    h: 2,
-    i: 9,
-    j: 1,
-    k: 1,
-    l: 4,
-    m: 2,
-    n: 6,
-    o: 8,
-    p: 2,
-    q: 1,
-    r: 6,
-    s: 4,
-    t: 6,
-    u: 4,
-    v: 2,
-    w: 2,
-    x: 1,
-    y: 2,
-    z: 1,
-    ' ': 2
-  })
+  const [remainingLetters, setRemainingLetters] = useState<any>(
+    STARTING_LETTER_COUNTS
+  )
 
   // set the focus of the square in board state when the active square changes
   useEffect(() => {

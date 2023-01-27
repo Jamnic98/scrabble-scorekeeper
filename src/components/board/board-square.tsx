@@ -53,7 +53,7 @@ export const BoardSquare: React.FC<BoardSquareProps> = ({
       }}
     >
       {setArrow()}
-      {square.letter !== '' && (
+      {square.letter && (
         <Tile letter={square.letter} isBlank={square.isBlank} />
       )}
     </button>

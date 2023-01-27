@@ -23,5 +23,5 @@
     "plugins": [{ "name": "typescript-plugin-css-modules" }]
   },
   "include": ["src/setupTests.ts", "src/**/*.test.ts*", "src/global.d.ts"],
-  "exclude": ["node_modules", "build"] // *** The files to not type check ***
+  "exclude": ["node_modules", "build", "react-app-env.d.ts"] // *** The files to not type check ***
 }

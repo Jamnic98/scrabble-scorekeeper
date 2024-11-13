@@ -4,16 +4,14 @@ import { capatalizeText } from '../../utils/helpers'
 import './player-entry-widget.css'
 
 export interface PlayerEntryWidgetProps {
-  players: Player[]
   setPlayers: (players: Player[]) => void
 }
 
 export const PlayerEntryWidget: React.FC<PlayerEntryWidgetProps> = ({
-  players,
   setPlayers
 }) => {
   const PPM_SIZE = 18
-  const nameInputRef = useRef<HTMLInputElement>(null)
+  const nameInputRef = useRef<HTMLInputElement | null>(null)
   const [playerNames, setPlayerNames] = useState<string[]>([])
 
   const handleGenerateButton = () => {
@@ -65,18 +63,9 @@ export const PlayerEntryWidget: React.FC<PlayerEntryWidgetProps> = ({
       alert(`Player name '${captalizedPlayerName}' taken.`)
       return false
     }
-
-    // regex to match words with spaces between
-    const re = /^[a-zA-Z]+([a-zA-Z]+)*$/
-    if (re.test(playerName)) {
-      return true
-    } else {
-      alert(playerName + ' is not a valid player name.')
-      return false
-    }
   }
 
-  return players.length === 0 ? (
+  return (
     <div id='player-entry-widget'>
       <h1>
         <u>
@@ -110,5 +99,5 @@ export const PlayerEntryWidget: React.FC<PlayerEntryWidgetProps> = ({
         <br />
       </button>
     </div>
-  ) : null
+  )
 }

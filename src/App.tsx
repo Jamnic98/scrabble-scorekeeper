@@ -16,7 +16,7 @@ export const App = () => {
   const [turnScore, setTurnScore] = useState(0)
   const [players, setPlayers] = useState<Player[]>([
     // { name: 'A', pointsPerMove: Array(20).fill(null), isCurrentPlayer: true },
-    // { name: 'B', pointsPerMove: Array(20).fill(null), isCurrentPlayer: false }
+    // { name: 'B', pointsPerMove: Array(20).fill(null), isCurrentPlayer: false },
     // { name: 'C', pointsPerMove: Array(20).fill(null), isCurrentPlayer: false },
     // { name: 'D', pointsPerMove: Array(20).fill(null), isCurrentPlayer: false }
   ])
@@ -24,10 +24,10 @@ export const App = () => {
   useEffect(() => {
     if (turnCount > lastTurnCount) {
       setPlayers(updatePlayerScore())
-      setLastTurnCount(lastTurnCount + 1)
+      setLastTurnCount((lastTurnCount) => lastTurnCount + 1)
       setTurnScore(0)
     } else {
-      setLastTurnCount(lastTurnCount - 1)
+      setLastTurnCount((lastTurnCount) => lastTurnCount - 1)
     }
   }, [turnCount])
 
@@ -36,6 +36,7 @@ export const App = () => {
     const currentPlayerIndex = players.indexOf(currentPlayer)
     const nextPlayerIndex =
       currentPlayerIndex === players.length - 1 ? 0 : currentPlayerIndex + 1
+
     const updatedPlayers = players.map((player, playerIndex) => {
       if (player.isCurrentPlayer) {
         player.pointsPerMove = addPoints(player.pointsPerMove)
@@ -56,9 +57,9 @@ export const App = () => {
   const getCurrentPlayer = () =>
     players.filter((player) => player.isCurrentPlayer)[0]
 
-  const addPoints = (playerPoints) => {
+  const addPoints = (playerPoints: (number | null)[]) => {
     const nullIndex = playerPoints.indexOf(null)
-    return playerPoints.map((points: number, pointsIndex: number) =>
+    return playerPoints.map((points, pointsIndex) =>
       nullIndex === pointsIndex ? turnScore : points
     )
   }
@@ -71,20 +72,25 @@ export const App = () => {
   }
 
   return (
-    <div>
+    <>
       <h1 id='main-title'>Scrabble Scorekeeper</h1>
       <div id='main-content'>
-        <PlayerEntryWidget players={players} setPlayers={setPlayers} />
-        <BoardWidget
-          players={players}
-          setPlayers={setPlayers}
-          getCurrentPlayer={getCurrentPlayer}
-          turnCount={turnCount}
-          setTurnCount={setTurnCount}
-          setTurnScore={setTurnScore}
-        />
-        <Table players={players} />
+        {players.length ? (
+          <>
+            <BoardWidget
+              players={players}
+              setPlayers={setPlayers}
+              getCurrentPlayer={getCurrentPlayer}
+              turnCount={turnCount}
+              setTurnCount={setTurnCount}
+              setTurnScore={setTurnScore}
+            />
+            <Table players={players} />
+          </>
+        ) : (
+          <PlayerEntryWidget setPlayers={setPlayers} />
+        )}
       </div>
-    </div>
+    </>
   )
 }

@@ -21,8 +21,8 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@types/jest": "^29.4.0",
-    "@types/react": "^18.0.27",
-    "typescript-plugin-css-modules": "^4.1.1"
+    "@types/react": "^18.3.12",
+    "typescript-plugin-css-modules": "^4.2.3"
   },
   "overrides": {
     "nth-check": "^2.0.1",

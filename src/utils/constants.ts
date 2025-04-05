@@ -25,5 +25,5 @@ export const STARTING_LETTER_COUNTS = {
   x: 1,
   y: 2,
   z: 1,
-  ' ': 2
+  ' ': 2,
 }

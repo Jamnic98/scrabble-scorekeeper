@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react'
-import { Player } from '../../App'
+import { type Player } from '../../App'
 import { capatalizeText } from '../../utils/helpers'
 import './player-entry-widget.css'
 
@@ -7,9 +7,7 @@ export interface PlayerEntryWidgetProps {
   setPlayers: (players: Player[]) => void
 }
 
-export const PlayerEntryWidget: React.FC<PlayerEntryWidgetProps> = ({
-  setPlayers
-}) => {
+export const PlayerEntryWidget: React.FC<PlayerEntryWidgetProps> = ({ setPlayers }) => {
   const PPM_SIZE = 18
   const nameInputRef = useRef<HTMLInputElement | null>(null)
   const [playerNames, setPlayerNames] = useState<string[]>([])
@@ -22,7 +20,7 @@ export const PlayerEntryWidget: React.FC<PlayerEntryWidgetProps> = ({
           return {
             name: playerName,
             pointsPerMove: Array(PPM_SIZE).fill(null),
-            isCurrentPlayer: index === 0
+            isCurrentPlayer: index === 0,
           }
         })
       )
@@ -31,10 +29,10 @@ export const PlayerEntryWidget: React.FC<PlayerEntryWidgetProps> = ({
     }
   }
 
-  const handleKeyPress = (e) => {
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     // is enter key pressed
-    if (e.keyCode === 13) {
-      const playerName = e.target.value
+    if (e.key === 'Enter') {
+      const playerName = e.currentTarget.value
       if (isPlayerNameValid(playerName)) {
         addNameToPlayerNames(playerName)
       }
@@ -47,10 +45,14 @@ export const PlayerEntryWidget: React.FC<PlayerEntryWidgetProps> = ({
       case 1:
       case 2:
       case 3:
-        setPlayerNames([...playerNames, capatalizeText(name.trim())])
-        if (null !== nameInputRef.current) {
-          nameInputRef.current.value = ''
-        }
+        // Use functional form of setPlayerNames to ensure the latest state
+        setPlayerNames((prevNames) => {
+          const newNames = [...prevNames, capatalizeText(name.trim())]
+          if (null !== nameInputRef.current) {
+            nameInputRef.current.value = ''
+          }
+          return newNames
+        })
         break
       default:
         alert('4 players maximum.')
@@ -63,10 +65,11 @@ export const PlayerEntryWidget: React.FC<PlayerEntryWidgetProps> = ({
       alert(`Player name '${captalizedPlayerName}' taken.`)
       return false
     }
+    return true
   }
 
   return (
-    <div id='player-entry-widget'>
+    <div id="player-entry-widget">
       <h1>
         <u>
           <b>Enter players in turn order:</b>
@@ -74,11 +77,7 @@ export const PlayerEntryWidget: React.FC<PlayerEntryWidgetProps> = ({
       </h1>
       <label>
         Name:
-        <input
-          type='text'
-          onKeyUp={(e) => handleKeyPress(e)}
-          ref={nameInputRef}
-        />
+        <input type="text" onKeyDown={handleKeyPress} ref={nameInputRef} />
       </label>
       <br />
       <br />
@@ -90,11 +89,7 @@ export const PlayerEntryWidget: React.FC<PlayerEntryWidgetProps> = ({
           <li key={index}>{name}</li>
         ))}
       </ol>
-      <button
-        id='generate-table-button'
-        className='btn'
-        onClick={handleGenerateButton}
-      >
+      <button id="generate-table-button" className="btn" onClick={handleGenerateButton}>
         GENERATE
         <br />
       </button>

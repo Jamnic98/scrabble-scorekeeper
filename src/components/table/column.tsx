@@ -1,5 +1,4 @@
-import React from 'react'
-import { Player } from '../../App'
+import { type Player } from '../../App'
 import './column.css'
 
 export interface ColumnProps {
@@ -20,8 +19,8 @@ export const Column: React.FC<ColumnProps> = ({ player, playerCount }) => {
   const setTableRow = () => {
     return player.pointsPerMove.map((points, pointsIndex) => (
       <tr key={pointsIndex}>
-        <td className='left-column'>{points}</td>
-        <td className='right-column'>{getCumulativeScore(pointsIndex)}</td>
+        <td className="left-column">{points}</td>
+        <td className="right-column">{getCumulativeScore(pointsIndex)}</td>
       </tr>
     ))
   }
@@ -31,17 +30,15 @@ export const Column: React.FC<ColumnProps> = ({ player, playerCount }) => {
       <thead>
         <tr>
           <th
-            className={`${
-              player.isCurrentPlayer ? 'highlighted' : ''
-            } main-column-title`}
+            className={`${player.isCurrentPlayer ? 'highlighted' : ''} main-column-title`}
             colSpan={2}
           >
             {player.name}
           </th>
         </tr>
         <tr>
-          <th className='sub-column-title'>Turn</th>
-          <th className='sub-column-title'>Sum</th>
+          <th className="sub-column-title">Turn</th>
+          <th className="sub-column-title">Sum</th>
         </tr>
       </thead>
       <tbody>{setTableRow()}</tbody>

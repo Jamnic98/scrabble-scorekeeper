@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { PlayerEntryWidget } from './components/player/player-entry-widget'
 import { BoardWidget } from './components/board/board-widget'
 import { Table } from './components/table/table'
@@ -34,8 +34,7 @@ export const App = () => {
   const updatePlayerScore = () => {
     const currentPlayer = getCurrentPlayer()
     const currentPlayerIndex = players.indexOf(currentPlayer)
-    const nextPlayerIndex =
-      currentPlayerIndex === players.length - 1 ? 0 : currentPlayerIndex + 1
+    const nextPlayerIndex = currentPlayerIndex === players.length - 1 ? 0 : currentPlayerIndex + 1
 
     const updatedPlayers = players.map((player, playerIndex) => {
       if (player.isCurrentPlayer) {
@@ -45,8 +44,7 @@ export const App = () => {
       return player
     })
 
-    const lastPlayersPoints =
-      updatedPlayers[updatedPlayers.length - 1].pointsPerMove
+    const lastPlayersPoints = updatedPlayers[updatedPlayers.length - 1].pointsPerMove
 
     return lastPlayersPoints[lastPlayersPoints.length - 1] !== null
       ? extendPointsArray()
@@ -54,8 +52,7 @@ export const App = () => {
   }
 
   // returns the player who's turn it is to move
-  const getCurrentPlayer = () =>
-    players.filter((player) => player.isCurrentPlayer)[0]
+  const getCurrentPlayer = () => players.filter((player) => player.isCurrentPlayer)[0]
 
   const addPoints = (playerPoints: (number | null)[]) => {
     const nullIndex = playerPoints.indexOf(null)
@@ -73,8 +70,8 @@ export const App = () => {
 
   return (
     <>
-      <h1 id='main-title'>Scrabble Scorekeeper</h1>
-      <div id='main-content'>
+      <h1 id="main-title">Scrabble Scorekeeper</h1>
+      <div id="main-content">
         {players.length ? (
           <>
             <BoardWidget

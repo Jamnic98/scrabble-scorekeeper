@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { BoardSquare, BoardSquareProps } from './board-square'
+import { BoardSquare } from './board-square'
 import './board.css'
 
 export interface BoardProps {
@@ -19,15 +19,13 @@ export const Board: React.FC<BoardProps> = ({
   setActiveSquareCoords,
   wordDirection,
   setWordDirection,
-  letters
+  letters,
 }) => {
   // when component mounts, create the starting board UI
   useEffect(
     () =>
       setBoardState(
-        new Array(15)
-          .fill(undefined)
-          .map((_row, rowIndex) => createRowOfSquares(rowIndex))
+        new Array(15).fill(undefined).map((_row, rowIndex) => createRowOfSquares(rowIndex))
       ),
     [setBoardState]
   )
@@ -40,7 +38,7 @@ export const Board: React.FC<BoardProps> = ({
     ['', '', '', '', 'dw', '', '', '', '', '', 'dw', '', '', '', ''],
     ['', 'tl', '', '', '', 'tl', '', '', '', 'tl', '', '', '', 'tl', ''],
     ['', '', 'dl', '', '', '', 'dl', '', 'dl', '', '', '', 'dl', '', ''],
-    ['tw', '', '', 'dl', '', '', '', 'dw', '', '', '', 'dl', '', '', 'tw']
+    ['tw', '', '', 'dl', '', '', '', 'dw', '', '', '', 'dl', '', '', 'tw'],
   ]
 
   // returns an array of Square objects from the score multiplier arrays
@@ -50,7 +48,7 @@ export const Board: React.FC<BoardProps> = ({
         letter: '',
         scoreMultiplier: _scoreMultiplier,
         isBlank: false,
-        isFocused: false
+        isFocused: false,
       }
     })
   }
@@ -85,10 +83,10 @@ export const Board: React.FC<BoardProps> = ({
   }
 
   return (
-    <div id='board'>
-      {boardState.map((row, y) => (
-        <div key={y} id='board-row'>
-          {row.map((square, x) => {
+    <div id="board">
+      {boardState.map((row: any, y: number) => (
+        <div key={y} id="board-row">
+          {row.map((square: any, x: number) => {
             return (
               <BoardSquare
                 key={y * 15 + x}

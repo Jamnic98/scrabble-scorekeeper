@@ -21,7 +21,7 @@ export const BoardSquare: React.FC<BoardSquareProps> = ({
   wordDirection,
   setWordDirection,
   letters,
-  boardState
+  boardState,
 }) => {
   const setArrow = () => {
     if (wordDirection === '') {
@@ -40,10 +40,7 @@ export const BoardSquare: React.FC<BoardSquareProps> = ({
         ${square.letter === '' ? 'empty' : 'occupied'} board-square`}
       onMouseDown={() => {
         if (letters.length === 0) {
-          if (
-            coords[0] !== activeSquareCoords[0] ||
-            coords[1] !== activeSquareCoords[1]
-          ) {
+          if (coords[0] !== activeSquareCoords[0] || coords[1] !== activeSquareCoords[1]) {
             setWordDirection('')
           }
           if (boardState[coords[1]][coords[0]].letter === '') {
@@ -53,9 +50,7 @@ export const BoardSquare: React.FC<BoardSquareProps> = ({
       }}
     >
       {setArrow()}
-      {square.letter && (
-        <Tile letter={square.letter} isBlank={square.isBlank} />
-      )}
+      {square.letter && <Tile letter={square.letter} isBlank={square.isBlank} />}
     </button>
   )
 }

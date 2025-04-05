@@ -1,8 +1,6 @@
 export const getLetterValue = (letter: string) => {
   const lowerCaseLetter = letter?.toLowerCase()
-  if (
-    ['a', 'e', 'i', 'l', 'n', 'o', 'r', 's', 't', 'u'].includes(lowerCaseLetter)
-  ) {
+  if (['a', 'e', 'i', 'l', 'n', 'o', 'r', 's', 't', 'u'].includes(lowerCaseLetter)) {
     return 1
   } else if (['d', 'g'].includes(lowerCaseLetter)) {
     return 2

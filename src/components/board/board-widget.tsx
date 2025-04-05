@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Board } from './board'
 import { SideBar } from '../side-bar/side-bar'
 import { getLetterValue, STARTING_LETTER_COUNTS } from '../../utils'
@@ -21,7 +21,7 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
   getCurrentPlayer,
   turnCount,
   setTurnCount,
-  setTurnScore
+  setTurnScore,
 }) => {
   const [letters, setLetters] = useState<any>([])
   const [skipCount, setSkipCount] = useState<number>(0)
@@ -50,7 +50,7 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
         { letter: '', scoreMultiplier: 'dl', isBlank: false, isFocused: false },
         { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
         { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
-        { letter: '', scoreMultiplier: 'tw', isBlank: false, isFocused: false }
+        { letter: '', scoreMultiplier: 'tw', isBlank: false, isFocused: false },
       ],
       // ROW 2
       [
@@ -68,7 +68,7 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
         { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
         { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
         { letter: '', scoreMultiplier: 'dw', isBlank: false, isFocused: false },
-        { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false }
+        { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
       ],
       // ROW 3
       [
@@ -86,7 +86,7 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
         { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
         { letter: '', scoreMultiplier: 'dw', isBlank: false, isFocused: false },
         { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
-        { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false }
+        { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
       ],
       // ROW 4
       [
@@ -104,7 +104,7 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
         { letter: '', scoreMultiplier: 'dw', isBlank: false, isFocused: false },
         { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
         { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
-        { letter: '', scoreMultiplier: 'dl', isBlank: false, isFocused: false }
+        { letter: '', scoreMultiplier: 'dl', isBlank: false, isFocused: false },
       ],
       // ROW 5
       [
@@ -122,7 +122,7 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
         { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
         { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
         { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
-        { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false }
+        { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
       ],
       // ROW 6
       [
@@ -140,7 +140,7 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
         { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
         { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
         { letter: '', scoreMultiplier: 'tl', isBlank: false, isFocused: false },
-        { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false }
+        { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
       ],
       // ROW 7
       [
@@ -158,7 +158,7 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
         { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
         { letter: '', scoreMultiplier: 'dl', isBlank: false, isFocused: false },
         { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
-        { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false }
+        { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
       ],
       // ROW 8
       [
@@ -176,7 +176,7 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
         { letter: '', scoreMultiplier: 'dl', isBlank: false, isFocused: false },
         { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
         { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
-        { letter: '', scoreMultiplier: 'tw', isBlank: false, isFocused: false }
+        { letter: '', scoreMultiplier: 'tw', isBlank: false, isFocused: false },
       ],
       // ROW 9
       [
@@ -194,7 +194,7 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
         { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
         { letter: '', scoreMultiplier: 'dl', isBlank: false, isFocused: false },
         { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
-        { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false }
+        { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
       ],
       // ROW 10
       [
@@ -212,7 +212,7 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
         { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
         { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
         { letter: '', scoreMultiplier: 'tl', isBlank: false, isFocused: false },
-        { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false }
+        { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
       ],
       // ROW 11
       [
@@ -230,7 +230,7 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
         { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
         { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
         { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
-        { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false }
+        { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
       ],
       // ROW 12
       [
@@ -248,7 +248,7 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
         { letter: '', scoreMultiplier: 'dw', isBlank: false, isFocused: false },
         { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
         { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
-        { letter: '', scoreMultiplier: 'dl', isBlank: false, isFocused: false }
+        { letter: '', scoreMultiplier: 'dl', isBlank: false, isFocused: false },
       ],
       // ROW 13
       [
@@ -266,7 +266,7 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
         { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
         { letter: '', scoreMultiplier: 'dw', isBlank: false, isFocused: false },
         { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
-        { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false }
+        { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
       ],
       // ROW 14
       [
@@ -284,7 +284,7 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
         { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
         { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
         { letter: '', scoreMultiplier: 'dw', isBlank: false, isFocused: false },
-        { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false }
+        { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
       ],
       // ROW 15
       [
@@ -302,21 +302,19 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
         { letter: '', scoreMultiplier: 'dl', isBlank: false, isFocused: false },
         { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
         { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
-        { letter: '', scoreMultiplier: 'tw', isBlank: false, isFocused: false }
-      ]
-    ]
+        { letter: '', scoreMultiplier: 'tw', isBlank: false, isFocused: false },
+      ],
+    ],
   ])
 
-  const [remainingLetters, setRemainingLetters] = useState<any>(
-    STARTING_LETTER_COUNTS
-  )
+  const [remainingLetters, setRemainingLetters] = useState<any>(STARTING_LETTER_COUNTS)
 
   // set the focus of the square in board state when the active square changes
   useEffect(() => {
     if (activeSquareCoords.length !== 0) {
       const [x, y] = activeSquareCoords
-      const updatedBoardArray = boardState.map((row, rowIndex) => {
-        return row.map((square, squareIndex) => {
+      const updatedBoardArray = boardState.map((row: any, rowIndex: number) => {
+        return row.map((square: any, squareIndex: any) => {
           return rowIndex === y && squareIndex === x
             ? { ...square, isFocused: true }
             : { ...square, isFocused: false }
@@ -336,10 +334,7 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
   const increaseNumberOfSkips = () => {
     setSkipCount(skipCount + 1)
     setTurnCount(turnCount + 1)
-    setLastBoardState([
-      ...lastBoardState,
-      lastBoardState[lastBoardState.length - 1]
-    ])
+    setLastBoardState([...lastBoardState, lastBoardState[lastBoardState.length - 1]])
   }
 
   const calculateMovePoints = () => {
@@ -356,7 +351,7 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
     setTurnScore(totalPoints)
   }
 
-  const calculateWordPoints = (wordObj) => {
+  const calculateWordPoints = (wordObj: any) => {
     let points = 0
     let twCount = 0
     let dwCount = 0
@@ -391,12 +386,12 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
     return points
   }
 
-  const makeLetterMove = (letter, isBlank = false) => {
+  const makeLetterMove = (letter: any, isBlank = false) => {
     const [x, y] = activeSquareCoords
     const letterObject = {
       letter: letter,
       scoreMultiplier: boardState[y][x].scoreMultiplier,
-      isBlank: isBlank
+      isBlank: isBlank,
     }
     updateBoard(letterObject)
     getWordsFormed(letterObject)
@@ -405,7 +400,7 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
     shiftFocus()
   }
 
-  const getWordsFormed = (letterObject) => {
+  const getWordsFormed = (letterObject: any) => {
     const horizontalSquares = appendHorizontalSquares(letterObject)
     const verticalSquares = appendVerticalSquares(letterObject)
     let newMainWord
@@ -452,28 +447,22 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
     }
   }
 
-  const appendHorizontalSquares = (letterObject) => {
-    const lettersToRight = getSquaresToRight(
-      activeSquareCoords[0],
-      activeSquareCoords[1]
-    )
-    const squaresToRight = lettersToRight.map((letter) => {
+  const appendHorizontalSquares = (letterObject: any) => {
+    const lettersToRight = getSquaresToRight(activeSquareCoords[0], activeSquareCoords[1])
+    const squaresToRight = lettersToRight.map((letter: any) => {
       return {
         letter: letter.letter,
         scoreMultiplier: '',
-        isBlank: letter.isBlank
+        isBlank: letter.isBlank,
       }
     })
 
-    const lettersToLeft = getSquaresToLeft(
-      activeSquareCoords[0],
-      activeSquareCoords[1]
-    ).reverse()
-    const squaresToLeft = lettersToLeft.map((letter) => {
+    const lettersToLeft = getSquaresToLeft(activeSquareCoords[0], activeSquareCoords[1]).reverse()
+    const squaresToLeft = lettersToLeft.map((letter: any) => {
       return {
         letter: letter.letter,
         scoreMultiplier: '',
-        isBlank: letter.isBlank
+        isBlank: letter.isBlank,
       }
     })
 
@@ -483,28 +472,22 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
     return []
   }
 
-  const appendVerticalSquares = (letterObject) => {
-    const lettersBelow = getSquaresBelow(
-      activeSquareCoords[0],
-      activeSquareCoords[1]
-    )
-    const squaresBelow = lettersBelow.map((letter) => {
+  const appendVerticalSquares = (letterObject: any) => {
+    const lettersBelow = getSquaresBelow(activeSquareCoords[0], activeSquareCoords[1])
+    const squaresBelow = lettersBelow.map((letter: any) => {
       return {
         letter: letter.letter,
         scoreMultiplier: '',
-        isBlank: letter.isBlank
+        isBlank: letter.isBlank,
       }
     })
 
-    const lettersAbove = getSquaresAbove(
-      activeSquareCoords[0],
-      activeSquareCoords[1]
-    ).reverse()
-    const squaresAbove = lettersAbove.map((letter) => {
+    const lettersAbove = getSquaresAbove(activeSquareCoords[0], activeSquareCoords[1]).reverse()
+    const squaresAbove = lettersAbove.map((letter: any) => {
       return {
         letter: letter.letter,
         scoreMultiplier: '',
-        isBlank: letter.isBlank
+        isBlank: letter.isBlank,
       }
     })
 
@@ -514,11 +497,11 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
     return []
   }
 
-  const getSquaresToRight = (x, y) => {
+  const getSquaresToRight = (x: number, y: number): any[] => {
     const nextX = x + 1
     if (x < 14) {
       const square = boardState[y][nextX]
-      const { isFocused, scoreMultiplier, ...letterObj } = square
+      const { ...letterObj } = square
       if (letterObj.letter !== '') {
         return [letterObj, ...getSquaresToRight(nextX, y)]
       }
@@ -526,12 +509,12 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
     return []
   }
 
-  const getSquaresToLeft = (x, y) => {
+  const getSquaresToLeft = (x: number, y: number): any[] => {
     if (wordDirection !== 'right' || mainWord.length === 0) {
       const nextX = x - 1
       if (x > 0) {
         const square = boardState[y][nextX]
-        const { isFocused, scoreMultiplier, ...letterObj } = square
+        const { ...letterObj } = square
         if (letterObj.letter !== '') {
           return [letterObj, ...getSquaresToLeft(nextX, y)]
         }
@@ -540,11 +523,11 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
     return []
   }
 
-  const getSquaresBelow = (x, y) => {
+  const getSquaresBelow = (x: number, y: number): any[] => {
     const nextY = y + 1
     if (y < 14) {
       const square = boardState[nextY][x]
-      const { isFocused, scoreMultiplier, ...letterObj } = square
+      const { ...letterObj } = square
       if (letterObj.letter !== '') {
         return [letterObj, ...getSquaresBelow(x, nextY)]
       }
@@ -552,12 +535,12 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
     return []
   }
 
-  const getSquaresAbove = (x, y) => {
+  const getSquaresAbove = (x: number, y: number): any[] => {
     if (wordDirection !== 'down' || mainWord.length === 0) {
       const nextY = y - 1
       if (y > 0) {
         const square = boardState[nextY][x]
-        const { isFocused, scoreMultiplier, ...letterObj } = square
+        const { ...letterObj } = square
         if (letterObj.letter !== '') {
           return [letterObj, ...getSquaresAbove(x, nextY)]
         }
@@ -566,18 +549,18 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
     return []
   }
 
-  const isSquareEmpty = (x, y) => {
+  const isSquareEmpty = (x: number, y: number) => {
     return boardState[y][x].letter === ''
   }
 
-  const handleRightArrow = (e) => {
+  const handleRightArrow = (e: React.KeyboardEvent<HTMLInputElement>) => {
     e.preventDefault()
     if (letters.length < 1) {
       setWordDirection('right')
     }
   }
 
-  const handleDownArrow = (e) => {
+  const handleDownArrow = (e: React.KeyboardEvent<HTMLInputElement>) => {
     e.preventDefault()
     if (letters.length < 1) {
       setWordDirection('down')
@@ -586,10 +569,7 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
 
   const shiftFocus = () => {
     if (wordDirection !== '') {
-      const newCoords = getNextAvailableSquare(
-        activeSquareCoords[0],
-        activeSquareCoords[1]
-      )
+      const newCoords = getNextAvailableSquare(activeSquareCoords[0], activeSquareCoords[1])
       setActiveSquareCoords(newCoords)
     }
   }
@@ -624,15 +604,15 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
 
   const clearFocus = () => {
     setActiveSquareCoords([])
-    const updatedBoardArray = boardState.map((row) =>
-      row.map((square) => {
+    const updatedBoardArray = boardState.map((row: any) =>
+      row.map((square: any) => {
         return { ...square, isFocused: false }
       })
     )
     setBoardState(updatedBoardArray)
   }
 
-  const updateRemainingLetters = (letterToRemove) => {
+  const updateRemainingLetters = (letterToRemove: any) => {
     const [x, y] = activeSquareCoords
     const currentLetter = boardState[y][x].letter.toLowerCase()
     const lowerCaseLetterToRemove = letterToRemove.toLowerCase()
@@ -648,10 +628,10 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
   }
 
   // retuns an array of the board with a letter placed at coords x, y
-  const updateBoard = (letterObject) => {
+  const updateBoard = (letterObject: any) => {
     const [x, y] = activeSquareCoords
-    const updatedBoardArray = boardState.map((row, rowIndex) =>
-      row.map((square, squareIndex) => {
+    const updatedBoardArray = boardState.map((row: any, rowIndex: number) =>
+      row.map((square: any, squareIndex: number) => {
         if (rowIndex === y && squareIndex === x) {
           return letterObject
         } else {
@@ -662,24 +642,20 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
     setBoardState(updatedBoardArray)
   }
 
-  const isLetterAvailable = (letter) => {
+  const isLetterAvailable = (letter: any) => {
     const letterCount = remainingLetters[letter.toLowerCase()]
     if (letterCount > 0) {
       return true
     } else {
-      alert(
-        `'${
-          letter === ' ' ? 'BLANK' : letter.toUpperCase()
-        }' tile is not available.`
-      )
+      alert(`'${letter === ' ' ? 'BLANK' : letter.toUpperCase()}' tile is not available.`)
       return false
     }
   }
 
-  const getFocusedSquareCoords = (board) => {
+  const getFocusedSquareCoords = (board: any) => {
     let coords: any = []
-    board.map((row, y) => {
-      row.map((square, x) => {
+    board.map((row: any, y: number) => {
+      row.map((square: any, x: number) => {
         if (square.isFocused) {
           coords = [x, y]
         }
@@ -697,10 +673,10 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
     setPreviousMainWords([])
   }
 
-  const invalidWordsAlert = (invalidWords) => {
+  const invalidWordsAlert = (invalidWords: any) => {
     const message = invalidWords
       .slice(0, invalidWords.length - 1)
-      .map((word, index) => {
+      .map((word: any, index: number) => {
         if (index <= invalidWords.length - 1) {
           return ` '${word}'`
         }
@@ -708,9 +684,7 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
     alert(
       `${message} ${invalidWords.length > 1 ? 'and' : ''} '${
         invalidWords[invalidWords.length - 1]
-      }' ${
-        invalidWords.length === 1 ? 'is' : 'are'
-      } not in the english dictionary!`
+      }' ${invalidWords.length === 1 ? 'is' : 'are'} not in the english dictionary!`
     )
   }
 
@@ -726,7 +700,7 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
     }
 
     for (const wordObj of allWords) {
-      const wordArray = wordObj.map((obj) => obj.letter)
+      const wordArray = wordObj.map((obj: any) => obj.letter)
       const word = wordArray.join('')
       const regex = new RegExp(`^${word}$`)
       const matches = dict.filter((d) => regex.test(d))
@@ -803,9 +777,7 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
       setLetters(letters.slice(0, letters.length - 1))
 
       setBoardState(previousBoardStates[previousBoardStates.length - 1])
-      setPreviousBoardStates(
-        previousBoardStates.slice(0, previousBoardStates.length - 1)
-      )
+      setPreviousBoardStates(previousBoardStates.slice(0, previousBoardStates.length - 1))
 
       // update the possible playable letters
       if (previousLetter.isBlank) {
@@ -822,10 +794,8 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
       switch (wordDirection) {
         case 'down':
           if (
-            getSquaresToLeft(focusedSquareCoords[0], focusedSquareCoords[1])
-              .length !== 0 ||
-            getSquaresToRight(focusedSquareCoords[0], focusedSquareCoords[1])
-              .length !== 0
+            getSquaresToLeft(focusedSquareCoords[0], focusedSquareCoords[1]).length !== 0 ||
+            getSquaresToRight(focusedSquareCoords[0], focusedSquareCoords[1]).length !== 0
           ) {
             setWords([...words.slice(0, words.length - 1)])
           }
@@ -833,10 +803,8 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
           break
         case 'right':
           if (
-            getSquaresAbove(focusedSquareCoords[0], focusedSquareCoords[1])
-              .length !== 0 ||
-            getSquaresBelow(focusedSquareCoords[0], focusedSquareCoords[1])
-              .length !== 0
+            getSquaresAbove(focusedSquareCoords[0], focusedSquareCoords[1]).length !== 0 ||
+            getSquaresBelow(focusedSquareCoords[0], focusedSquareCoords[1]).length !== 0
           ) {
             setWords([...words.slice(0, words.length - 1)])
           }
@@ -851,9 +819,7 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
 
       if (previousMainWords.length > 1) {
         setMainWord(previousMainWords[previousMainWords.length - 2])
-        setPreviousMainWords([
-          ...previousMainWords.slice(0, previousMainWords.length - 1)
-        ])
+        setPreviousMainWords([...previousMainWords.slice(0, previousMainWords.length - 1)])
       } else {
         setMainWord(mainWord.slice(0, mainWord.length - 1))
       }
@@ -866,8 +832,8 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
     if (letters.length > 0) {
       if (isMoveValid()) {
         setTurnCount(turnCount + 1)
-        const clearedBoard = boardState.map((row) => {
-          return row.map((square) => {
+        const clearedBoard = boardState.map((row: any) => {
+          return row.map((square: any) => {
             square.isFocused = false
             return square
           })
@@ -879,13 +845,10 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
     }
   }
 
-  const handleKeyPressed = (e) => {
+  const handleKeyPressed = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const keyCode = e.keyCode
     if (activeSquareCoords.length !== 0) {
-      if (
-        isSquareEmpty(activeSquareCoords[0], activeSquareCoords[1]) &&
-        letters.length < 7
-      ) {
+      if (isSquareEmpty(activeSquareCoords[0], activeSquareCoords[1]) && letters.length < 7) {
         // key with a letter pressed
         if (keyCode >= 65 && keyCode <= 90) {
           const letter = String.fromCharCode(keyCode + 32)
@@ -925,7 +888,10 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
   }
 
   return players.length !== 0 ? (
-    <div id='board-widget' onKeyUp={(e) => handleKeyPressed(e)}>
+    <div
+      id="board-widget"
+      onKeyUp={(e: React.KeyboardEvent<HTMLInputElement>) => handleKeyPressed(e)}
+    >
       <Board
         boardState={boardState}
         setBoardState={setBoardState}

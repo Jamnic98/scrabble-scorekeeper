@@ -46,7 +46,7 @@ export const SideBar: React.FC<SideBarProps> = ({
   skipCount,
   setSkipCount,
   remainingLetters,
-  setRemainingLetters
+  setRemainingLetters,
 }) => {
   const handleUndoButton = () => {
     if (lastBoardState.length <= 1) {
@@ -73,7 +73,7 @@ export const SideBar: React.FC<SideBarProps> = ({
     const previousPlayerIndex =
       currentPlayerIndex === 0 ? players.length - 1 : currentPlayerIndex - 1
 
-    const updatedPlayers = players.map((player, playerIndex) => {
+    const updatedPlayers = players.map((player: any, playerIndex: number) => {
       player.isCurrentPlayer = playerIndex === previousPlayerIndex
       if (player.isCurrentPlayer) {
         player.pointsPerMove = updatePlayerPoints(player.pointsPerMove)
@@ -87,8 +87,8 @@ export const SideBar: React.FC<SideBarProps> = ({
     const previousBoardState = lastBoardState[lastBoardState.length - 1]
     const ppBS = lastBoardState[lastBoardState.length - 2]
     let lettersAdded: any[] = []
-    previousBoardState.map((row, rowIndex) => {
-      return row.map((square, squareIndex) => {
+    previousBoardState.map((row: any, rowIndex: number) => {
+      return row.map((square: any, squareIndex: number) => {
         const l = ppBS[rowIndex][squareIndex].letter
         if (square.letter !== l) {
           lettersAdded.push(square)
@@ -98,13 +98,13 @@ export const SideBar: React.FC<SideBarProps> = ({
     return lettersAdded
   }
 
-  const updatePlayerPoints = (playerPoints) => {
+  const updatePlayerPoints = (playerPoints: any) => {
     let nullIndex = playerPoints.indexOf(null)
     if (nullIndex === -1) {
       nullIndex = playerPoints.length
     }
 
-    const updatedPoints = playerPoints.map((points, pointsIndex) => {
+    const updatedPoints = playerPoints.map((points: any, pointsIndex: number) => {
       if (pointsIndex === nullIndex - 1) {
         if (points === 0) {
           setSkipCount(skipCount - 1)
@@ -115,9 +115,9 @@ export const SideBar: React.FC<SideBarProps> = ({
     return updatedPoints
   }
 
-  const addTiles = (lettersAdded) => {
+  const addTiles = (lettersAdded: any) => {
     const lettersRemaining = { ...remainingLetters }
-    lettersAdded.map((letterObj) => {
+    lettersAdded.map((letterObj: any) => {
       if (letterObj.isBlank) {
         lettersRemaining[' '] += 1
       } else {
@@ -128,36 +128,32 @@ export const SideBar: React.FC<SideBarProps> = ({
   }
 
   return (
-    <div id='side-bar'>
-      <div id='arrows'>
+    <div id="side-bar">
+      <div id="arrows">
         <button
           onMouseDown={(e) => handleRightArrow(e)}
-          className='btn'
+          className="btn"
           disabled={
-            wordDirection === 'right' ||
-            letters.length > 0 ||
-            activeSquareCoords.length === 0
+            wordDirection === 'right' || letters.length > 0 || activeSquareCoords.length === 0
           }
         >
-          <div id='right-arrow' className='right'></div>
+          <div id="right-arrow" className="right"></div>
         </button>
         <br />
         <button
           onMouseDown={(e) => handleDownArrow(e)}
-          className='btn'
+          className="btn"
           disabled={
-            wordDirection === 'down' ||
-            letters.length > 0 ||
-            activeSquareCoords.length === 0
+            wordDirection === 'down' || letters.length > 0 || activeSquareCoords.length === 0
           }
         >
-          <div id='down-arrow' className='down'></div>
+          <div id="down-arrow" className="down"></div>
         </button>
       </div>
       <br />
       <button
-        id='skip-button'
-        className='btn'
+        id="skip-button"
+        className="btn"
         disabled={letters.length > 0}
         onMouseUp={() => {
           increaseNumberOfSkips()
@@ -172,8 +168,8 @@ export const SideBar: React.FC<SideBarProps> = ({
       </button>
       <br />
       <button
-        id='undo-button'
-        className='btn'
+        id="undo-button"
+        className="btn"
         disabled={letters.length > 0 || turnCount === 0}
         onMouseUp={() => {
           handleUndoButton()

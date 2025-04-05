@@ -1,6 +1,5 @@
-import React from 'react'
 import { render, screen } from '@testing-library/react'
-import { Tile, TileProps } from './tile'
+import { Tile, type TileProps } from './tile'
 
 const defaultLetter = 'j'
 const defaultIsBlank = false
@@ -9,7 +8,7 @@ const drawTile = (props?: TileProps) => {
   const finalProps = {
     letter: defaultLetter,
     isBlank: defaultIsBlank,
-    ...props
+    ...props,
   }
   render(<Tile {...finalProps} />)
 }

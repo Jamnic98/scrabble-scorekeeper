@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { PlayerEntryWidget } from './components/player/player-entry-widget'
 import { BoardWidget } from './components/board/board-widget'
 import { Table } from './components/table/table'
-import './App.css'
 
 export interface Player {
   name: string
@@ -18,7 +17,7 @@ export const App = () => {
     // { name: 'A', pointsPerMove: Array(20).fill(null), isCurrentPlayer: true },
     // { name: 'B', pointsPerMove: Array(20).fill(null), isCurrentPlayer: false },
     // { name: 'C', pointsPerMove: Array(20).fill(null), isCurrentPlayer: false },
-    // { name: 'D', pointsPerMove: Array(20).fill(null), isCurrentPlayer: false }
+    // { name: 'D', pointsPerMove: Array(20).fill(null), isCurrentPlayer: false },
   ])
 
   useEffect(() => {
@@ -51,7 +50,6 @@ export const App = () => {
       : updatedPlayers
   }
 
-  // returns the player who's turn it is to move
   const getCurrentPlayer = () => players.filter((player) => player.isCurrentPlayer)[0]
 
   const addPoints = (playerPoints: (number | null)[]) => {
@@ -69,25 +67,27 @@ export const App = () => {
   }
 
   return (
-    <>
-      <h1 id="main-title">Scrabble Scorekeeper</h1>
-      <div id="main-content">
-        {players.length ? (
-          <>
-            <BoardWidget
-              players={players}
-              setPlayers={setPlayers}
-              getCurrentPlayer={getCurrentPlayer}
-              turnCount={turnCount}
-              setTurnCount={setTurnCount}
-              setTurnScore={setTurnScore}
-            />
-            <Table players={players} />
-          </>
-        ) : (
+    <div id="main-content" className="min-h-screen p-4">
+      {players.length ? (
+        <>
+          <BoardWidget
+            players={players}
+            setPlayers={setPlayers}
+            getCurrentPlayer={getCurrentPlayer}
+            turnCount={turnCount}
+            setTurnCount={setTurnCount}
+            setTurnScore={setTurnScore}
+          />
+          <Table players={players} />
+        </>
+      ) : (
+        <div className="flex flex-col items-center justify-center min-h-screen gap-8">
+          <h1 id="main-title" className="text-3xl font-semibold">
+            Scrabble Scorekeeper
+          </h1>
           <PlayerEntryWidget setPlayers={setPlayers} />
-        )}
-      </div>
-    </>
+        </div>
+      )}
+    </div>
   )
 }

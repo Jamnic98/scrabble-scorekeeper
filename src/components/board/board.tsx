@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 import { BoardSquare } from './board-square'
-import './board.css'
 
 export interface BoardProps {
   boardState: any
@@ -83,7 +82,7 @@ export const Board: React.FC<BoardProps> = ({
   }
 
   return (
-    <div id="board">
+    <div id="board" className="border-8 border-black float-left min-w-138.75">
       {boardState.map((row: any, y: number) => (
         <div key={y} id="board-row">
           {row.map((square: any, x: number) => {

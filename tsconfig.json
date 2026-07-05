@@ -2,6 +2,7 @@
   "compilerOptions": {
     "paths": {
       "components": ["./src/components"],
+      "utils": ["./src/utils"],
       "types": ["./src/types"]
     },
     "moduleResolution": "bundler",

@@ -1,14 +1,13 @@
 {
   "compilerOptions": {
-  "baseUrl": "./src",
-  "paths": {
-    "components": ["./src/components"],
-    "types": ["./src/types"]
-  },
-  "moduleResolution": "node",
-  "esModuleInterop": true,
-  "resolveJsonModule": true,
-  "types": ["vite/client"]
+    "paths": {
+      "components": ["./src/components"],
+      "types": ["./src/types"]
+    },
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "types": ["vite/client"]
   },
   "files": [],
   "references": [

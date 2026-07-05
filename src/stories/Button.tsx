@@ -1,3 +1,4 @@
+// Button.tsx
 import './button.css'
 
 export interface ButtonProps {
@@ -13,7 +14,6 @@ export interface ButtonProps {
   onClick?: () => void
 }
 
-/** Primary UI component for user interaction */
 export const Button = ({
   primary = false,
   size = 'medium',
@@ -22,6 +22,7 @@ export const Button = ({
   ...props
 }: ButtonProps) => {
   const mode = primary ? 'storybook-button--primary' : 'storybook-button--secondary'
+
   return (
     <button
       type="button"

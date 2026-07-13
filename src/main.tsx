@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { App } from './App'
 
 import './styles/main.css'
+import { StrictMode } from 'react'
 
 window.addEventListener(
   'keydown',
@@ -21,4 +22,8 @@ window.addEventListener(
   false
 )
 
-createRoot(document.getElementById('root')!).render(<App />)
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <App />
+  </StrictMode>
+)

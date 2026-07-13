@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react'
+
 import { type Player } from '../../App'
 import { capatalizeText } from '../../utils/helpers'
 
@@ -77,7 +78,7 @@ export const PlayerEntryWidget: React.FC<PlayerEntryWidgetProps> = ({ setPlayers
   return (
     <div
       id="player-entry-widget"
-      className="flex flex-col gap-5 max-w-sm p-6 bg-white rounded-xl border border-gray-200 shadow-sm"
+      className="flex flex-col gap-5 p-6 m-8 bg-white rounded-xl border border-gray-200 shadow-sm"
     >
       <div>
         <h1 className="text-xl font-semibold text-gray-900">Add players</h1>

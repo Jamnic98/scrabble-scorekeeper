@@ -1,8 +1,8 @@
 import React from 'react'
 import { ArrowRight, ArrowDown, SkipForward, Undo2 } from 'lucide-react'
 
-import './side-bar.css'
 import { Tile } from '../tile'
+
 export interface SideBarProps {
   wordDirection: any
   handleRightArrow: any
@@ -132,42 +132,53 @@ export const SideBar: React.FC<SideBarProps> = ({
   return (
     <div
       id="side-bar"
-      className="flex flex-col justify-between h-146.5 w-64 p-2 bg-neutral-400 border-r-8 border-t-8 border-b-8 border-black shadow-inner"
+      className="flex flex-col justify-between h-146.5 w-52 p-2 bg-neutral-400 border-r-8 border-t-8 border-b-8 border-black shadow-inner"
     >
-      <div id="arrows" className="flex flex-col gap-1">
-        <button
-          onMouseDown={(e) => handleRightArrow(e)}
-          className="flex items-center justify-center py-2.5 bg-[rgb(255,218,163)] border-2 border-black rounded-md cursor-pointer hover:brightness-95 transition disabled:opacity-30 disabled:cursor-default disabled:hover:brightness-100"
-          disabled={
-            wordDirection === 'right' || letters.length > 0 || activeSquareCoords.length === 0
-          }
-        >
-          <ArrowRight size={18} strokeWidth={2.5} />
-        </button>
-
+      <div id="arrows" className="flex flex-row gap-1">
         <button
           onMouseDown={(e) => handleDownArrow(e)}
-          className="flex items-center justify-center py-2.5 bg-[rgb(255,218,163)] border-2 border-black rounded-md cursor-pointer hover:brightness-95 transition disabled:opacity-30 disabled:cursor-default disabled:hover:brightness-100"
+          className="flex items-center justify-center py-2.5 w-1/2 bg-[rgb(255,218,163)] border-2 border-black rounded-md cursor-pointer hover:brightness-95 transition disabled:opacity-30 disabled:cursor-default disabled:hover:brightness-100"
           disabled={
             wordDirection === 'down' || letters.length > 0 || activeSquareCoords.length === 0
           }
         >
           <ArrowDown size={18} strokeWidth={2.5} />
         </button>
+
+        <button
+          onMouseDown={(e) => handleRightArrow(e)}
+          className="flex items-center justify-center py-2.5 w-1/2 bg-[rgb(255,218,163)] border-2 border-black rounded-md cursor-pointer hover:brightness-95 transition disabled:opacity-30 disabled:cursor-default disabled:hover:brightness-100"
+          disabled={
+            wordDirection === 'right' || letters.length > 0 || activeSquareCoords.length === 0
+          }
+        >
+          <ArrowRight size={18} strokeWidth={2.5} />
+        </button>
       </div>
 
-      <div className="flex flex-row flex-wrap gap-2">
+      <div className="flex flex-row flex-wrap gap-2 justify-center items-center ">
         {Object.entries(remainingLetters).map(([letter, count]: any, index) => (
           <div key={index} className="flex flex-col justify-center items-center">
-            <div className={count === 0 ? 'invisible' : ''}>
-              <Tile letter={letter} />
+            <div>
+              <Tile letter={letter} unavailable={count === 0} />
             </div>
             <span className={`text-xs font-bold ${count === 0 ? 'invisible' : ''}`}>{count}</span>
           </div>
         ))}
       </div>
 
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-row gap-1">
+        <button
+          id="undo-button"
+          onMouseUp={() => {
+            handleUndoButton()
+          }}
+          disabled={letters.length > 0 || turnCount === 0}
+          className="flex items-center justify-center gap-1 py-2.5 w-1/2 uppercase text-sm font-bold tracking-wide bg-[rgb(255,218,163)] border-2 border-black rounded-md cursor-pointer hover:brightness-95 transition disabled:opacity-30 disabled:cursor-default disabled:hover:brightness-100"
+        >
+          <Undo2 size={16} strokeWidth={2.5} />
+          Undo
+        </button>
         <button
           id="skip-button"
           onMouseUp={() => {
@@ -175,22 +186,10 @@ export const SideBar: React.FC<SideBarProps> = ({
             generalReset()
           }}
           disabled={letters.length > 0}
-          className="flex items-center justify-center gap-1 py-2.5 uppercase text-sm font-bold tracking-wide bg-[rgb(255,218,163)] border-2 border-black rounded-md cursor-pointer hover:brightness-95 transition disabled:opacity-30 disabled:cursor-default disabled:hover:brightness-100"
+          className="flex items-center justify-center gap-1 py-2.5 w-1/2 uppercase text-sm font-bold tracking-wide bg-[rgb(255,218,163)] border-2 border-black rounded-md cursor-pointer hover:brightness-95 transition disabled:opacity-30 disabled:cursor-default disabled:hover:brightness-100"
         >
           <SkipForward size={16} strokeWidth={2.5} />
           Skip
-        </button>
-
-        <button
-          id="undo-button"
-          onMouseUp={() => {
-            handleUndoButton()
-          }}
-          disabled={letters.length > 0 || turnCount === 0}
-          className="flex items-center justify-center gap-1 py-2.5 uppercase text-sm font-bold tracking-wide bg-[rgb(255,218,163)] border-2 border-black rounded-md cursor-pointer hover:brightness-95 transition disabled:opacity-30 disabled:cursor-default disabled:hover:brightness-100"
-        >
-          <Undo2 size={16} strokeWidth={2.5} />
-          Undo
         </button>
       </div>
     </div>

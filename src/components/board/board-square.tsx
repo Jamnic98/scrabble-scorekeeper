@@ -1,5 +1,10 @@
+import { ChevronDown, ChevronRight } from 'lucide-react'
+
 import { Tile } from '../tile'
+
 import './board-square.css'
+
+const baseStyle = 'relative border-1 border-solid border-gray-400'
 
 export interface BoardSquareProps {
   coords: [x: number, y: number]
@@ -26,7 +31,19 @@ export const BoardSquare: React.FC<BoardSquareProps> = ({
     if (wordDirection === '') {
       return null
     } else if (square.letter === '' && square.isFocused) {
-      return <span className={`${wordDirection} arrow small`}></span>
+      if (wordDirection === 'right') {
+        return (
+          <span className="flex justify-center">
+            <ChevronRight size={20} />
+          </span>
+        )
+      } else {
+        return (
+          <span className="flex justify-center ">
+            <ChevronDown size={20} />
+          </span>
+        )
+      }
     }
   }
 
@@ -34,6 +51,7 @@ export const BoardSquare: React.FC<BoardSquareProps> = ({
     <button
       tabIndex={-1}
       className={`
+        ${baseStyle} 
         ${square.scoreMultiplier} 
         ${square.isFocused ? 'focused' : 'unfocused'} 
         ${square.letter === '' ? 'empty' : 'occupied'} board-square`}

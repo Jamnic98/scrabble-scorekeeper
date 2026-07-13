@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+
 import { PlayerEntryWidget } from './components/player/player-entry-widget'
 import { BoardWidget } from './components/board/board-widget'
 import { Table } from './components/table/table'
@@ -67,9 +68,9 @@ export const App = () => {
   }
 
   return (
-    <div id="main-content" className="min-h-screen p-4">
+    <div className="min-h-screen">
       {players.length ? (
-        <>
+        <div className="flex flex-row flex-nowrap gap-8 p-8">
           <BoardWidget
             players={players}
             setPlayers={setPlayers}
@@ -79,12 +80,10 @@ export const App = () => {
             setTurnScore={setTurnScore}
           />
           <Table players={players} />
-        </>
+        </div>
       ) : (
-        <div className="flex flex-col items-center justify-center min-h-screen gap-8">
-          <h1 id="main-title" className="text-3xl font-semibold">
-            Scrabble Scorekeeper
-          </h1>
+        <div className="min-h-screen flex flex-col items-center justify-center">
+          <h1 className="text-3xl font-semibold">Scrabble Scorekeeper</h1>
           <PlayerEntryWidget setPlayers={setPlayers} />
         </div>
       )}

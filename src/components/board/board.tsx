@@ -82,7 +82,7 @@ export const Board: React.FC<BoardProps> = ({
   }
 
   return (
-    <div id="board" className="border-8 border-black float-left min-w-138.75">
+    <div id="board" className="border-8 border-black float-left">
       {boardState.map((row: any, y: number) => (
         <div key={y} id="board-row">
           {row.map((square: any, x: number) => {

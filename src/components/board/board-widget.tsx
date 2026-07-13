@@ -4,8 +4,6 @@ import { Board } from './board'
 import { SideBar } from '../side-bar/side-bar'
 import { getLetterValue, STARTING_LETTER_COUNTS } from '../../utils'
 
-import './board-widget.css'
-
 import dict from 'an-array-of-english-words'
 
 export interface BoardWidgetProps {
@@ -892,7 +890,7 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
   return players.length !== 0 ? (
     <div
       id="board-widget"
-      className="inline"
+      className="float-left min-w-200"
       onKeyUp={(e: React.KeyboardEvent<HTMLInputElement>) => handleKeyPressed(e)}
     >
       <Board

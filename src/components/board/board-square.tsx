@@ -1,6 +1,4 @@
-import { ChevronDown, ChevronRight } from 'lucide-react'
-
-import { Tile } from 'components'
+import { Arrow, Tile } from 'components'
 
 import './board-square.css'
 
@@ -27,26 +25,6 @@ const BoardSquare: React.FC<BoardSquareProps> = ({
   letters,
   boardState,
 }) => {
-  const setArrow = () => {
-    if (wordDirection === '') {
-      return null
-    } else if (square.letter === '' && square.isFocused) {
-      if (wordDirection === 'right') {
-        return (
-          <span className="flex justify-center">
-            <ChevronRight size={20} />
-          </span>
-        )
-      } else {
-        return (
-          <span className="flex justify-center ">
-            <ChevronDown size={20} />
-          </span>
-        )
-      }
-    }
-  }
-
   return (
     <button
       tabIndex={-1}
@@ -66,7 +44,7 @@ const BoardSquare: React.FC<BoardSquareProps> = ({
         }
       }}
     >
-      {setArrow()}
+      <Arrow square={square} wordDirection={wordDirection} />
       {square.letter && <Tile letter={square.letter} isBlank={square.isBlank} />}
     </button>
   )

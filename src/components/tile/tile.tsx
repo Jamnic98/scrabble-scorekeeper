@@ -25,22 +25,20 @@ export const Tile: React.FC<TileProps> = ({
   isBlank = false,
   unavailable = false,
   style = 'sans',
-}) => {
-  return (
+}) => (
+  <div
+    className={`${baseStyle} ${unavailable ? 'bg-[rgb(255,218,163)]/30 border-black/40' : 'bg-[rgb(255,218,163)] border-black'}`}
+    data-testid="application-tile"
+  >
     <div
-      className={`${baseStyle} ${unavailable ? 'bg-[rgb(255,218,163)]/30 border-black/40' : 'bg-[rgb(255,218,163)] border-black'}`}
-      data-testid="application-tile"
+      className={`${fontStyles[style]} text-center tracking-normal ${unavailable ? 'text-black/40' : 'text-black'}`}
     >
-      <div
-        className={`${fontStyles[style]} text-center tracking-normal ${unavailable ? 'text-black/40' : 'text-black'}`}
-      >
-        {/* display letter */}
-        <span className="text-2xl absolute left-1.5 top-4 leading-0">{letter.toUpperCase()}</span>
-        {/* display digit */}
-        <span className="absolute text-[9px] bottom-1 right-px leading-0 font-sans">
-          {isBlank ? null : getLetterValue(letter)}
-        </span>
-      </div>
+      {/* display letter */}
+      <span className="text-2xl absolute left-1.5 top-4 leading-0">{letter.toUpperCase()}</span>
+      {/* display digit */}
+      <span className="absolute text-[9px] bottom-1 right-px leading-0 font-sans">
+        {isBlank ? null : getLetterValue(letter)}
+      </span>
     </div>
-  )
-}
+  </div>
+)

@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 
 import { BoardSquare } from 'components'
+import { scoreMultiplierArrays } from '../../constants'
 
 export interface BoardProps {
   boardState: any
@@ -29,17 +30,6 @@ const Board: React.FC<BoardProps> = ({
       ),
     [setBoardState]
   )
-
-  const scoreMultiplierArrays = [
-    ['tw', '', '', 'dl', '', '', '', 'tw', '', '', '', 'dl', '', '', 'tw'],
-    ['', 'dw', '', '', '', 'tl', '', '', '', 'tl', '', '', '', 'dw', ''],
-    ['', '', 'dw', '', '', '', 'dl', '', 'dl', '', '', '', 'dw', '', ''],
-    ['dl', '', '', 'dw', '', '', '', 'dl', '', '', '', 'dw', '', '', 'dl'],
-    ['', '', '', '', 'dw', '', '', '', '', '', 'dw', '', '', '', ''],
-    ['', 'tl', '', '', '', 'tl', '', '', '', 'tl', '', '', '', 'tl', ''],
-    ['', '', 'dl', '', '', '', 'dl', '', 'dl', '', '', '', 'dl', '', ''],
-    ['tw', '', '', 'dl', '', '', '', 'dw', '', '', '', 'dl', '', '', 'tw'],
-  ]
 
   // returns an array of Square objects from the score multiplier arrays
   const createRowOfSquares = (rowIndex: number) => {

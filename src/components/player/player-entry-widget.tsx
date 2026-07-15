@@ -1,7 +1,12 @@
 import React, { useRef, useState } from 'react'
 
-import { type Player } from '../../App'
-import { capatalizeText } from '../../utils/helpers'
+import { capatalizeText } from 'utils'
+
+export interface Player {
+  name: string
+  pointsPerMove: (number | null)[]
+  isCurrentPlayer: boolean
+}
 
 export interface PlayerEntryWidgetProps {
   setPlayers: (players: Player[]) => void
@@ -12,7 +17,7 @@ export const PlayerEntryWidget: React.FC<PlayerEntryWidgetProps> = ({ setPlayers
   const nameInputRef = useRef<HTMLInputElement | null>(null)
   const [playerNames, setPlayerNames] = useState<string[]>([])
 
-  const handleGenerateButton = () => {
+  const generate = () => {
     const numberOfPlayers = playerNames.length
     if (2 <= numberOfPlayers && numberOfPlayers <= 4) {
       setPlayers(
@@ -29,36 +34,31 @@ export const PlayerEntryWidget: React.FC<PlayerEntryWidgetProps> = ({ setPlayers
     }
   }
 
-  const handleAddPlayer = () => {
+  const addPlayer = () => {
     const playerName = nameInputRef.current?.value ?? ''
     if (playerName.trim() === '') return
     if (isPlayerNameValid(playerName)) {
-      addNameToPlayerNames(playerName)
+      updatePlayerNames(playerName)
     }
   }
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      handleAddPlayer()
+      addPlayer()
     }
   }
 
-  const addNameToPlayerNames = (name: string) => {
-    switch (playerNames.length) {
-      case 0:
-      case 1:
-      case 2:
-      case 3:
-        setPlayerNames((prevNames) => {
-          const newNames = [...prevNames, name.trim()]
-          if (null !== nameInputRef.current) {
-            nameInputRef.current.value = ''
-          }
-          return newNames
-        })
-        break
-      default:
-        alert('4 players maximum.')
+  const updatePlayerNames = (name: string) => {
+    if (playerNames.length < 4) {
+      setPlayerNames((prevNames) => {
+        const newNames = [...prevNames, name.trim()]
+        if (nameInputRef.current) {
+          nameInputRef.current.value = ''
+        }
+        return newNames
+      })
+    } else {
+      alert('4 players maximum.')
     }
   }
 
@@ -94,7 +94,7 @@ export const PlayerEntryWidget: React.FC<PlayerEntryWidgetProps> = ({ setPlayers
           className="flex-1 min-w-0 border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-gray-900 focus:ring-1 focus:ring-gray-900 transition-colors"
         />
         <button
-          onClick={handleAddPlayer}
+          onClick={addPlayer}
           className="shrink-0 px-4 text-sm font-semibold text-gray-900 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
         >
           Enter
@@ -126,7 +126,7 @@ export const PlayerEntryWidget: React.FC<PlayerEntryWidgetProps> = ({ setPlayers
 
       <button
         id="generate-table-button"
-        onClick={handleGenerateButton}
+        onClick={generate}
         className="uppercase text-sm font-semibold tracking-wide bg-gray-900 text-white rounded-lg py-2.5 cursor-pointer hover:bg-gray-700 transition-colors"
       >
         Generate

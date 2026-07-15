@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
-import { Tile, type TileProps } from './tile'
+
+import { Tile, type TileProps } from 'components'
 
 const defaultLetter = 'j'
 const defaultIsBlank = false

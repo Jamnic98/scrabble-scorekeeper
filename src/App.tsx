@@ -1,22 +1,14 @@
 import { useEffect, useState } from 'react'
 
-import { PlayerEntryWidget } from './components/player/player-entry-widget'
-import { BoardWidget } from './components/board/board-widget'
-import { Table } from './components/table/table'
-
-export interface Player {
-  name: string
-  pointsPerMove: (number | null)[]
-  isCurrentPlayer: boolean
-}
+import { BoardWidget, PlayerEntryWidget, Player, Table } from 'components'
 
 export const App = () => {
   const [lastTurnCount, setLastTurnCount] = useState(0)
   const [turnCount, setTurnCount] = useState(0)
   const [turnScore, setTurnScore] = useState(0)
   const [players, setPlayers] = useState<Player[]>([
-    // { name: 'A', pointsPerMove: Array(20).fill(null), isCurrentPlayer: true },
-    // { name: 'B', pointsPerMove: Array(20).fill(null), isCurrentPlayer: false },
+    { name: 'A', pointsPerMove: Array(20).fill(null), isCurrentPlayer: true },
+    { name: 'B', pointsPerMove: Array(20).fill(null), isCurrentPlayer: false },
     // { name: 'C', pointsPerMove: Array(20).fill(null), isCurrentPlayer: false },
     // { name: 'D', pointsPerMove: Array(20).fill(null), isCurrentPlayer: false },
   ])
@@ -70,7 +62,7 @@ export const App = () => {
   return (
     <div className="min-h-screen">
       {players.length ? (
-        <div className="flex flex-row flex-nowrap gap-8 p-8">
+        <div className="flex flex-row flex-wrap gap-8 p-8">
           <BoardWidget
             players={players}
             setPlayers={setPlayers}

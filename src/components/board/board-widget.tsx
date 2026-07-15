@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react'
 
-import { Board } from './board'
-import { SideBar } from '../side-bar/side-bar'
-import { getLetterValue, STARTING_LETTER_COUNTS } from '../../utils'
+import { Board, SideBar } from 'components'
+import { getLetterValue, STARTING_LETTER_COUNTS } from 'utils'
 
 import dict from 'an-array-of-english-words'
 
@@ -15,7 +14,7 @@ export interface BoardWidgetProps {
   setTurnScore: (currentPoints: number) => void
 }
 
-export const BoardWidget: React.FC<BoardWidgetProps> = ({
+const BoardWidget: React.FC<BoardWidgetProps> = ({
   players,
   setPlayers,
   getCurrentPlayer,
@@ -928,3 +927,5 @@ export const BoardWidget: React.FC<BoardWidgetProps> = ({
     </div>
   ) : null
 }
+
+export default BoardWidget

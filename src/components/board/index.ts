@@ -1,3 +1,3 @@
-export * from './board'
-export * from './board-square'
-export * from './board-widget'
+export { default as Board } from './board'
+export { default as BoardSquare } from './board-square'
+export { default as BoardWidget } from './board-widget'

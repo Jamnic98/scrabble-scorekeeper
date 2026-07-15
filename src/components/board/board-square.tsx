@@ -1,6 +1,6 @@
 import { ChevronDown, ChevronRight } from 'lucide-react'
 
-import { Tile } from '../tile'
+import { Tile } from 'components'
 
 import './board-square.css'
 
@@ -17,7 +17,7 @@ export interface BoardSquareProps {
   boardState: any
 }
 
-export const BoardSquare: React.FC<BoardSquareProps> = ({
+const BoardSquare: React.FC<BoardSquareProps> = ({
   coords,
   square,
   activeSquareCoords,
@@ -71,3 +71,5 @@ export const BoardSquare: React.FC<BoardSquareProps> = ({
     </button>
   )
 }
+
+export default BoardSquare

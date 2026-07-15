@@ -1,20 +1,24 @@
-import { Column } from './column'
-import { type Player } from '../../App'
+import { Column, type Player } from 'components'
 
 export interface TableProps {
   players: Player[]
 }
 
-export const Table: React.FC<TableProps> = ({ players }) => {
+const TABLE_WIDTH = 460
+
+const Table: React.FC<TableProps> = ({ players }) => {
   const playerCount = players.length
+  const columnWidth = TABLE_WIDTH / playerCount
 
   return (
     playerCount > 0 && (
       <div id="table" className="min-w-115 inline-block">
         {players.map((player, index) => (
-          <Column key={index} player={player} playerCount={playerCount} />
+          <Column key={index} player={player} columnWidth={columnWidth} />
         ))}
       </div>
     )
   )
 }
+
+export default Table

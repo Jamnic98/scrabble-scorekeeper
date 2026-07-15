@@ -1,11 +1,12 @@
 import React from 'react'
-import { getLetterValue } from '../../utils/helpers'
+
+import { getLetterValue } from 'utils'
 
 export interface TileProps {
   letter: string
   isBlank?: boolean
-  style?: TileStyle
   unavailable?: boolean
+  style?: TileStyle
 }
 
 type TileStyle = 'mono' | 'serif' | 'sans'
@@ -22,8 +23,8 @@ const baseStyle =
 export const Tile: React.FC<TileProps> = ({
   letter = '',
   isBlank = false,
-  style = 'sans',
   unavailable = false,
+  style = 'sans',
 }) => {
   return (
     <div

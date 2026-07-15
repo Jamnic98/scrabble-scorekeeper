@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
-import { BoardSquare } from './board-square'
+
+import { BoardSquare } from 'components'
 
 export interface BoardProps {
   boardState: any
@@ -11,7 +12,7 @@ export interface BoardProps {
   letters: any
 }
 
-export const Board: React.FC<BoardProps> = ({
+const Board: React.FC<BoardProps> = ({
   boardState,
   setBoardState,
   activeSquareCoords,
@@ -105,3 +106,5 @@ export const Board: React.FC<BoardProps> = ({
     </div>
   )
 }
+
+export default Board

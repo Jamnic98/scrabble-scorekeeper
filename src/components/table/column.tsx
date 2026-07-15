@@ -1,16 +1,16 @@
-import { type Player } from '../../App'
+import { type Player } from 'components'
 
 export interface ColumnProps {
   player: Player
-  playerCount: number
+  columnWidth: number
 }
 
-export const Column: React.FC<ColumnProps> = ({ player, playerCount }) => {
+export const Column: React.FC<ColumnProps> = ({ player, columnWidth }) => {
   const getCumulativeScore = (pointsIndex: number) => {
     const nullIndex = player.pointsPerMove.indexOf(null)
     return nullIndex > pointsIndex || nullIndex === -1
       ? player.pointsPerMove
-          .slice(0, ++pointsIndex)
+          .slice(0, pointsIndex + 1)
           .reduce((a, b) => (a !== null && b !== null ? a + b : null), 0)
       : null
   }
@@ -30,14 +30,14 @@ export const Column: React.FC<ColumnProps> = ({ player, playerCount }) => {
 
   return (
     <table
-      style={{ width: 460 / playerCount }}
+      style={{ width: columnWidth }}
       className="border border-black border-collapse inline-table content-center items-center text-center text-2xl font-bold"
     >
       <thead>
         <tr className="h-[1.2em]">
           <th
             className={`${
-              player.isCurrentPlayer ? 'bg-yellow-300' : ''
+              player.isCurrentPlayer && 'bg-yellow-300'
             } max-w-[5em] h-[1em] border border-black text-center text-xl`}
             colSpan={2}
           >

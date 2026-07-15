@@ -1,7 +1,7 @@
 import React from 'react'
 import { ArrowRight, ArrowDown, SkipForward, Undo2 } from 'lucide-react'
 
-import { Tile } from '../tile'
+import { Tile } from 'components'
 
 export interface SideBarProps {
   wordDirection: any

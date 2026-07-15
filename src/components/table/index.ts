@@ -1,2 +1,2 @@
 export * from './column'
-export * from './table'
+export { default as Table } from './table'

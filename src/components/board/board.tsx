@@ -1,7 +1,37 @@
 import { useEffect } from 'react'
 
 import { BoardSquare } from 'components'
-import { scoreMultiplierArrays } from '../../constants'
+import { scoreMultiplierArrays } from '../../utils/constants'
+
+// TODO: move
+// returns a row's point multipliers as an array of strings
+const getRowScoreMultipliers = (rowIndex: number) => {
+  switch (rowIndex) {
+    case 0:
+    case 14:
+      return scoreMultiplierArrays[0]
+    case 1:
+    case 13:
+      return scoreMultiplierArrays[1]
+    case 2:
+    case 12:
+      return scoreMultiplierArrays[2]
+    case 3:
+    case 11:
+      return scoreMultiplierArrays[3]
+    case 4:
+    case 10:
+      return scoreMultiplierArrays[4]
+    case 5:
+    case 9:
+      return scoreMultiplierArrays[5]
+    case 6:
+    case 8:
+      return scoreMultiplierArrays[6]
+    case 7:
+      return scoreMultiplierArrays[7]
+  }
+}
 
 export interface BoardProps {
   boardState: any
@@ -41,35 +71,6 @@ const Board: React.FC<BoardProps> = ({
         isFocused: false,
       }
     })
-  }
-
-  // returns a row's point multipliers as an array of strings
-  const getRowScoreMultipliers = (rowIndex: number) => {
-    switch (rowIndex) {
-      case 0:
-      case 14:
-        return scoreMultiplierArrays[0]
-      case 1:
-      case 13:
-        return scoreMultiplierArrays[1]
-      case 2:
-      case 12:
-        return scoreMultiplierArrays[2]
-      case 3:
-      case 11:
-        return scoreMultiplierArrays[3]
-      case 4:
-      case 10:
-        return scoreMultiplierArrays[4]
-      case 5:
-      case 9:
-        return scoreMultiplierArrays[5]
-      case 6:
-      case 8:
-        return scoreMultiplierArrays[6]
-      case 7:
-        return scoreMultiplierArrays[7]
-    }
   }
 
   return (

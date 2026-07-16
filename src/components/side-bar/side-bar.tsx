@@ -1,7 +1,7 @@
 import React from 'react'
 import { ArrowRight, ArrowDown, SkipForward, Undo2 } from 'lucide-react'
 
-import { Tile } from 'components'
+import { type Player, Tile } from 'components'
 
 export interface SideBarProps {
   wordDirection: any
@@ -11,14 +11,14 @@ export interface SideBarProps {
   setLetters: any
   activeSquareCoords: any
   setActiveSquareCoords: any
-  increaseNumberOfSkips: any
+  increaseSkipCount: any
   generalReset: any
   setBoardState: any
   lastBoardState: any
   setLastBoardState: any
   turnCount: any
   setTurnCount: any
-  players: any
+  players: Player[]
   setPlayers: any
   getCurrentPlayer: any
   skipCount: any
@@ -35,7 +35,7 @@ export const SideBar: React.FC<SideBarProps> = ({
   setLetters,
   activeSquareCoords,
   setActiveSquareCoords,
-  increaseNumberOfSkips,
+  increaseSkipCount,
   generalReset,
   setBoardState,
   lastBoardState,
@@ -75,7 +75,7 @@ export const SideBar: React.FC<SideBarProps> = ({
     const previousPlayerIndex =
       currentPlayerIndex === 0 ? players.length - 1 : currentPlayerIndex - 1
 
-    const updatedPlayers = players.map((player: any, playerIndex: number) => {
+    const updatedPlayers = players.map((player: Player, playerIndex: number) => {
       player.isCurrentPlayer = playerIndex === previousPlayerIndex
       if (player.isCurrentPlayer) {
         player.pointsPerMove = updatePlayerPoints(player.pointsPerMove)
@@ -91,8 +91,8 @@ export const SideBar: React.FC<SideBarProps> = ({
     let lettersAdded: any[] = []
     previousBoardState.map((row: any, rowIndex: number) => {
       return row.map((square: any, squareIndex: number) => {
-        const l = ppBS[rowIndex][squareIndex].letter
-        if (square.letter !== l) {
+        const { letter } = ppBS[rowIndex][squareIndex]
+        if (square.letter !== letter) {
           lettersAdded.push(square)
         }
       })
@@ -182,7 +182,7 @@ export const SideBar: React.FC<SideBarProps> = ({
         <button
           id="skip-button"
           onMouseUp={() => {
-            increaseNumberOfSkips()
+            increaseSkipCount()
             generalReset()
           }}
           disabled={letters.length > 0}

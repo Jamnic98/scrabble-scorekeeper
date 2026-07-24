@@ -6,7 +6,7 @@ export const scoreMultiplierArrays = [
   ['', '', '', '', 'dw', '', '', '', '', '', 'dw', '', '', '', ''],
   ['', 'tl', '', '', '', 'tl', '', '', '', 'tl', '', '', '', 'tl', ''],
   ['', '', 'dl', '', '', '', 'dl', '', 'dl', '', '', '', 'dl', '', ''],
-  ['tw', '', '', 'dl', '', '', '', 'dw', '', '', '', 'dl', '', '', 'tw'],
+  ['tw', '', '', 'dl', '', '', '', 'dw', '', '', '', 'dl', '', '', 'tw']
 ]
 
 export const INITIAL_BOARD_STATE = [
@@ -27,7 +27,7 @@ export const INITIAL_BOARD_STATE = [
       { letter: '', scoreMultiplier: 'dl', isBlank: false, isFocused: false },
       { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
       { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
-      { letter: '', scoreMultiplier: 'tw', isBlank: false, isFocused: false },
+      { letter: '', scoreMultiplier: 'tw', isBlank: false, isFocused: false }
     ],
     // ROW 2
     [
@@ -45,7 +45,7 @@ export const INITIAL_BOARD_STATE = [
       { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
       { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
       { letter: '', scoreMultiplier: 'dw', isBlank: false, isFocused: false },
-      { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
+      { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false }
     ],
     // ROW 3
     [
@@ -63,7 +63,7 @@ export const INITIAL_BOARD_STATE = [
       { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
       { letter: '', scoreMultiplier: 'dw', isBlank: false, isFocused: false },
       { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
-      { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
+      { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false }
     ],
     // ROW 4
     [
@@ -81,7 +81,7 @@ export const INITIAL_BOARD_STATE = [
       { letter: '', scoreMultiplier: 'dw', isBlank: false, isFocused: false },
       { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
       { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
-      { letter: '', scoreMultiplier: 'dl', isBlank: false, isFocused: false },
+      { letter: '', scoreMultiplier: 'dl', isBlank: false, isFocused: false }
     ],
     // ROW 5
     [
@@ -99,7 +99,7 @@ export const INITIAL_BOARD_STATE = [
       { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
       { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
       { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
-      { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
+      { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false }
     ],
     // ROW 6
     [
@@ -117,7 +117,7 @@ export const INITIAL_BOARD_STATE = [
       { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
       { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
       { letter: '', scoreMultiplier: 'tl', isBlank: false, isFocused: false },
-      { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
+      { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false }
     ],
     // ROW 7
     [
@@ -135,7 +135,7 @@ export const INITIAL_BOARD_STATE = [
       { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
       { letter: '', scoreMultiplier: 'dl', isBlank: false, isFocused: false },
       { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
-      { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
+      { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false }
     ],
     // ROW 8
     [
@@ -153,7 +153,7 @@ export const INITIAL_BOARD_STATE = [
       { letter: '', scoreMultiplier: 'dl', isBlank: false, isFocused: false },
       { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
       { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
-      { letter: '', scoreMultiplier: 'tw', isBlank: false, isFocused: false },
+      { letter: '', scoreMultiplier: 'tw', isBlank: false, isFocused: false }
     ],
     // ROW 9
     [
@@ -171,7 +171,7 @@ export const INITIAL_BOARD_STATE = [
       { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
       { letter: '', scoreMultiplier: 'dl', isBlank: false, isFocused: false },
       { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
-      { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
+      { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false }
     ],
     // ROW 10
     [
@@ -189,7 +189,7 @@ export const INITIAL_BOARD_STATE = [
       { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
       { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
       { letter: '', scoreMultiplier: 'tl', isBlank: false, isFocused: false },
-      { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
+      { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false }
     ],
     // ROW 11
     [
@@ -207,7 +207,7 @@ export const INITIAL_BOARD_STATE = [
       { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
       { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
       { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
-      { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
+      { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false }
     ],
     // ROW 12
     [
@@ -225,7 +225,7 @@ export const INITIAL_BOARD_STATE = [
       { letter: '', scoreMultiplier: 'dw', isBlank: false, isFocused: false },
       { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
       { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
-      { letter: '', scoreMultiplier: 'dl', isBlank: false, isFocused: false },
+      { letter: '', scoreMultiplier: 'dl', isBlank: false, isFocused: false }
     ],
     // ROW 13
     [
@@ -243,7 +243,7 @@ export const INITIAL_BOARD_STATE = [
       { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
       { letter: '', scoreMultiplier: 'dw', isBlank: false, isFocused: false },
       { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
-      { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
+      { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false }
     ],
     // ROW 14
     [
@@ -261,7 +261,7 @@ export const INITIAL_BOARD_STATE = [
       { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
       { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
       { letter: '', scoreMultiplier: 'dw', isBlank: false, isFocused: false },
-      { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
+      { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false }
     ],
     // ROW 15
     [
@@ -279,9 +279,9 @@ export const INITIAL_BOARD_STATE = [
       { letter: '', scoreMultiplier: 'dl', isBlank: false, isFocused: false },
       { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
       { letter: '', scoreMultiplier: '', isBlank: false, isFocused: false },
-      { letter: '', scoreMultiplier: 'tw', isBlank: false, isFocused: false },
-    ],
-  ],
+      { letter: '', scoreMultiplier: 'tw', isBlank: false, isFocused: false }
+    ]
+  ]
 ]
 
 export const STARTING_LETTER_COUNTS = {
@@ -311,5 +311,5 @@ export const STARTING_LETTER_COUNTS = {
   x: 1,
   y: 2,
   z: 1,
-  ' ': 2,
+  ' ': 2
 }

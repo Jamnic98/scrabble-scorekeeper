@@ -48,7 +48,7 @@ export const SideBar: React.FC<SideBarProps> = ({
   skipCount,
   setSkipCount,
   remainingLetters,
-  setRemainingLetters,
+  setRemainingLetters
 }) => {
   const handleUndoButton = () => {
     if (lastBoardState.length <= 1) {

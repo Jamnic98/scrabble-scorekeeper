@@ -56,7 +56,7 @@ const BoardWidget: React.FC<BoardWidgetProps> = ({
   getCurrentPlayer,
   turnCount,
   setTurnCount,
-  setTurnScore,
+  setTurnScore
 }) => {
   const [letters, setLetters] = useState<any>([])
   const [remainingLetters, setRemainingLetters] = useState<any>(STARTING_LETTER_COUNTS)
@@ -117,7 +117,7 @@ const BoardWidget: React.FC<BoardWidgetProps> = ({
     const letterObject = {
       letter: letter,
       scoreMultiplier: boardState[y][x].scoreMultiplier,
-      isBlank: isBlank,
+      isBlank: isBlank
     }
     updateBoard(letterObject)
     getWordsFormed(letterObject)
@@ -180,7 +180,7 @@ const BoardWidget: React.FC<BoardWidgetProps> = ({
       return {
         letter: letter.letter,
         scoreMultiplier: '',
-        isBlank: letter.isBlank,
+        isBlank: letter.isBlank
       }
     })
 
@@ -189,7 +189,7 @@ const BoardWidget: React.FC<BoardWidgetProps> = ({
       return {
         letter: letter.letter,
         scoreMultiplier: '',
-        isBlank: letter.isBlank,
+        isBlank: letter.isBlank
       }
     })
 
@@ -205,7 +205,7 @@ const BoardWidget: React.FC<BoardWidgetProps> = ({
       return {
         letter: letter.letter,
         scoreMultiplier: '',
-        isBlank: letter.isBlank,
+        isBlank: letter.isBlank
       }
     })
 
@@ -214,7 +214,7 @@ const BoardWidget: React.FC<BoardWidgetProps> = ({
       return {
         letter: letter.letter,
         scoreMultiplier: '',
-        isBlank: letter.isBlank,
+        isBlank: letter.isBlank
       }
     })
 

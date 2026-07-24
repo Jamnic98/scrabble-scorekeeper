@@ -1,14 +1,9 @@
 {
   "compilerOptions": {
-    "paths": {
-      "components/*": ["components/*"],
-      "utils/*": ["utils/*"],
-      "types/*": ["types/*"]
-    },
     "moduleResolution": "bundler",
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "types": ["vite/client"]
+    "types": ["vite/client" ]
   },
   "files": [],
   "references": [

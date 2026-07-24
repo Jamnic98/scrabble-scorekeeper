@@ -50,7 +50,7 @@ const Board: React.FC<BoardProps> = ({
   setActiveSquareCoords,
   wordDirection,
   setWordDirection,
-  letters,
+  letters
 }) => {
   // when component mounts, create the starting board UI
   useEffect(
@@ -68,7 +68,7 @@ const Board: React.FC<BoardProps> = ({
         letter: '',
         scoreMultiplier: _scoreMultiplier,
         isBlank: false,
-        isFocused: false,
+        isFocused: false
       }
     })
   }

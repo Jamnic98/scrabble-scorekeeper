@@ -2,17 +2,78 @@
 
 @theme {
   --animate-flash: flash 0.8s ease-in-out infinite;
+  --animate-tw-color-change: tw-color-change 1s infinite;
+  --animate-tl-color-change: tl-color-change 1s infinite;
+  --animate-dw-color-change: dw-color-change 1s infinite;
+  --animate-dl-color-change: dl-color-change 1s infinite;
+  --animate-color-change: color-change 1s infinite;
+}
 
-  @keyframes flash {
-    0%,
-    100% {
-      background-color: #fff;
-      color: #000;
-    }
-    50% {
-      background-color: #000;
-      color: #fff;
-    }
+/* Move keyframes to root level */
+@keyframes flash {
+  0%,
+  100% {
+    background-color: #fff;
+    color: #000;
+  }
+  50% {
+    background-color: #000;
+    color: #fff;
+  }
+}
+
+@keyframes tw-color-change {
+  0%,
+  49% {
+    background-color: yellow;
+  }
+  50%,
+  100% {
+    background-color: red;
+  }
+}
+
+@keyframes tl-color-change {
+  0%,
+  49% {
+    background-color: yellow;
+  }
+  50%,
+  100% {
+    background-color: blue;
+  }
+}
+
+@keyframes dw-color-change {
+  0%,
+  49% {
+    background-color: yellow;
+  }
+  50%,
+  100% {
+    background-color: pink;
+  }
+}
+
+@keyframes dl-color-change {
+  0%,
+  49% {
+    background-color: yellow;
+  }
+  50%,
+  100% {
+    background-color: lightblue;
+  }
+}
+
+@keyframes color-change {
+  0%,
+  49% {
+    background-color: yellow;
+  }
+  50%,
+  100% {
+    background-color: white;
   }
 }
 

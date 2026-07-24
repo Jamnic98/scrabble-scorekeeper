@@ -1,6 +1,3 @@
-// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
-import storybook from "eslint-plugin-storybook";
-
 import typescriptEslintPlugin from '@typescript-eslint/eslint-plugin'
 import reactPlugin from 'eslint-plugin-react'
 import reactHooksPlugin from 'eslint-plugin-react-hooks'
@@ -42,4 +39,4 @@ export default [{
     'react-hooks/exhaustive-deps': 'warn',
     'tailwindcss/classnames-order': 'off',
   },
-}, ...storybook.configs["flat/recommended"]];
+}];

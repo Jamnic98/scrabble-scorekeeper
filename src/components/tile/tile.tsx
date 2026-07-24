@@ -14,7 +14,7 @@ type TileStyle = 'mono' | 'serif' | 'sans'
 const fontStyles: Record<TileStyle, string> = {
   mono: 'font-mono font-bold',
   serif: 'font-serif font-bold',
-  sans: 'font-sans font-bold',
+  sans: 'font-sans font-bold'
 }
 
 const baseStyle =
@@ -24,7 +24,7 @@ export const Tile: React.FC<TileProps> = ({
   letter = '',
   isBlank = false,
   unavailable = false,
-  style = 'sans',
+  style = 'sans'
 }) => (
   <div
     className={`${baseStyle} ${unavailable ? 'bg-[rgb(255,218,163)]/30 border-black/40' : 'bg-[rgb(255,218,163)] border-black'}`}

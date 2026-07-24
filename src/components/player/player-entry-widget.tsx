@@ -25,7 +25,7 @@ export const PlayerEntryWidget: React.FC<PlayerEntryWidgetProps> = ({ setPlayers
           return {
             name: playerName,
             pointsPerMove: Array(PPM_SIZE).fill(null),
-            isCurrentPlayer: index === 0,
+            isCurrentPlayer: index === 0
           }
         })
       )

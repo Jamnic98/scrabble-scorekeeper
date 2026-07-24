@@ -2,27 +2,28 @@ import React from 'react'
 import { ArrowRight, ArrowDown, SkipForward, Undo2 } from 'lucide-react'
 
 import { type Player, Tile } from 'components'
+import type { Coords, WordDirection } from 'types/global'
 
 export interface SideBarProps {
-  wordDirection: any
+  wordDirection: WordDirection
   handleRightArrow: any
   handleDownArrow: any
   letters: any
   setLetters: any
   activeSquareCoords: any
-  setActiveSquareCoords: any
+  setActiveSquareCoords: React.Dispatch<Coords>
   increaseSkipCount: any
   generalReset: any
   setBoardState: any
   lastBoardState: any
   setLastBoardState: any
-  turnCount: any
-  setTurnCount: any
+  turnCount: number
+  setTurnCount: React.Dispatch<React.SetStateAction<number>>
   players: Player[]
-  setPlayers: any
-  getCurrentPlayer: any
-  skipCount: any
-  setSkipCount: any
+  setPlayers: React.Dispatch<React.SetStateAction<Player[]>>
+  getCurrentPlayer: (players: Player[]) => Player
+  skipCount: number
+  setSkipCount: React.Dispatch<React.SetStateAction<number>>
   remainingLetters: any
   setRemainingLetters: any
 }
@@ -65,7 +66,7 @@ export const SideBar: React.FC<SideBarProps> = ({
     const lettersAdded = getLettersAdded()
     addTiles(lettersAdded)
 
-    setActiveSquareCoords([])
+    setActiveSquareCoords([-1, -1])
     setLetters([])
     setTurnCount(turnCount - 1)
   }

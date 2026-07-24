@@ -1,9 +1,9 @@
 import { ChevronDown, ChevronRight } from 'lucide-react'
 
-import { type WordDirection } from 'types/global'
+import type { Square, WordDirection } from 'types/global'
 
 interface ArrowProps {
-  square: { letter: string; isFocused: false }
+  square: Square
   wordDirection: WordDirection
 }
 

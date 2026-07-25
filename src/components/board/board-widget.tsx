@@ -2,11 +2,25 @@ import { useEffect, useState } from 'react'
 
 import { Board, Player, SideBar } from 'components'
 import { getLetterValue, INITIAL_BOARD_STATE, STARTING_LETTER_COUNTS } from 'utils'
+import type {
+  BoardState,
+  Coords,
+  Letter,
+  LetterCounts,
+  Row,
+  Square,
+  WordDirection,
+  Word,
+  TileLetter
+} from 'types/global'
 
 import dict from 'an-array-of-english-words'
 
 // TODO: move
-const calculateWordPoints = (wordObj: any) => {
+const calculateWordPoints = (
+  // TODO: review type
+  wordObj: Square[]
+): number => {
   let points = 0
   let twCount = 0
   let dwCount = 0
@@ -44,10 +58,10 @@ const calculateWordPoints = (wordObj: any) => {
 export interface BoardWidgetProps {
   turnCount: number
   players: Player[]
-  setPlayers: (updatedPlayers: Player[]) => void
+  setPlayers: React.Dispatch<React.SetStateAction<Player[]>>
   getCurrentPlayer: () => Player
-  setTurnCount: (currentTurnCount: number) => void
-  setTurnScore: (currentPoints: number) => void
+  setTurnCount: React.Dispatch<React.SetStateAction<number>>
+  setTurnScore: React.Dispatch<React.SetStateAction<number>>
 }
 
 const BoardWidget: React.FC<BoardWidgetProps> = ({
@@ -58,24 +72,28 @@ const BoardWidget: React.FC<BoardWidgetProps> = ({
   setTurnCount,
   setTurnScore
 }) => {
-  const [letters, setLetters] = useState<any>([])
-  const [remainingLetters, setRemainingLetters] = useState<any>(STARTING_LETTER_COUNTS)
+  const [letters, setLetters] = useState<Word>([])
+  const [remainingLetters, setRemainingLetters] = useState<LetterCounts>({
+    ...STARTING_LETTER_COUNTS
+  })
   const [skipCount, setSkipCount] = useState<number>(0)
-  const [previousMainWords, setPreviousMainWords] = useState<any>([])
-  const [mainWord, setMainWord] = useState<any>([])
-  const [words, setWords] = useState<any>([])
-  const [activeSquareCoords, setActiveSquareCoords] = useState<any>([])
-  const [wordDirection, setWordDirection] = useState<any>('')
-  const [boardState, setBoardState] = useState<any>([])
-  const [previousBoardStates, setPreviousBoardStates] = useState<any>([])
-  const [lastBoardState, setLastBoardState] = useState<any>(INITIAL_BOARD_STATE)
+  // TODO: remove any
+  const [previousMainWords, setPreviousMainWords] = useState<Word[]>([])
+  const [mainWord, setMainWord] = useState<any[]>([])
+  const [words, setWords] = useState<any[]>([])
+  const [activeSquareCoords, setActiveSquareCoords] = useState<Coords>([-1, -1])
+  const [wordDirection, setWordDirection] = useState<WordDirection>('')
+  const [boardState, setBoardState] = useState<BoardState>([])
+  const [previousBoardStates, setPreviousBoardStates] = useState<BoardState[]>([])
+  const [lastBoardState, setLastBoardState] = useState<BoardState[]>(INITIAL_BOARD_STATE)
 
   // set the focus of the square in board state when the active square changes
   useEffect(() => {
-    if (activeSquareCoords.length !== 0) {
+    // TODO: FIX!
+    if (activeSquareCoords[0] !== -1 || activeSquareCoords[1] !== -1) {
       const [x, y] = activeSquareCoords
-      const updatedBoardArray = boardState.map((row: any, rowIndex: number) => {
-        return row.map((square: any, squareIndex: any) => {
+      const updatedBoardArray = boardState.map((row: Row, rowIndex: number) => {
+        return row.map((square: Square, squareIndex: number) => {
           return rowIndex === y && squareIndex === x
             ? { ...square, isFocused: true }
             : { ...square, isFocused: false }
@@ -92,7 +110,7 @@ const BoardWidget: React.FC<BoardWidgetProps> = ({
     }
   }, [letters])
 
-  const increaseSkipCount = () => {
+  const increaseSkipCount = (): void => {
     setSkipCount(skipCount + 1)
     setTurnCount(turnCount + 1)
     setLastBoardState([...lastBoardState, lastBoardState[lastBoardState.length - 1]])
@@ -112,12 +130,13 @@ const BoardWidget: React.FC<BoardWidgetProps> = ({
     setTurnScore(totalPoints)
   }
 
-  const makeLetterMove = (letter: any, isBlank = false) => {
+  const makeLetterMove = (letter: string, isBlank = false): void => {
     const [x, y] = activeSquareCoords
     const letterObject = {
       letter: letter,
       scoreMultiplier: boardState[y][x].scoreMultiplier,
-      isBlank: isBlank
+      isBlank: isBlank,
+      isFocused: false
     }
     updateBoard(letterObject)
     getWordsFormed(letterObject)
@@ -126,7 +145,7 @@ const BoardWidget: React.FC<BoardWidgetProps> = ({
     shiftFocus()
   }
 
-  const getWordsFormed = (letterObject: any) => {
+  const getWordsFormed = (letterObject: Square): void => {
     const horizontalSquares = appendHorizontalSquares(letterObject)
     const verticalSquares = appendVerticalSquares(letterObject)
     let newMainWord
@@ -160,7 +179,7 @@ const BoardWidget: React.FC<BoardWidgetProps> = ({
         }
         break
       case '':
-        const wordsArray: any[] = []
+        const wordsArray: Word[] = []
         if (horizontalSquares.length !== 0) {
           wordsArray.push(horizontalSquares)
         }
@@ -174,23 +193,23 @@ const BoardWidget: React.FC<BoardWidgetProps> = ({
     }
   }
 
-  const appendHorizontalSquares = (letterObject: any) => {
+  const appendHorizontalSquares = (letterObject: Letter): Letter[] => {
     const lettersToRight = getSquaresToRight(activeSquareCoords[0], activeSquareCoords[1])
-    const squaresToRight = lettersToRight.map((letter: any) => {
+    const squaresToRight = lettersToRight.map((letter: Letter) => {
       return {
         letter: letter.letter,
         scoreMultiplier: '',
         isBlank: letter.isBlank
-      }
+      } as Square
     })
 
     const lettersToLeft = getSquaresToLeft(activeSquareCoords[0], activeSquareCoords[1]).reverse()
-    const squaresToLeft = lettersToLeft.map((letter: any) => {
+    const squaresToLeft = lettersToLeft.map((letter: Letter) => {
       return {
         letter: letter.letter,
         scoreMultiplier: '',
         isBlank: letter.isBlank
-      }
+      } as Square
     })
 
     if (squaresToLeft.length !== 0 || squaresToRight.length !== 0) {
@@ -199,23 +218,23 @@ const BoardWidget: React.FC<BoardWidgetProps> = ({
     return []
   }
 
-  const appendVerticalSquares = (letterObject: any) => {
+  const appendVerticalSquares = (letterObject: Square): Square[] => {
     const lettersBelow = getSquaresBelow(activeSquareCoords[0], activeSquareCoords[1])
-    const squaresBelow = lettersBelow.map((letter: any) => {
+    const squaresBelow = lettersBelow.map((letter: Square) => {
       return {
         letter: letter.letter,
         scoreMultiplier: '',
         isBlank: letter.isBlank
-      }
+      } as Square
     })
 
     const lettersAbove = getSquaresAbove(activeSquareCoords[0], activeSquareCoords[1]).reverse()
-    const squaresAbove = lettersAbove.map((letter: any) => {
+    const squaresAbove = lettersAbove.map((letter: Square) => {
       return {
         letter: letter.letter,
         scoreMultiplier: '',
         isBlank: letter.isBlank
-      }
+      } as Square
     })
 
     if (squaresAbove.length !== 0 || squaresBelow.length !== 0) {
@@ -224,7 +243,7 @@ const BoardWidget: React.FC<BoardWidgetProps> = ({
     return []
   }
 
-  const getSquaresToRight = (x: number, y: number): any[] => {
+  const getSquaresToRight = (x: number, y: number): Square[] => {
     const nextX = x + 1
     if (x < 14) {
       const square = boardState[y][nextX]
@@ -236,7 +255,7 @@ const BoardWidget: React.FC<BoardWidgetProps> = ({
     return []
   }
 
-  const getSquaresToLeft = (x: number, y: number): any[] => {
+  const getSquaresToLeft = (x: number, y: number): Square[] => {
     if (wordDirection !== 'right' || mainWord.length === 0) {
       const nextX = x - 1
       if (x > 0) {
@@ -250,7 +269,7 @@ const BoardWidget: React.FC<BoardWidgetProps> = ({
     return []
   }
 
-  const getSquaresBelow = (x: number, y: number): any[] => {
+  const getSquaresBelow = (x: number, y: number): Square[] => {
     const nextY = y + 1
     if (y < 14) {
       const square = boardState[nextY][x]
@@ -262,7 +281,7 @@ const BoardWidget: React.FC<BoardWidgetProps> = ({
     return []
   }
 
-  const getSquaresAbove = (x: number, y: number): any[] => {
+  const getSquaresAbove = (x: number, y: number): Square[] => {
     if (wordDirection !== 'down' || mainWord.length === 0) {
       const nextY = y - 1
       if (y > 0) {
@@ -276,18 +295,21 @@ const BoardWidget: React.FC<BoardWidgetProps> = ({
     return []
   }
 
-  const isSquareEmpty = (x: number, y: number) => {
+  const isSquareEmpty = (x: number, y: number): boolean => {
+    if (x === -1 || y === -1) {
+      return false
+    }
     return boardState[y][x].letter === ''
   }
 
-  const handleRightArrow = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleRightArrow = (e: React.MouseEvent | React.KeyboardEvent) => {
     e.preventDefault()
     if (letters.length < 1) {
       setWordDirection('right')
     }
   }
 
-  const handleDownArrow = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleDownArrow = (e: React.MouseEvent | React.KeyboardEvent) => {
     e.preventDefault()
     if (letters.length < 1) {
       setWordDirection('down')
@@ -301,7 +323,7 @@ const BoardWidget: React.FC<BoardWidgetProps> = ({
     }
   }
 
-  const getNextAvailableSquare = (x: number, y: number) => {
+  const getNextAvailableSquare = (x: number, y: number): Coords => {
     if (wordDirection === 'right') {
       if (x < 14) {
         const nextX = x + 1
@@ -327,35 +349,41 @@ const BoardWidget: React.FC<BoardWidgetProps> = ({
   }
 
   const clearFocus = () => {
-    setActiveSquareCoords([])
-    const updatedBoardArray = boardState.map((row: any) =>
-      row.map((square: any) => {
+    setActiveSquareCoords([-1, -1])
+    const updatedBoardArray = boardState.map((row: Row) =>
+      row.map((square: Square) => {
         return { ...square, isFocused: false }
       })
     )
     setBoardState(updatedBoardArray)
   }
 
-  const updateRemainingLetters = (letterToRemove: any) => {
+  const updateRemainingLetters = (letterToRemove: string) => {
     const [x, y] = activeSquareCoords
-    const currentLetter = boardState[y][x].letter.toLowerCase()
-    const lowerCaseLetterToRemove = letterToRemove.toLowerCase()
-    const updatedRemainingLetters = { ...remainingLetters }
+    const currentLetter = boardState[y][x].letter.toLowerCase() as TileLetter | ''
+    const lowerCaseLetterToRemove = letterToRemove.toLowerCase() as TileLetter
 
-    if (currentLetter === '') {
-      updatedRemainingLetters[lowerCaseLetterToRemove] -= 1
-    } else if (currentLetter !== letterToRemove) {
-      updatedRemainingLetters[currentLetter] += 1
-      updatedRemainingLetters[lowerCaseLetterToRemove] -= 1
-    }
-    setRemainingLetters(updatedRemainingLetters)
+    setRemainingLetters((prev) => {
+      const updated = { ...prev }
+
+      if (currentLetter === '') {
+        updated[lowerCaseLetterToRemove] = (updated[lowerCaseLetterToRemove] ?? 0) - 1
+      } else if (currentLetter !== lowerCaseLetterToRemove) {
+        if (currentLetter in updated) {
+          updated[currentLetter as TileLetter] = (updated[currentLetter as TileLetter] ?? 0) + 1
+        }
+        updated[lowerCaseLetterToRemove] = (updated[lowerCaseLetterToRemove] ?? 0) - 1
+      }
+
+      return updated
+    })
   }
 
   // retuns an array of the board with a letter placed at coords x, y
-  const updateBoard = (letterObject: any) => {
+  const updateBoard = (letterObject: Square) => {
     const [x, y] = activeSquareCoords
-    const updatedBoardArray = boardState.map((row: any, rowIndex: number) =>
-      row.map((square: any, squareIndex: number) => {
+    const updatedBoardArray = boardState.map((row: Row, rowIndex: number) =>
+      row.map((square: Square, squareIndex: number) => {
         if (rowIndex === y && squareIndex === x) {
           return letterObject
         } else {
@@ -366,8 +394,10 @@ const BoardWidget: React.FC<BoardWidgetProps> = ({
     setBoardState(updatedBoardArray)
   }
 
-  const isLetterAvailable = (letter: any) => {
-    const letterCount = remainingLetters[letter.toLowerCase()]
+  const isLetterAvailable = (letter: string): boolean => {
+    const key = letter.toLowerCase() as TileLetter
+    const letterCount = remainingLetters[key] ?? 0
+
     if (letterCount > 0) {
       return true
     } else {
@@ -376,10 +406,10 @@ const BoardWidget: React.FC<BoardWidgetProps> = ({
     }
   }
 
-  const getFocusedSquareCoords = (board: any) => {
-    let coords: any = []
-    board.map((row: any, y: number) => {
-      row.map((square: any, x: number) => {
+  const getFocusedSquareCoords = (board: BoardState): Coords => {
+    let coords: Coords = [-1, -1]
+    board.map((row: Row, y: number) => {
+      row.map((square: Square, x: number) => {
         if (square.isFocused) {
           coords = [x, y]
         }
@@ -397,10 +427,10 @@ const BoardWidget: React.FC<BoardWidgetProps> = ({
     setPreviousMainWords([])
   }
 
-  const invalidWordsAlert = (invalidWords: any): boolean => {
+  const invalidWordsAlert = (invalidWords: string[]): boolean => {
     const message = invalidWords
       .slice(0, invalidWords.length - 1)
-      .map((word: any, index: number) => {
+      .map((word: string, index: number) => {
         if (index <= invalidWords.length - 1) {
           return ` '${word}'`
         }
@@ -414,7 +444,7 @@ const BoardWidget: React.FC<BoardWidgetProps> = ({
 
   const getInvalidWords = () => {
     let invalidWords: string[] = []
-    let allWords
+    let allWords: Word[]
     if (letters.length === 1 && wordDirection !== '') {
       allWords = [...words]
     } else if (letters.length === 1 && wordDirection === '') {
@@ -424,7 +454,7 @@ const BoardWidget: React.FC<BoardWidgetProps> = ({
     }
 
     for (const wordObj of allWords) {
-      const wordArray = wordObj.map((obj: any) => obj.letter)
+      const wordArray = wordObj.map((obj: Letter) => obj.letter)
       const word = wordArray.join('')
       const regex = new RegExp(`^${word}$`)
       const matches = dict.filter((d) => regex.test(d))
@@ -436,7 +466,7 @@ const BoardWidget: React.FC<BoardWidgetProps> = ({
     return invalidWords
   }
 
-  const isMoveValid = () => {
+  const isMoveValid = (): boolean => {
     if (turnCount - skipCount === 0) {
       if (boardState[7][7].letter === '') {
         alert('Word must pass through the center square.')
@@ -463,7 +493,7 @@ const BoardWidget: React.FC<BoardWidgetProps> = ({
     return true
   }
 
-  const areWordsValid = () => {
+  const areWordsValid = (): boolean => {
     const invalidWords = getInvalidWords()
     if (invalidWords.length === 0) {
       return true
@@ -495,7 +525,7 @@ const BoardWidget: React.FC<BoardWidgetProps> = ({
     }
   }
 
-  const handleBackSpaceKey = () => {
+  const handleBackSpaceKey = (): void => {
     if (letters.length > 0) {
       const previousLetter = letters[letters.length - 1]
       setLetters(letters.slice(0, letters.length - 1))
@@ -503,13 +533,17 @@ const BoardWidget: React.FC<BoardWidgetProps> = ({
       setBoardState(previousBoardStates[previousBoardStates.length - 1])
       setPreviousBoardStates(previousBoardStates.slice(0, previousBoardStates.length - 1))
 
-      // update the possible playable letters
-      if (previousLetter.isBlank) {
-        remainingLetters[' '] = remainingLetters[' '] + 1
-      } else {
-        remainingLetters[`${previousLetter.letter}`] =
-          remainingLetters[`${previousLetter.letter}`] + 1
-      }
+      // Update the possible playable letters (in handleBackSpaceKey)
+      setRemainingLetters((prev) => {
+        const key = (
+          previousLetter.isBlank ? ' ' : previousLetter.letter.toLowerCase()
+        ) as TileLetter
+
+        return {
+          ...prev,
+          [key]: (prev[key] ?? 0) + 1
+        }
+      })
 
       const focusedSquareCoords = getFocusedSquareCoords(
         previousBoardStates[previousBoardStates.length - 1]
@@ -552,12 +586,12 @@ const BoardWidget: React.FC<BoardWidgetProps> = ({
     }
   }
 
-  const handleEnterKey = () => {
+  const handleEnterKey = (): void => {
     if (letters.length > 0) {
       if (isMoveValid()) {
         setTurnCount(turnCount + 1)
-        const clearedBoard = boardState.map((row: any) => {
-          return row.map((square: any) => {
+        const clearedBoard = boardState.map((row: Row) => {
+          return row.map((square: Square) => {
             square.isFocused = false
             return square
           })
@@ -569,46 +603,44 @@ const BoardWidget: React.FC<BoardWidgetProps> = ({
     }
   }
 
-  const handleKeyPressed = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyPressed = (e: React.KeyboardEvent<HTMLInputElement>): void => {
     const { key } = e
 
-    if (activeSquareCoords.length !== 0) {
-      if (isSquareEmpty(activeSquareCoords[0], activeSquareCoords[1]) && letters.length < 7) {
-        // Check for a-z or A-Z (matches single characters)
-        if (/^[a-zA-Z]$/.test(key)) {
-          const letter = key.toLowerCase()
-          if (isLetterAvailable(letter)) {
-            makeLetterMove(letter)
-            updateRemainingLetters(letter)
-          }
-        }
-
-        // Space bar
-        if (key === ' ') {
-          handleSpaceKey()
+    if (isSquareEmpty(activeSquareCoords[0], activeSquareCoords[1]) && letters.length < 7) {
+      // Check for a-z or A-Z (matches single characters)
+      if (/^[a-zA-Z]$/.test(key)) {
+        const letter = key.toLowerCase()
+        if (isLetterAvailable(letter)) {
+          makeLetterMove(letter)
+          updateRemainingLetters(letter)
         }
       }
 
-      // Navigation and Action keys
-      switch (key) {
-        case 'ArrowRight':
-          handleRightArrow(e)
-          break
-        case 'ArrowDown':
-          handleDownArrow(e)
-          break
-        case 'Enter':
-          handleEnterKey()
-          break
-        case 'Backspace':
-          handleBackSpaceKey()
-          break
-        case 'Escape':
-          if (letters.length === 0) {
-            generalReset()
-          }
-          break
+      // Space bar
+      if (key === ' ') {
+        handleSpaceKey()
       }
+    }
+
+    // Navigation and Action keys
+    switch (key) {
+      case 'ArrowRight':
+        handleRightArrow(e)
+        break
+      case 'ArrowDown':
+        handleDownArrow(e)
+        break
+      case 'Enter':
+        handleEnterKey()
+        break
+      case 'Backspace':
+        handleBackSpaceKey()
+        break
+      case 'Escape':
+        if (letters.length === 0) {
+          generalReset()
+        }
+        break
     }
   }
 

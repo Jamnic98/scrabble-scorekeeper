@@ -1,11 +1,20 @@
 import { useEffect } from 'react'
 
 import { BoardSquare } from 'components'
-import { scoreMultiplierArrays } from '../../utils/constants'
+import { scoreMultiplierArrays } from 'utils/constants'
+import type {
+  BoardState,
+  Coords,
+  Row,
+  ScoreMultiplier,
+  Square,
+  Word,
+  WordDirection
+} from 'types/global'
 
 // TODO: move
 // returns a row's point multipliers as an array of strings
-const getRowScoreMultipliers = (rowIndex: number) => {
+const getRowScoreMultipliers = (rowIndex: number): ScoreMultiplier[] => {
   switch (rowIndex) {
     case 0:
     case 14:
@@ -31,16 +40,17 @@ const getRowScoreMultipliers = (rowIndex: number) => {
     case 7:
       return scoreMultiplierArrays[7]
   }
+  return []
 }
 
 export interface BoardProps {
-  boardState: any
-  setBoardState: any
-  activeSquareCoords: any
-  setActiveSquareCoords: any
-  wordDirection: any
-  setWordDirection: any
-  letters: any
+  boardState: BoardState
+  setBoardState: React.Dispatch<React.SetStateAction<BoardState>>
+  activeSquareCoords: Coords
+  setActiveSquareCoords: React.Dispatch<React.SetStateAction<Coords>>
+  wordDirection: WordDirection
+  setWordDirection: React.Dispatch<React.SetStateAction<WordDirection>>
+  letters: Word
 }
 
 const Board: React.FC<BoardProps> = ({
@@ -52,32 +62,30 @@ const Board: React.FC<BoardProps> = ({
   setWordDirection,
   letters
 }) => {
-  // when component mounts, create the starting board UI
-  useEffect(
-    () =>
-      setBoardState(
-        new Array(15).fill(undefined).map((_row, rowIndex) => createRowOfSquares(rowIndex))
-      ),
-    [setBoardState]
-  )
+  // Returns an array of Square objects for a given row index
+  const createRowOfSquares = (rowIndex: number): Square[] => {
+    const multipliers = getRowScoreMultipliers(rowIndex) ?? []
 
-  // returns an array of Square objects from the score multiplier arrays
-  const createRowOfSquares = (rowIndex: number) => {
-    return getRowScoreMultipliers(rowIndex)?.map((_scoreMultiplier) => {
-      return {
-        letter: '',
-        scoreMultiplier: _scoreMultiplier,
-        isBlank: false,
-        isFocused: false
-      }
-    })
+    return multipliers.map((scoreMultiplier) => ({
+      letter: '',
+      scoreMultiplier,
+      isBlank: false,
+      isFocused: false
+    }))
   }
+
+  useEffect(() => {
+    // Generates 15 rows cleanly without standard array hole/undefined issues
+    const board = Array.from({ length: 15 }, (_, rowIndex) => createRowOfSquares(rowIndex))
+
+    setBoardState(board)
+  }, [setBoardState])
 
   return (
     <div id="board" className="border-8 border-black float-left">
-      {boardState.map((row: any, y: number) => (
+      {boardState.map((row: Row, y: number) => (
         <div key={y} id="board-row">
-          {row.map((square: any, x: number) => {
+          {row.map((square: Square, x: number) => {
             return (
               <BoardSquare
                 key={y * 15 + x}

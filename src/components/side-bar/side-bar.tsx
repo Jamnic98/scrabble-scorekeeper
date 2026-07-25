@@ -2,21 +2,22 @@ import React from 'react'
 import { ArrowRight, ArrowDown, SkipForward, Undo2 } from 'lucide-react'
 
 import { type Player, Tile } from 'components'
-import type { Coords, WordDirection } from 'types/global'
+import type { BoardState, Coords, Letter, Row, Square, Word, WordDirection } from 'types/global'
+import { LetterCounts, TileLetter } from 'types/global'
 
 export interface SideBarProps {
   wordDirection: WordDirection
-  handleRightArrow: any
-  handleDownArrow: any
-  letters: any
-  setLetters: any
-  activeSquareCoords: any
+  handleRightArrow: (e: React.MouseEvent | React.KeyboardEvent) => void
+  handleDownArrow: (e: React.MouseEvent | React.KeyboardEvent) => void
+  letters: Word
+  setLetters: React.Dispatch<React.SetStateAction<Word>>
+  activeSquareCoords: Coords
   setActiveSquareCoords: React.Dispatch<Coords>
-  increaseSkipCount: any
-  generalReset: any
-  setBoardState: any
-  lastBoardState: any
-  setLastBoardState: any
+  increaseSkipCount: () => void
+  generalReset: () => void
+  setBoardState: React.Dispatch<React.SetStateAction<BoardState>>
+  lastBoardState: BoardState[]
+  setLastBoardState: React.Dispatch<React.SetStateAction<BoardState[]>>
   turnCount: number
   setTurnCount: React.Dispatch<React.SetStateAction<number>>
   players: Player[]
@@ -24,8 +25,8 @@ export interface SideBarProps {
   getCurrentPlayer: (players: Player[]) => Player
   skipCount: number
   setSkipCount: React.Dispatch<React.SetStateAction<number>>
-  remainingLetters: any
-  setRemainingLetters: any
+  remainingLetters: LetterCounts
+  setRemainingLetters: React.Dispatch<React.SetStateAction<LetterCounts>>
 }
 
 export const SideBar: React.FC<SideBarProps> = ({
@@ -89,9 +90,9 @@ export const SideBar: React.FC<SideBarProps> = ({
   const getLettersAdded = () => {
     const previousBoardState = lastBoardState[lastBoardState.length - 1]
     const ppBS = lastBoardState[lastBoardState.length - 2]
-    let lettersAdded: any[] = []
-    previousBoardState.map((row: any, rowIndex: number) => {
-      return row.map((square: any, squareIndex: number) => {
+    let lettersAdded: Word = []
+    previousBoardState.map((row: Row, rowIndex: number) => {
+      return row.map((square: Square, squareIndex: number) => {
         const { letter } = ppBS[rowIndex][squareIndex]
         if (square.letter !== letter) {
           lettersAdded.push(square)
@@ -101,13 +102,13 @@ export const SideBar: React.FC<SideBarProps> = ({
     return lettersAdded
   }
 
-  const updatePlayerPoints = (playerPoints: any) => {
+  const updatePlayerPoints = (playerPoints: (number | null)[]) => {
     let nullIndex = playerPoints.indexOf(null)
     if (nullIndex === -1) {
       nullIndex = playerPoints.length
     }
 
-    const updatedPoints = playerPoints.map((points: any, pointsIndex: number) => {
+    const updatedPoints = playerPoints.map((points: number | null, pointsIndex: number) => {
       if (pointsIndex === nullIndex - 1) {
         if (points === 0) {
           setSkipCount(skipCount - 1)
@@ -118,16 +119,18 @@ export const SideBar: React.FC<SideBarProps> = ({
     return updatedPoints
   }
 
-  const addTiles = (lettersAdded: any) => {
-    const lettersRemaining = { ...remainingLetters }
-    lettersAdded.map((letterObj: any) => {
-      if (letterObj.isBlank) {
-        lettersRemaining[' '] += 1
-      } else {
-        lettersRemaining[letterObj.letter] += 1
-      }
+  const addTiles = (lettersAdded: Letter[]) => {
+    setRemainingLetters((prev) => {
+      const updated = { ...prev }
+
+      lettersAdded.forEach((letterObj) => {
+        const key = (letterObj.isBlank ? ' ' : letterObj.letter.toLowerCase()) as TileLetter
+
+        updated[key] = (updated[key] ?? 0) + 1
+      })
+
+      return updated
     })
-    setRemainingLetters(lettersRemaining)
   }
 
   return (
@@ -139,8 +142,12 @@ export const SideBar: React.FC<SideBarProps> = ({
         <button
           onMouseDown={(e) => handleDownArrow(e)}
           className="flex items-center justify-center py-2.5 w-1/2 bg-[rgb(255,218,163)] border-2 border-black rounded-md cursor-pointer hover:brightness-95 transition disabled:opacity-30 disabled:cursor-default disabled:hover:brightness-100"
+          // TODO: REPLACE activeSquareCoords[0] === -1, activeSquareCoords[1] === -1
           disabled={
-            wordDirection === 'down' || letters.length > 0 || activeSquareCoords.length === 0
+            wordDirection === 'down' ||
+            letters.length > 0 ||
+            activeSquareCoords[0] === -1 ||
+            activeSquareCoords[1] === -1
           }
         >
           <ArrowDown size={18} strokeWidth={2.5} />
@@ -149,8 +156,12 @@ export const SideBar: React.FC<SideBarProps> = ({
         <button
           onMouseDown={(e) => handleRightArrow(e)}
           className="flex items-center justify-center py-2.5 w-1/2 bg-[rgb(255,218,163)] border-2 border-black rounded-md cursor-pointer hover:brightness-95 transition disabled:opacity-30 disabled:cursor-default disabled:hover:brightness-100"
+          // TODO: REPLACE activeSquareCoords[0] === -1, activeSquareCoords[1] === -1
           disabled={
-            wordDirection === 'right' || letters.length > 0 || activeSquareCoords.length === 0
+            wordDirection === 'right' ||
+            letters.length > 0 ||
+            activeSquareCoords[0] === -1 ||
+            activeSquareCoords[1] === -1
           }
         >
           <ArrowRight size={18} strokeWidth={2.5} />
@@ -158,7 +169,7 @@ export const SideBar: React.FC<SideBarProps> = ({
       </div>
 
       <div className="flex flex-row flex-wrap gap-2 justify-center items-center ">
-        {Object.entries(remainingLetters).map(([letter, count]: any, index) => (
+        {Object.entries(remainingLetters).map(([letter, count]: [string, number], index) => (
           <div key={index} className="flex flex-col justify-center items-center">
             <div>
               <Tile letter={letter} unavailable={count === 0} />

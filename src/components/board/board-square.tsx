@@ -1,6 +1,7 @@
 import React from 'react'
 
 import { Arrow, Tile } from 'components'
+import type { BoardState, Coords, Square, Word, WordDirection } from 'types/global'
 
 const baseStyle = `relative border-1 border-solid border-gray-400 w-[38px] h-[38px] p-0 float-left outline-none`
 
@@ -35,14 +36,14 @@ const getMultiplierBg = (scoreMultiplier?: string): string => {
 }
 
 export interface BoardSquareProps {
-  coords: [x: number, y: number]
-  square: any
-  activeSquareCoords: any
-  setActiveSquareCoords: any
-  wordDirection: any
-  setWordDirection: any
-  letters: any
-  boardState: any
+  coords: Coords
+  activeSquareCoords: Coords
+  square: Square
+  setActiveSquareCoords: React.Dispatch<React.SetStateAction<Coords>>
+  wordDirection: WordDirection
+  setWordDirection: React.Dispatch<React.SetStateAction<WordDirection>>
+  letters: Word
+  boardState: BoardState
 }
 
 const BoardSquare: React.FC<BoardSquareProps> = ({
@@ -65,7 +66,8 @@ const BoardSquare: React.FC<BoardSquareProps> = ({
   // plus fallback check for object format ({ x, y })
   const isActive = Array.isArray(activeSquareCoords)
     ? Number(activeSquareCoords[0]) === Number(x) && Number(activeSquareCoords[1]) === Number(y)
-    : activeSquareCoords?.x === x && activeSquareCoords?.y === y
+    : // TODO: review
+      activeSquareCoords?.[1] === x && activeSquareCoords?.[0] === y
 
   // 3. Determine animation or standard static background
   const flashClass = isActive ? getFlashClass(scoreMultiplier) : ''

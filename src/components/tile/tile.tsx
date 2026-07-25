@@ -36,7 +36,7 @@ export const Tile: React.FC<TileProps> = ({
         {letter.toUpperCase()}
       </span>
       {/* display digit */}
-      <span className="absolute text-[9px] bottom-1 right-px leading-0 font-sans font-bold">
+      <span className="absolute text-[9px] bottom-1.5 right-px leading-0 font-sans font-bold">
         {isBlank ? null : getLetterValue(letter)}
       </span>
     </div>

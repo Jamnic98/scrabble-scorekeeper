@@ -60,9 +60,9 @@ export const App = () => {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gray-700">
       {players.length ? (
-        <div className="flex flex-row flex-wrap gap-8 p-8">
+        <div className="flex flex-row flex-wrap gap-4 p-8">
           <BoardWidget
             players={players}
             setPlayers={setPlayers}

@@ -12,7 +12,7 @@ const Table: React.FC<TableProps> = ({ players }) => {
 
   return (
     playerCount > 0 && (
-      <div id="table" className="min-w-115 inline-block">
+      <div id="table" className="min-w-115 bg-neutral-50 border-8 flex flex-nowrap">
         {players.map((player, index) => (
           <Column key={index} player={player} columnWidth={columnWidth} />
         ))}

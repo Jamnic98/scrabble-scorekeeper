@@ -1,4 +1,6 @@
-export const scoreMultiplierArrays = [
+import { BoardState, ScoreMultiplier } from 'types/global'
+
+export const scoreMultiplierArrays: ScoreMultiplier[][] = [
   ['tw', '', '', 'dl', '', '', '', 'tw', '', '', '', 'dl', '', '', 'tw'],
   ['', 'dw', '', '', '', 'tl', '', '', '', 'tl', '', '', '', 'dw', ''],
   ['', '', 'dw', '', '', '', 'dl', '', 'dl', '', '', '', 'dw', '', ''],
@@ -9,7 +11,7 @@ export const scoreMultiplierArrays = [
   ['tw', '', '', 'dl', '', '', '', 'dw', '', '', '', 'dl', '', '', 'tw']
 ]
 
-export const INITIAL_BOARD_STATE = [
+export const INITIAL_BOARD_STATE: BoardState[] = [
   [
     // ROW 1
     [
@@ -312,4 +314,4 @@ export const STARTING_LETTER_COUNTS = {
   y: 2,
   z: 1,
   ' ': 2
-}
+} as const

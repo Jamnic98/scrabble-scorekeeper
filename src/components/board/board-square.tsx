@@ -56,7 +56,7 @@ const BoardSquare: React.FC<BoardSquareProps> = ({
   letters,
   boardState
 }) => {
-  const [x, y] = coords
+  const { x, y } = coords
 
   // 1. Safely extract scoreMultiplier from passed square prop or boardState
   const scoreMultiplier: string =
@@ -67,7 +67,7 @@ const BoardSquare: React.FC<BoardSquareProps> = ({
   const isActive = Array.isArray(activeSquareCoords)
     ? Number(activeSquareCoords[0]) === Number(x) && Number(activeSquareCoords[1]) === Number(y)
     : // TODO: review
-      activeSquareCoords?.[1] === x && activeSquareCoords?.[0] === y
+      activeSquareCoords?.x === x && activeSquareCoords?.y === y
 
   // 3. Determine animation or standard static background
   const flashClass = isActive ? getFlashClass(scoreMultiplier) : ''
@@ -84,7 +84,7 @@ const BoardSquare: React.FC<BoardSquareProps> = ({
       `}
       onMouseDown={() => {
         if (letters?.length === 0) {
-          if (x !== activeSquareCoords?.[0] || y !== activeSquareCoords?.[1]) {
+          if (x !== activeSquareCoords.x || y !== activeSquareCoords.y) {
             setWordDirection('')
           }
           if (boardState?.[y]?.[x]?.letter === '') {

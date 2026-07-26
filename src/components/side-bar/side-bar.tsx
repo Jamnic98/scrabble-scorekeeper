@@ -67,7 +67,7 @@ export const SideBar: React.FC<SideBarProps> = ({
     const lettersAdded = getLettersAdded()
     addTiles(lettersAdded)
 
-    setActiveSquareCoords([-1, -1])
+    setActiveSquareCoords({ x: -1, y: -1 })
     setLetters([])
     setTurnCount(turnCount - 1)
   }
@@ -146,8 +146,8 @@ export const SideBar: React.FC<SideBarProps> = ({
           disabled={
             wordDirection === 'down' ||
             letters.length > 0 ||
-            activeSquareCoords[0] === -1 ||
-            activeSquareCoords[1] === -1
+            activeSquareCoords.x === -1 ||
+            activeSquareCoords.y === -1
           }
         >
           <ArrowDown size={18} strokeWidth={2.5} />
@@ -160,8 +160,8 @@ export const SideBar: React.FC<SideBarProps> = ({
           disabled={
             wordDirection === 'right' ||
             letters.length > 0 ||
-            activeSquareCoords[0] === -1 ||
-            activeSquareCoords[1] === -1
+            activeSquareCoords.x === -1 ||
+            activeSquareCoords.y === -1
           }
         >
           <ArrowRight size={18} strokeWidth={2.5} />

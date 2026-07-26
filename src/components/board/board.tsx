@@ -89,7 +89,7 @@ const Board: React.FC<BoardProps> = ({
             return (
               <BoardSquare
                 key={y * 15 + x}
-                coords={[x, y]}
+                coords={{ x, y }}
                 square={square}
                 wordDirection={wordDirection}
                 setWordDirection={setWordDirection}

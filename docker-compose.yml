@@ -1,0 +1,62 @@
+services:
+  # --- MongoDB Database ---
+  mongo:
+    container_name: scrabble-db
+    image: mongo:7.0 # Explicit version avoids breaking changes
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-root}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-scrabblesecret}
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - app-network
+    # Not exposed on host ports by default for security,
+    # but uncomment below if you want to inspect DB via Compass/GUI:
+    # ports:
+    #   - "27017:27017"
+
+  loadbalancer:
+    container_name: loadbalancer
+    image: nginx:1.27.5-alpine-slim
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - client
+      - server
+    networks:
+      - app-network
+
+  client:
+    container_name: scrabble-client
+    build:
+      context: .
+      dockerfile: client/Dockerfile
+    networks:
+      - app-network
+    env_file:
+      - .env
+    depends_on:
+      - server
+
+  server:
+    container_name: scrabble-server
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    networks:
+      - app-network
+    env_file:
+      - .env
+    expose:
+      - "8080"
+    depends_on:
+      - mongo
+
+networks:
+  app-network:
+
+volumes:
+  mongo-data: # Stores database records on host disk

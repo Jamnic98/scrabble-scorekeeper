@@ -14,7 +14,7 @@ import type {
   TileLetter
 } from 'types/global'
 
-import dict from 'an-array-of-english-words'
+import engishWords from 'an-array-of-english-words'
 
 // TODO: move
 const calculateWordPoints = (
@@ -457,7 +457,7 @@ const BoardWidget: React.FC<BoardWidgetProps> = ({
       const wordArray = wordObj.map((obj: Letter) => obj.letter)
       const word = wordArray.join('')
       const regex = new RegExp(`^${word}$`)
-      const matches = dict.filter((d) => regex.test(d))
+      const matches = engishWords.filter((d) => regex.test(d))
 
       if (matches.length === 0) {
         invalidWords.push(word)

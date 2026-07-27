@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import { BoardWidget, PlayerEntryWidget, type Player, Table } from 'components'
+import {} from '@scrabble/engine'
 
 export const App = () => {
   const [lastTurnCount, setLastTurnCount] = useState(0)

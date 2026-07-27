@@ -37,6 +37,5 @@ export default [{
     '@typescript-eslint/consistent-type-imports': 'error',
     'react-hooks/rules-of-hooks': 'error',
     'react-hooks/exhaustive-deps': 'warn',
-    'tailwindcss/classnames-order': 'off',
   },
 }];

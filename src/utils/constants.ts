@@ -1,4 +1,4 @@
-import { BoardState, ScoreMultiplier } from 'types/global'
+import type { BoardState, ScoreMultiplier } from 'types/global'
 
 export const scoreMultiplierArrays: ScoreMultiplier[][] = [
   ['tw', '', '', 'dl', '', '', '', 'tw', '', '', '', 'dl', '', '', 'tw'],

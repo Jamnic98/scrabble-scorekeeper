@@ -3,7 +3,7 @@ import { ArrowRight, ArrowDown, SkipForward, Undo2 } from 'lucide-react'
 
 import { type Player, Tile } from 'components'
 import type { BoardState, Coords, Letter, Row, Square, Word, WordDirection } from 'types/global'
-import { LetterCounts, TileLetter } from 'types/global'
+import type { LetterCounts, TileLetter } from 'types/global'
 
 export interface SideBarProps {
   wordDirection: WordDirection

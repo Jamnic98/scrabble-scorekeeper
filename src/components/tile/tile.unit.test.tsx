@@ -9,7 +9,7 @@ const drawTile = (props?: TileProps) => {
   const finalProps = {
     letter: defaultLetter,
     isBlank: defaultIsBlank,
-    ...props,
+    ...props
   }
   render(<Tile {...finalProps} />)
 }

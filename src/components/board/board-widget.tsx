@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { Board, Player, SideBar } from 'components'
+import { Board, type Player, SideBar } from 'components'
 import { getLetterValue, INITIAL_BOARD_STATE, STARTING_LETTER_COUNTS } from 'utils'
 import type {
   BoardState,

@@ -1,4 +1,4 @@
-import { STARTING_LETTER_COUNTS } from 'utils/constants'
+import { type STARTING_LETTER_COUNTS } from 'utils/constants'
 
 export type WordDirection = 'right' | 'down' | ''
 

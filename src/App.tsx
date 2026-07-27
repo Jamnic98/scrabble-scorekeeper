@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { BoardWidget, PlayerEntryWidget, Player, Table } from 'components'
+import { BoardWidget, PlayerEntryWidget, type Player, Table } from 'components'
 
 export const App = () => {
   const [lastTurnCount, setLastTurnCount] = useState(0)

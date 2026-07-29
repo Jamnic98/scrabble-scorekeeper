@@ -1,3 +1,2 @@
-export * from './gameReducer'
-export * from './scrabbleLogic'
+export * from './features'
 export * from './types'

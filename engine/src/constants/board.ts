@@ -1,4 +1,6 @@
-import type { BoardState, ScoreMultiplier } from '../types'
+import type { ScoreMultiplier } from '../types'
+
+export const BOARD_SIZE = 15
 
 export const BOARD_MULTIPLIER_GRID: ScoreMultiplier[][] = [
   ['tw', null, null, 'dl', null, null, null, 'tw', null, null, null, 'dl', null, null, 'tw'],
@@ -17,20 +19,3 @@ export const BOARD_MULTIPLIER_GRID: ScoreMultiplier[][] = [
   [null, 'dw', null, null, null, 'tl', null, null, null, 'tl', null, null, null, 'dw', null],
   ['tw', null, null, 'dl', null, null, null, 'tw', null, null, null, 'dl', null, null, 'tw']
 ]
-
-/**
- * Creates a fresh 15x15 board populated with row/col coordinates.
- */
-export const createInitialBoard = (): BoardState => {
-  return BOARD_MULTIPLIER_GRID.map((row, rowIndex) =>
-    row.map((scoreMultiplier, colIndex) => ({
-      tile: null,
-      row: rowIndex,
-      col: colIndex,
-      scoreMultiplier,
-      isFocused: false
-    }))
-  )
-}
-
-export const INITIAL_BOARD = createInitialBoard()

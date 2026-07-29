@@ -1,4 +1,4 @@
 export * from './board'
-export * from './gameReducer'
+export * from './dictionary'
 export * from './scoring'
 export * from './scrabbleLogic'

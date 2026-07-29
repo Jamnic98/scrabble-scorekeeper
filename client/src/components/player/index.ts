@@ -1,1 +1,2 @@
-export * from './player-entry-widget'
+export * from './PlayerEntry'
+export * from './PlayerForm'

@@ -1,0 +1,34 @@
+import { render, screen } from '@testing-library/react'
+
+import { Tile, type TileProps } from 'components'
+
+const defaultLetter = 'j'
+const defaultIsBlank = false
+
+const drawTile = (props?: TileProps) => {
+  const finalProps = {
+    letter: defaultLetter,
+    isBlank: defaultIsBlank,
+    ...props
+  }
+  render(<Tile {...finalProps} />)
+}
+
+describe('Tile should render correctly', () => {
+  test('should render with empty props', () => {
+    render(<Tile {...({} as TileProps)} />)
+    expect(screen.getByTestId('application-tile')).toBeInTheDocument()
+  })
+
+  test('should render default data', () => {
+    drawTile()
+    expect(screen.getByText(defaultLetter.toUpperCase())).toBeInTheDocument()
+  })
+
+  test('should render correct data when passed as props', () => {
+    const testLetter = 'a'
+    const testIsBlank = true
+    drawTile({ letter: testLetter, isBlank: testIsBlank })
+    expect(screen.getByText(testLetter.toUpperCase())).toBeInTheDocument()
+  })
+})

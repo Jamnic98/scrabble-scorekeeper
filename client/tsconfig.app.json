@@ -3,6 +3,10 @@
   "paths": {
     "components": ["./src/components/index.ts"],
     "components/*": ["./src/components/*"],
+    "context": ["./src/context/index.ts"],
+    "context/*": ["./src/context/*"],
+    "hooks": ["./src/hooks/index.ts"],
+    "hooks/*": ["./src/hooks/*"],
     "types": ["./src/types/index.ts"],
     "types/*": ["./src/types/*"],
     "utils": ["./src/utils/index.ts"],

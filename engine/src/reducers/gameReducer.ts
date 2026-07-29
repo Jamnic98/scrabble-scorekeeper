@@ -1,4 +1,5 @@
-import { createInitialBoard } from './board'
+import { createInitialBoard } from '../features'
+import { MAX_PLAYERS } from '../constants'
 import type { GameAction, GameState, Player, MoveHistoryItem } from '../types'
 
 export const initialGameState: GameState = {
@@ -21,16 +22,16 @@ export const initialGameState: GameState = {
   history: [],
   roomCode: '',
   board: [],
-  status: 'LOBBY',
+  status: 'IN_PROGRESS',
   gameMode: 'scorekeeper'
 }
 
 export const createInitialState = (roomCode = ''): GameState => ({
   roomCode,
-  status: 'LOBBY',
+  status: initialGameState.status,
   gameMode: 'scorekeeper',
   board: createInitialBoard(),
-  players: [],
+  players: initialGameState.players,
   activePlayerIndex: 0,
   history: []
 })
@@ -41,6 +42,10 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     // 1. ADD_PLAYER
     // ==========================================
     case 'ADD_PLAYER': {
+      if (state.players.length >= MAX_PLAYERS) {
+        throw new Error(`Maximum of ${MAX_PLAYERS} players allowed`)
+      }
+
       const newPlayer: Player = {
         id: `player-${state.players.length + 1}-${Date.now()}`,
         name: action.name,
@@ -63,9 +68,9 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         throw new Error('At least 2 players are required to start')
       }
 
-      state.status = 'IN_PROGRESS'
       return {
         ...state,
+        status: 'IN_PROGRESS',
         activePlayerIndex: 0,
         board: createInitialBoard(),
         history: []
@@ -243,9 +248,9 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         return player
       })
 
-      state.status = 'COMPLETED'
       return {
         ...state,
+        status: 'COMPLETED',
         players: finalPlayers
       }
     }

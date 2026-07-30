@@ -74,6 +74,8 @@ export const Square: React.FC<SquareProps> = ({
   const bgClass = flashClass || getMultiplierBg(scoreMultiplier)
 
   const handleMouseDown = () => {
+    if (placements.length > 0) return
+
     // Only prevent selection click if a PERMANENT board tile exists
     const isPermanentlyOccupied = square?.tile !== null && square?.tile !== undefined
     if (isPermanentlyOccupied) return

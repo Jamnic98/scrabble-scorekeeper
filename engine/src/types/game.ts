@@ -1,4 +1,5 @@
 import type { BoardState, LetterCounts, Player, Tile } from '.'
+import type { ScoreResult } from '../features'
 
 export type WordDirection = 'horizontal' | 'vertical' | null
 export type ScoreMultiplier = 'tw' | 'tl' | 'dw' | 'dl' | 'star' | null
@@ -19,15 +20,15 @@ export type TilePlacement = {
 export type MoveHistoryItem = {
   id: string
   playerId: string
-  actionType: 'PLAY_WORD' | 'SWAP_TILES' | 'PASS_TURN'
+  actionType: 'PLAY_WORD' | 'SWAP_TILES' | 'SKIP_TURN' | 'GAME_START'
 
   // Scored results
   words: FormedWord[]
   totalScore: number
 
   // Replay state data
-  placements: TilePlacement[] // Empty for PASS_TURN or SWAP_TILES
-
+  placements: TilePlacement[] // Empty for SKIP_TURN or SWAP_TILES
+  boardState?: BoardState
   playedAt: number
 }
 
@@ -54,7 +55,7 @@ export type RemainingTileInput = {
 export type GameAction =
   | { type: 'ADD_PLAYER'; name: string; isHost?: boolean }
   | { type: 'START_GAME'; mode?: GameMode }
-  | { type: 'PLAY_WORD'; playerId: string; placements: TilePlacement[] }
-  | { type: 'PASS_TURN'; playerId: string }
+  | { type: 'PLAY_WORD'; playerId: string; placements: TilePlacement[]; turnResult: ScoreResult }
+  | { type: 'SKIP_TURN'; playerId: string }
   | { type: 'UNDO_MOVE'; playerId: string }
   | { type: 'END_GAME'; finalRacks: RemainingTileInput[] }

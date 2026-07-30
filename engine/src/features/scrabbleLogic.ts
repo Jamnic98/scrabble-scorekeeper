@@ -1,5 +1,5 @@
 import { WordDictionary } from './dictionary'
-import type { BoardState, PlayerScoreState, Square, Tile, TilePlacement } from '../types'
+import type { BoardState, PlayerScoreState, Tile, TilePlacement } from '../types'
 import { BOARD_SIZE, LETTER_DISTRIBUTION } from '../constants'
 
 type ValidationResult = {
@@ -24,10 +24,6 @@ export function validatePlacement(
     if (p.row < 0 || p.row >= BOARD_SIZE || p.col < 0 || p.col >= BOARD_SIZE) {
       return { isValid: false, reason: 'Tile placement is out of bounds.' }
     }
-
-    // if (board[p.row][p.col].tile !== null) {
-    //   return { isValid: false, reason: 'Cannot place tile on an already occupied square.' }
-    // }
   }
 
   // 2. Single Tile Placement Handling
@@ -245,58 +241,6 @@ function extractWordAt(
   }
 
   return word
-}
-
-/**
- * Calculates tile placement coordinates for a typed string,
- * automatically skipping over existing tiles on the board.
- */
-export function calculateTilePlacements(
-  board: Square[][],
-  startRow: number,
-  startCol: number,
-  direction: 'right' | 'down',
-  typedLetters: { letter: string; points: number; isBlank: boolean }[]
-): TilePlacement[] {
-  const placements: TilePlacement[] = []
-
-  let currRow = startRow
-  let currCol = startCol
-  let letterIdx = 0
-
-  while (letterIdx < typedLetters.length) {
-    // Bounds check
-    if (currRow >= 15 || currCol >= 15) {
-      throw new Error('Word runs off the board edge!')
-    }
-
-    const currentSquare = board[currRow][currCol]
-
-    // If square already has a tile, SKIP IT
-    if (currentSquare.tile !== null) {
-      if (direction === 'right') currCol++
-      else currRow++
-      continue // Move to next square without using up a typed letter
-    }
-
-    // Square is free! Place the current typed tile here
-    const inputTile = typedLetters[letterIdx]
-    placements.push({
-      row: currRow,
-      col: currCol,
-      tile: {
-        id: `tile-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
-        ...inputTile
-      }
-    })
-
-    // Advance both the letter index and board coordinate
-    letterIdx++
-    if (direction === 'right') currCol++
-    else currRow++
-  }
-
-  return placements
 }
 
 export interface DictionaryValidationResult {

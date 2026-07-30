@@ -4,14 +4,15 @@ import {
   createInitialState,
   initialGameState,
   validatePlacement,
-  validateWordsInDictionary,
-  calculateTurnScore
+  calculateTurnScore,
+  INITIAL_BOARD,
+  createInitialBoard,
+  validateWordsInDictionary
 } from '@scrabble/engine'
-import type { GameAction, GameState, TileLetter } from '@scrabble/engine'
+import type { GameAction, GameState, MoveHistoryItem, TileLetter } from '@scrabble/engine'
 
 import { GameContext, UIAction, UIState } from './GameContext'
 
-// TODO: remove
 const overrides: Partial<GameState> = {
   status: 'IN_PROGRESS',
   players: [
@@ -21,16 +22,29 @@ const overrides: Partial<GameState> = {
 }
 
 function makeInitialUIState(base = createInitialState('LOCAL', overrides)): UIState {
+  const initialBoard = base.board || createInitialBoard()
+  const gameStartHistoryItem: MoveHistoryItem = {
+    id: 'game-start',
+    playerId: '',
+    actionType: 'GAME_START',
+    words: [],
+    totalScore: 0,
+    placements: [],
+    boardState: initialBoard,
+    playedAt: Date.now()
+  }
+
   return {
     ...base,
     placements: [],
     errorMessage: null,
-    lastTurnSummary: null,
     activeSquareCoords: null,
     wordDirection: null,
     roomCode: '',
     status: 'LOBBY',
     gameMode: 'scorekeeper',
+    board: initialBoard,
+    history: [gameStartHistoryItem],
     ...overrides
   }
 }
@@ -85,8 +99,7 @@ function combinedGameReducer(state: UIState, action: UIAction): UIState {
         remainingLetters: {
           ...state.remainingLetters,
           [letterKey]: currentCount - 1
-        },
-        errorMessage: null
+        }
       }
     }
 
@@ -140,7 +153,6 @@ function combinedGameReducer(state: UIState, action: UIAction): UIState {
       const isFirstTurn = state.history.length === 0
 
       const placementResult = validatePlacement(state.board, state.placements, isFirstTurn)
-
       if (!placementResult.isValid) {
         return { ...state, errorMessage: placementResult.reason || 'Invalid tile placement' }
       }
@@ -155,20 +167,22 @@ function combinedGameReducer(state: UIState, action: UIAction): UIState {
 
       try {
         const turnResult = calculateTurnScore(state.board, state.placements)
-        const engineNextState = engineGameReducer(state, {
-          type: 'PLAY_WORD',
-          playerId: activePlayer.id,
-          placements: state.placements
-        })
+
+        const engineNextState = engineGameReducer(
+          { ...state, board: state.history[state.history.length - 1].boardState || INITIAL_BOARD },
+          {
+            type: 'PLAY_WORD',
+            playerId: activePlayer.id,
+            placements: state.placements,
+            turnResult
+          }
+        )
 
         return {
+          ...state,
           ...engineNextState,
           placements: [],
           errorMessage: null,
-          lastTurnSummary: {
-            words: dictResult.formedWords,
-            score: turnResult.totalScore
-          },
           activeSquareCoords: state.activeSquareCoords,
           wordDirection: null
         }
@@ -176,6 +190,7 @@ function combinedGameReducer(state: UIState, action: UIAction): UIState {
         return {
           ...state,
           wordDirection: null,
+          activeSquareCoords: null,
           errorMessage: err instanceof Error ? err.message : 'Failed to commit move'
         }
       }
@@ -204,7 +219,6 @@ function combinedGameReducer(state: UIState, action: UIAction): UIState {
         return {
           ...nextEngineState,
           placements: state.placements,
-          lastTurnSummary: state.lastTurnSummary,
           activeSquareCoords: state.activeSquareCoords,
           wordDirection: null,
           errorMessage: null

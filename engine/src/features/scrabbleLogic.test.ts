@@ -29,8 +29,8 @@ describe('Scrabble Placement & Validation Logic', () => {
   describe('First Turn Rules', () => {
     it('should pass if first move covers center star (7,7)', () => {
       const placements: TilePlacement[] = [
-        { id: '1', row: 7, col: 6, letter: 'H', points: 4, isBlank: false },
-        { id: '2', row: 7, col: 7, letter: 'I', points: 1, isBlank: false }
+        { row: 7, col: 6, tile: { id: '1', letter: 'H', points: 4, isBlank: false } },
+        { row: 7, col: 7, tile: { id: '2', letter: 'I', points: 1, isBlank: false } }
       ]
       const result = validatePlacement(board, placements, true /* isFirstTurn */)
       expect(result.isValid).toBe(true)
@@ -38,9 +38,9 @@ describe('Scrabble Placement & Validation Logic', () => {
 
     it('should FAIL first move if center star (7,7) is NOT covered', () => {
       const placements: TilePlacement[] = [
-        { id: '1', row: 0, col: 0, letter: 'C', points: 3, isBlank: false },
-        { id: '2', row: 0, col: 1, letter: 'A', points: 1, isBlank: false },
-        { id: '3', row: 0, col: 2, letter: 'T', points: 1, isBlank: false }
+        { row: 0, col: 0, tile: { id: '1', letter: 'C', points: 3, isBlank: false } },
+        { row: 0, col: 1, tile: { id: '2', letter: 'A', points: 1, isBlank: false } },
+        { row: 0, col: 2, tile: { id: '3', letter: 'T', points: 1, isBlank: false } }
       ]
       const result = validatePlacement(board, placements, true)
       expect(result.isValid).toBe(false)
@@ -54,8 +54,8 @@ describe('Scrabble Placement & Validation Logic', () => {
   describe('Tile Alignment and Continuity', () => {
     it('should FAIL if tiles are placed diagonally', () => {
       const placements: TilePlacement[] = [
-        { id: '1', row: 2, col: 2, letter: 'A', points: 1, isBlank: false },
-        { id: '2', row: 3, col: 3, letter: 'T', points: 1, isBlank: false }
+        { row: 2, col: 2, tile: { id: '1', letter: 'A', points: 1, isBlank: false } },
+        { row: 3, col: 3, tile: { id: '2', letter: 'T', points: 1, isBlank: false } }
       ]
       const result = validatePlacement(board, placements, false)
       expect(result.isValid).toBe(false)
@@ -65,8 +65,8 @@ describe('Scrabble Placement & Validation Logic', () => {
     it('should FAIL if there are empty un-bridged gaps between placed tiles', () => {
       // Place 'C' at (5,2) and 'T' at (5,5) with empty board squares in between
       const placements: TilePlacement[] = [
-        { id: '1', row: 5, col: 2, letter: 'C', points: 3, isBlank: false },
-        { id: '2', row: 5, col: 5, letter: 'T', points: 1, isBlank: false }
+        { row: 5, col: 2, tile: { id: '1', letter: 'C', points: 3, isBlank: false } },
+        { row: 5, col: 5, tile: { id: '2', letter: 'T', points: 1, isBlank: false } }
       ]
       const result = validatePlacement(board, placements, false)
       expect(result.isValid).toBe(false)
@@ -80,8 +80,8 @@ describe('Scrabble Placement & Validation Logic', () => {
 
       // Place 'C' at (5,2) and 'S' at (5,5)
       const placements: TilePlacement[] = [
-        { id: '1', row: 5, col: 2, letter: 'C', points: 3, isBlank: false },
-        { id: '2', row: 5, col: 5, letter: 'S', points: 1, isBlank: false }
+        { row: 5, col: 2, tile: { id: '1', letter: 'C', points: 3, isBlank: false } },
+        { row: 5, col: 5, tile: { id: '2', letter: 'S', points: 1, isBlank: false } }
       ]
       const result = validatePlacement(board, placements, false)
       expect(result.isValid).toBe(true)
@@ -90,7 +90,7 @@ describe('Scrabble Placement & Validation Logic', () => {
     it('should FAIL if placing a tile on top of an already occupied square', () => {
       board[7][7].tile = { id: 'old', letter: 'X', points: 8, isBlank: false }
       const placements: TilePlacement[] = [
-        { id: '1', row: 7, col: 7, letter: 'Y', points: 4, isBlank: false }
+        { row: 7, col: 7, tile: { id: '1', letter: 'Y', points: 4, isBlank: false } }
       ]
       const result = validatePlacement(board, placements, false)
       expect(result.isValid).toBe(false)
@@ -108,8 +108,8 @@ describe('Scrabble Placement & Validation Logic', () => {
 
       // Disconnected move placed way up at row 0
       const placements: TilePlacement[] = [
-        { id: '1', row: 0, col: 0, letter: 'N', points: 1, isBlank: false },
-        { id: '2', row: 0, col: 1, letter: 'O', points: 1, isBlank: false }
+        { row: 0, col: 0, tile: { id: '1', letter: 'N', points: 1, isBlank: false } },
+        { row: 0, col: 1, tile: { id: '2', letter: 'O', points: 1, isBlank: false } }
       ]
       const result = validatePlacement(board, placements, false)
       expect(result.isValid).toBe(false)
@@ -121,7 +121,7 @@ describe('Scrabble Placement & Validation Logic', () => {
 
       // Place 'T' right below at (8,7)
       const placements: TilePlacement[] = [
-        { id: '1', row: 8, col: 7, letter: 'T', points: 1, isBlank: false }
+        { row: 8, col: 7, tile: { id: '1', letter: 'T', points: 1, isBlank: false } }
       ]
       const result = validatePlacement(board, placements, false)
       expect(result.isValid).toBe(true)
@@ -136,7 +136,7 @@ describe('Scrabble Placement & Validation Logic', () => {
       board[0][0].tile = { id: '1', letter: 'A', points: 1, isBlank: false }
 
       const placements: TilePlacement[] = [
-        { id: '1', row: 0, col: 1, letter: 'T', points: 1, isBlank: false }
+        { row: 0, col: 1, tile: { id: '1', letter: 'T', points: 1, isBlank: false } }
       ]
 
       expect(() => validatePlacement(board, placements, false)).not.toThrow()
@@ -148,7 +148,7 @@ describe('Scrabble Placement & Validation Logic', () => {
       board[14][13].tile = { id: '1', letter: 'G', points: 2, isBlank: false }
 
       const placements: TilePlacement[] = [
-        { id: '1', row: 14, col: 14, letter: 'O', points: 1, isBlank: false }
+        { row: 14, col: 14, tile: { id: '1', letter: 'O', points: 1, isBlank: false } }
       ]
 
       expect(() => validatePlacement(board, placements, false)).not.toThrow()
@@ -158,7 +158,7 @@ describe('Scrabble Placement & Validation Logic', () => {
 
     it('should correctly reject placements with out-of-bound indices', () => {
       const placements: TilePlacement[] = [
-        { id: '1', row: -1, col: 5, letter: 'A', points: 1, isBlank: false }
+        { row: -1, col: 5, tile: { id: '1', letter: 'A', points: 1, isBlank: false } }
       ]
       const result = validatePlacement(board, placements, false)
       expect(result.isValid).toBe(false)

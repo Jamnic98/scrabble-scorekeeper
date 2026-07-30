@@ -1,6 +1,12 @@
 import { useEffect } from 'react'
 
-import type { WordDirection, Tile, TilePlacement, LetterCounts } from '@scrabble/engine'
+import {
+  type WordDirection,
+  type Tile,
+  type TilePlacement,
+  type LetterCounts,
+  getLetterPoints
+} from '@scrabble/engine'
 import { Coords } from 'types/global'
 
 interface BoardKeyboardControlsProps {
@@ -18,6 +24,7 @@ interface BoardKeyboardControlsProps {
   onPlaceTile: (placement: TilePlacement) => void
   onRemoveTile: (coords: { row: number; col: number }) => void
   onSubmitTurn?: () => void
+  errorMessage: string | null
 }
 
 export function usePreventArrowScroll({
@@ -34,7 +41,8 @@ export function usePreventArrowScroll({
   onSetDirection,
   onPlaceTile,
   onRemoveTile,
-  onSubmitTurn
+  onSubmitTurn,
+  errorMessage
 }: BoardKeyboardControlsProps) {
   useEffect(() => {
     if (!enabled || !activeSquareCoords) return
@@ -141,8 +149,13 @@ export function usePreventArrowScroll({
           e.preventDefault()
           if (placements.length > 0) {
             onSubmitTurn?.()
-            onSelectSquare(null)
-            onSetDirection(null)
+
+            console.log(errorMessage)
+
+            if (!errorMessage) {
+              onSelectSquare(null)
+              onSetDirection(null)
+            }
           }
           return
         }
@@ -231,15 +244,25 @@ export function usePreventArrowScroll({
         if (matched) {
           tileToPlace =
             typeof matched === 'string'
-              ? ({ id: `tile-${typedChar}-${Date.now()}`, letter: typedChar } as Tile)
+              ? ({
+                  id: `tile-${typedChar}-${Date.now()}`,
+                  letter: typedChar,
+                  points: getLetterPoints(typedChar),
+                  isBlank: false
+                } as Tile)
               : matched.isBlank
-                ? { ...matched, letter: typedChar }
-                : matched
+                ? { ...matched, letter: typedChar, points: 0 }
+                : {
+                    ...matched,
+                    points: matched.points ?? getLetterPoints(matched.letter)
+                  }
         } else {
-          // Fallback tile so typing never silently fails
+          // Fallback tile when typed key isn't found in rack
           tileToPlace = {
             id: `tile-${targetRow}-${targetCol}-${typedChar}-${Date.now()}`,
-            letter: typedChar
+            letter: typedChar,
+            points: getLetterPoints(typedChar), // ✅ Always assign point value
+            isBlank: false
           } as Tile
         }
 

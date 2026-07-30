@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
+
 import { calculateTurnScore, getLetterPoints, LETTER_DISTRIBUTION } from './scoring'
 import { BOARD_MULTIPLIER_GRID } from '../constants' // Adjust path if needed
 import type { BoardState, TilePlacement } from '../types'
@@ -54,9 +55,9 @@ describe('Scrabble Scoring System', () => {
     it('should score a simple word on normal squares without multipliers', () => {
       // Place "CAT" horizontally at row 0, cols 4, 5, 6 (neutral squares per BOARD_MULTIPLIER_GRID)
       const placements: TilePlacement[] = [
-        { id: '1', row: 0, col: 4, letter: 'C', points: 3, isBlank: false },
-        { id: '2', row: 0, col: 5, letter: 'A', points: 1, isBlank: false },
-        { id: '3', row: 0, col: 6, letter: 'T', points: 1, isBlank: false }
+        { row: 0, col: 4, tile: { id: '1', letter: 'C', points: 3, isBlank: false } },
+        { row: 0, col: 5, tile: { id: '2', letter: 'A', points: 1, isBlank: false } },
+        { row: 0, col: 6, tile: { id: '3', letter: 'T', points: 1, isBlank: false } }
       ]
 
       const result = calculateTurnScore(board, placements)
@@ -71,9 +72,9 @@ describe('Scrabble Scoring System', () => {
     it('should apply Double Letter (DL) and Triple Letter (TL) multipliers correctly', () => {
       // (0, 3) is 'dl' in BOARD_MULTIPLIER_GRID
       const placements: TilePlacement[] = [
-        { id: '1', row: 0, col: 3, letter: 'D', points: 2, isBlank: false }, // 2 * 2 = 4 pts (DL)
-        { id: '2', row: 0, col: 4, letter: 'O', points: 1, isBlank: false }, // 1 pt
-        { id: '3', row: 0, col: 5, letter: 'G', points: 2, isBlank: false } // 2 pts
+        { row: 0, col: 3, tile: { id: '1', letter: 'D', points: 2, isBlank: false } }, // 2 * 2 = 4 pts (DL)
+        { row: 0, col: 4, tile: { id: '2', letter: 'O', points: 1, isBlank: false } }, // 1 pt
+        { row: 0, col: 5, tile: { id: '3', letter: 'G', points: 2, isBlank: false } } // 2 pts
       ]
 
       const result = calculateTurnScore(board, placements)
@@ -85,8 +86,8 @@ describe('Scrabble Scoring System', () => {
     it('should double the word score when placed on the center STAR square', () => {
       // (7,7) is 'star' in BOARD_MULTIPLIER_GRID
       const placements: TilePlacement[] = [
-        { id: '1', row: 7, col: 6, letter: 'H', points: 4, isBlank: false }, // 4 pts
-        { id: '2', row: 7, col: 7, letter: 'I', points: 1, isBlank: false } // 1 pt [STAR = 2x Word]
+        { row: 7, col: 6, tile: { id: '1', letter: 'H', points: 4, isBlank: false } }, // 4 pts
+        { row: 7, col: 7, tile: { id: '2', letter: 'I', points: 1, isBlank: false } } // 1 pt [STAR = 2x Word]
       ]
 
       const result = calculateTurnScore(board, placements)
@@ -98,9 +99,9 @@ describe('Scrabble Scoring System', () => {
     it('should multiply when hitting a Triple Word (TW) square', () => {
       // (0,0) is 'tw' in BOARD_MULTIPLIER_GRID
       const placements: TilePlacement[] = [
-        { id: '1', row: 0, col: 0, letter: 'Z', points: 10, isBlank: false }, // 10 pts [TW]
-        { id: '2', row: 0, col: 1, letter: 'O', points: 1, isBlank: false }, // 1 pt
-        { id: '3', row: 0, col: 2, letter: 'O', points: 1, isBlank: false } // 1 pt
+        { row: 0, col: 0, tile: { id: '1', letter: 'Z', points: 10, isBlank: false } }, // 10 pts [TW]
+        { row: 0, col: 1, tile: { id: '2', letter: 'O', points: 1, isBlank: false } }, // 1 pt
+        { row: 0, col: 2, tile: { id: '3', letter: 'O', points: 1, isBlank: false } } // 1 pt
       ]
 
       const result = calculateTurnScore(board, placements)
@@ -120,8 +121,8 @@ describe('Scrabble Scoring System', () => {
 
       // New turn: attach 'OO' at (0,1) and (0,2)
       const placements: TilePlacement[] = [
-        { id: '1', row: 0, col: 1, letter: 'O', points: 1, isBlank: false },
-        { id: '2', row: 0, col: 2, letter: 'O', points: 1, isBlank: false }
+        { row: 0, col: 1, tile: { id: '1', letter: 'O', points: 1, isBlank: false } },
+        { row: 0, col: 2, tile: { id: '2', letter: 'O', points: 1, isBlank: false } }
       ]
 
       const result = calculateTurnScore(board, placements)
@@ -138,8 +139,8 @@ describe('Scrabble Scoring System', () => {
 
       // Place 'C' at (7,6) and 'S' at (7,9) => "CATS"
       const placements: TilePlacement[] = [
-        { id: '1', row: 7, col: 6, letter: 'C', points: 3, isBlank: false },
-        { id: '2', row: 7, col: 9, letter: 'S', points: 1, isBlank: false }
+        { row: 7, col: 6, tile: { id: '1', letter: 'C', points: 3, isBlank: false } },
+        { row: 7, col: 9, tile: { id: '2', letter: 'S', points: 1, isBlank: false } }
       ]
 
       const result = calculateTurnScore(board, placements)
@@ -160,8 +161,8 @@ describe('Scrabble Scoring System', () => {
       // Play "N O" horizontally at row 1, cols 3 and 4
       // Placing 'O' at (1,4) vertically aligns with 'N' at (2,4) to form "ON"
       const placements: TilePlacement[] = [
-        { id: '1', row: 1, col: 3, letter: 'N', points: 1, isBlank: false },
-        { id: '2', row: 1, col: 4, letter: 'O', points: 1, isBlank: false }
+        { row: 1, col: 3, tile: { id: '1', letter: 'N', points: 1, isBlank: false } },
+        { row: 1, col: 4, tile: { id: '2', letter: 'O', points: 1, isBlank: false } }
       ]
 
       const result = calculateTurnScore(board, placements)
@@ -175,9 +176,9 @@ describe('Scrabble Scoring System', () => {
     it('should score blank tiles as 0 points even when hitting DL squares', () => {
       // Blank 'Z' placed on DL square at (0,3)
       const placements: TilePlacement[] = [
-        { id: '1', row: 0, col: 3, letter: 'Z', points: 0, isBlank: true }, // 0 pts
-        { id: '2', row: 0, col: 4, letter: 'O', points: 1, isBlank: false }, // 1 pt
-        { id: '3', row: 0, col: 5, letter: 'O', points: 1, isBlank: false } // 1 pt
+        { row: 0, col: 3, tile: { id: '1', letter: 'Z', points: 0, isBlank: true } }, // 0 pts
+        { row: 0, col: 4, tile: { id: '2', letter: 'O', points: 1, isBlank: false } }, // 1 pt
+        { row: 0, col: 5, tile: { id: '3', letter: 'O', points: 1, isBlank: false } } // 1 pt
       ]
 
       const result = calculateTurnScore(board, placements)
@@ -188,13 +189,13 @@ describe('Scrabble Scoring System', () => {
     it('should add 50-point Bingo bonus when all 7 tiles are played', () => {
       // 7 tiles across row 7 starting at col 4
       const placements: TilePlacement[] = [
-        { id: '1', row: 7, col: 4, letter: 'S', points: 1, isBlank: false },
-        { id: '2', row: 7, col: 5, letter: 'C', points: 3, isBlank: false },
-        { id: '3', row: 7, col: 6, letter: 'R', points: 1, isBlank: false },
-        { id: '4', row: 7, col: 7, letter: 'A', points: 1, isBlank: false }, // STAR (2x Word)
-        { id: '5', row: 7, col: 8, letter: 'M', points: 3, isBlank: false },
-        { id: '6', row: 7, col: 9, letter: 'B', points: 3, isBlank: false },
-        { id: '7', row: 7, col: 10, letter: 'L', points: 1, isBlank: false }
+        { row: 7, col: 4, tile: { id: '1', letter: 'S', points: 1, isBlank: false } },
+        { row: 7, col: 5, tile: { id: '2', letter: 'C', points: 3, isBlank: false } },
+        { row: 7, col: 6, tile: { id: '3', letter: 'R', points: 1, isBlank: false } },
+        { row: 7, col: 7, tile: { id: '4', letter: 'A', points: 1, isBlank: false } }, // STAR (2x Word)
+        { row: 7, col: 8, tile: { id: '5', letter: 'M', points: 3, isBlank: false } },
+        { row: 7, col: 9, tile: { id: '6', letter: 'B', points: 3, isBlank: false } },
+        { row: 7, col: 10, tile: { id: '7', letter: 'L', points: 1, isBlank: false } }
       ]
 
       const result = calculateTurnScore(board, placements)
@@ -225,8 +226,8 @@ describe('Scrabble Scoring System', () => {
 
       // Play 'B' at (1,1) [DW] and 'S' at (1,13) [DW]
       const placements: TilePlacement[] = [
-        { id: 'b', row: 1, col: 1, letter: 'B', points: 3, isBlank: false },
-        { id: 's', row: 1, col: 13, letter: 'S', points: 1, isBlank: false }
+        { row: 1, col: 1, tile: { id: 'b', letter: 'B', points: 3, isBlank: false } },
+        { row: 1, col: 13, tile: { id: 's', letter: 'S', points: 1, isBlank: false } }
       ]
 
       const result = calculateTurnScore(board, placements)
@@ -245,9 +246,9 @@ describe('Scrabble Scoring System', () => {
       // Play "C A T" horizontally at row 7, cols 3, 4, 5
       // (7,3) is a 'dl' square! Placed tile 'C' forms horizontal "CAT" AND vertical "CAT"
       const placements: TilePlacement[] = [
-        { id: 'c', row: 7, col: 3, letter: 'C', points: 3, isBlank: false }, // DL square!
-        { id: 'a2', row: 7, col: 4, letter: 'A', points: 1, isBlank: false },
-        { id: 't2', row: 7, col: 5, letter: 'T', points: 1, isBlank: false }
+        { row: 7, col: 3, tile: { id: 'c', letter: 'C', points: 3, isBlank: false } }, // DL square!
+        { row: 7, col: 4, tile: { id: 'a2', letter: 'A', points: 1, isBlank: false } },
+        { row: 7, col: 5, tile: { id: 't2', letter: 'T', points: 1, isBlank: false } }
       ]
 
       const result = calculateTurnScore(board, placements)
@@ -267,7 +268,7 @@ describe('Scrabble Scoring System', () => {
 
       // Add single tile 'S' at (0,4) to make "FARS"
       const placements: TilePlacement[] = [
-        { id: 's', row: 0, col: 4, letter: 'S', points: 1, isBlank: false }
+        { row: 0, col: 4, tile: { id: 's', letter: 'S', points: 1, isBlank: false } }
       ]
 
       const result = calculateTurnScore(board, placements)
@@ -282,9 +283,9 @@ describe('Scrabble Scoring System', () => {
       // Vertical play at col 5, rows 1, 2, 3
       // (1,5) is 'tl' in BOARD_MULTIPLIER_GRID
       const placements: TilePlacement[] = [
-        { id: '1', row: 1, col: 5, letter: 'Z', points: 10, isBlank: false }, // TL square!
-        { id: '2', row: 2, col: 5, letter: 'I', points: 1, isBlank: false },
-        { id: '3', row: 3, col: 5, letter: 'P', points: 3, isBlank: false }
+        { row: 1, col: 5, tile: { id: '1', letter: 'Z', points: 10, isBlank: false } }, // TL square!
+        { row: 2, col: 5, tile: { id: '2', letter: 'I', points: 1, isBlank: false } },
+        { row: 3, col: 5, tile: { id: '3', letter: 'P', points: 3, isBlank: false } }
       ]
 
       const result = calculateTurnScore(board, placements)

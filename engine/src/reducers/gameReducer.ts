@@ -109,36 +109,31 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         }
       })
 
-      // 2. Placeholder scoring (integrate calculateWordScore / cross-words here)
-      const rawPoints = action.placements.reduce(
-        (sum, { tile: { isBlank, points } }) => sum + (isBlank ? 0 : points),
-        0
-      )
-      const hitsCenterStar = action.placements.some((p) => p.row === 7 && p.col === 7)
-      const turnScore = hitsCenterStar ? rawPoints * 2 : rawPoints
+      // 2. Extract calculated score & words from turnResult
+      const turnScore = action.turnResult?.totalScore ?? 0
+      const formedWords = action.turnResult?.words ?? []
 
       const historyItem: MoveHistoryItem = {
         id: `move-${Date.now()}`,
         playerId: action.playerId,
         actionType: 'PLAY_WORD',
-        words: [{ word: 'EXAMPLE', score: turnScore, isMainWord: true }],
+        words: formedWords,
         totalScore: turnScore,
-        placements: action.placements.map((p) => ({
-          ...p,
-          tile: {
-            ...p.tile,
-            letter: p.tile.letter ?? 'A',
-            points: 1,
-            isBlank: !!p.tile.isBlank
-          }
-        })),
+        placements: action.placements,
+        boardState: newBoard,
         playedAt: Date.now()
       }
 
-      // 3. Update scores & rotate turn
-      const updatedPlayers = state.players.map((p, idx) =>
-        idx === state.activePlayerIndex ? { ...p, score: p.score + turnScore } : p
-      )
+      // 3. Update player total score, turnScores history array, and rotate turn
+      const updatedPlayers = state.players.map((p, idx) => {
+        if (idx !== state.activePlayerIndex) return p
+
+        return {
+          ...p,
+          score: p.score + turnScore, // ✅ Add calculated turn score to total
+          turnScores: [...(p.turnScores || []), turnScore] // ✅ Track individual turn history
+        }
+      })
 
       return {
         ...state,
@@ -150,9 +145,9 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     }
 
     // ==========================================
-    // 4. PASS_TURN
+    // 4. SKIP_TURN
     // ==========================================
-    case 'PASS_TURN': {
+    case 'SKIP_TURN': {
       // Guard against passing turn after game ends
       if (state.status === 'COMPLETED') {
         throw new Error('Game is already completed')
@@ -179,7 +174,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       const historyItem: MoveHistoryItem = {
         id: `move-${Date.now()}`,
         playerId: action.playerId,
-        actionType: 'PASS_TURN',
+        actionType: 'SKIP_TURN',
         words: [],
         totalScore: newTurnScores.reduce((a, b) => a + b, 0),
         placements: [],

@@ -44,7 +44,7 @@ describe('Scrabble Scorekeeper Reducer', () => {
   })
 
   // ==========================================
-  // 2. TURN ACTIONS (PLAY_WORD & PASS_TURN)
+  // 2. TURN ACTIONS (PLAY_WORD & SKIP_TURN)
   // ==========================================
   describe('Gameplay Mechanics', () => {
     let inGameState: GameState
@@ -59,17 +59,17 @@ describe('Scrabble Scorekeeper Reducer', () => {
       const bobId = inGameState.players[1].id
 
       expect(() => {
-        gameReducer(inGameState, { type: 'PASS_TURN', playerId: bobId })
+        gameReducer(inGameState, { type: 'SKIP_TURN', playerId: bobId })
       }).toThrow('Not your turn')
     })
 
-    it('should rotate turn and log turn on PASS_TURN', () => {
+    it('should rotate turn and log turn on SKIP_TURN', () => {
       const aliceId = inGameState.players[0].id
-      const state = gameReducer(inGameState, { type: 'PASS_TURN', playerId: aliceId })
+      const state = gameReducer(inGameState, { type: 'SKIP_TURN', playerId: aliceId })
 
       expect(state.activePlayerIndex).toBe(1)
       expect(state.history).toHaveLength(1)
-      expect(state.history[0].actionType).toBe('PASS_TURN')
+      expect(state.history[0].actionType).toBe('SKIP_TURN')
       expect(state.history[0].totalScore).toBe(0)
     })
 
@@ -133,15 +133,15 @@ describe('Scrabble Scorekeeper Reducer', () => {
       const [alice, bob, charlie] = state.players
 
       // Alice -> Bob
-      state = gameReducer(state, { type: 'PASS_TURN', playerId: alice.id })
+      state = gameReducer(state, { type: 'SKIP_TURN', playerId: alice.id })
       expect(state.activePlayerIndex).toBe(1)
 
       // Bob -> Charlie
-      state = gameReducer(state, { type: 'PASS_TURN', playerId: bob.id })
+      state = gameReducer(state, { type: 'SKIP_TURN', playerId: bob.id })
       expect(state.activePlayerIndex).toBe(2)
 
       // Charlie -> Alice (Wrap-around!)
-      state = gameReducer(state, { type: 'PASS_TURN', playerId: charlie.id })
+      state = gameReducer(state, { type: 'SKIP_TURN', playerId: charlie.id })
       expect(state.activePlayerIndex).toBe(0)
     })
 
@@ -209,7 +209,7 @@ describe('Scrabble Scorekeeper Reducer', () => {
       })
 
       // Bob passes turn 2
-      state = gameReducer(state, { type: 'PASS_TURN', playerId: bob.id })
+      state = gameReducer(state, { type: 'SKIP_TURN', playerId: bob.id })
       expect(state.activePlayerIndex).toBe(0) // Back to Alice
 
       // Bob undos his pass
@@ -264,7 +264,7 @@ describe('Scrabble Scorekeeper Reducer', () => {
       expect(state.players[1].score).toBe(100)
     })
 
-    it('should reject PLAY_WORD or PASS_TURN if game is already COMPLETED', () => {
+    it('should reject PLAY_WORD or SKIP_TURN if game is already COMPLETED', () => {
       let state = gameReducer(initialState, { type: 'ADD_PLAYER', name: 'Alice' })
       state = gameReducer(state, { type: 'ADD_PLAYER', name: 'Bob' })
       state = gameReducer(state, { type: 'START_GAME' })
@@ -273,7 +273,7 @@ describe('Scrabble Scorekeeper Reducer', () => {
       expect(state.status).toBe('COMPLETED')
 
       expect(() => {
-        gameReducer(state, { type: 'PASS_TURN', playerId: state.players[0].id })
+        gameReducer(state, { type: 'SKIP_TURN', playerId: state.players[0].id })
       }).toThrow()
     })
   })

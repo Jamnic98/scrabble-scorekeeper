@@ -90,7 +90,7 @@ export const Controls: React.FC<ControlsProps> = ({
           id="undo-button"
           type="button"
           onClick={handleUndo}
-          disabled={hasPendingPlacements || turnCount === 0}
+          disabled={hasPendingPlacements || turnCount === 1}
           className="flex w-1/2 cursor-pointer items-center justify-center gap-1 rounded-md border-2 border-black bg-[rgb(255,218,163)] py-2.5 text-sm font-bold uppercase tracking-wide transition hover:brightness-95 disabled:cursor-default disabled:opacity-30 disabled:hover:brightness-100"
         >
           <Undo2 size={16} strokeWidth={2.5} />

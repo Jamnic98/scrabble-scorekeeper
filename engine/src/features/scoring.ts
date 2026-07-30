@@ -68,16 +68,23 @@ export function calculateTurnScore(board: BoardState, placements: TilePlacement[
   const newTileCoords = new Set(placements.map((p) => `${p.row},${p.col}`))
 
   // Merge placements into a temporary board state representation
+
   const tempBoard: BoardState = board.map((rowArr, r) =>
     rowArr.map((sq, c) => {
       const placement = placements.find((p) => p.row === r && p.col === c)
       if (placement) {
         return {
           ...sq,
+          row: r,
+          col: c,
           tile: placement.tile
         }
       }
-      return sq
+      return {
+        ...sq,
+        row: r,
+        col: c
+      }
     })
   )
 
@@ -142,7 +149,11 @@ function calculateWordPoints(squares: Square[], newTileCoords: Set<string>): num
 
     const key = `${sq.row},${sq.col}`
     const isNewTile = newTileCoords.has(key)
-    const basePoints = sq.tile.points
+
+    const basePoints =
+      typeof sq.tile.points === 'number'
+        ? sq.tile.points
+        : getLetterPoints(sq.tile.letter, sq.tile.isBlank)
 
     if (isNewTile && sq.scoreMultiplier) {
       switch (sq.scoreMultiplier) {
@@ -199,7 +210,13 @@ function extractWordAt(
   while (curr < 15) {
     const sq = isHoriz ? board[row][curr] : board[curr][col]
     if (!sq.tile) break
-    squares.push(sq)
+
+    // ✅ FIX: Explicitly assign row and col so sq.row and sq.col are never undefined!
+    squares.push({
+      ...sq,
+      row: isHoriz ? row : curr,
+      col: isHoriz ? curr : col
+    })
     curr++
   }
 

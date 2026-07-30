@@ -14,10 +14,6 @@ export interface UIState extends GameState {
   wordDirection: WordDirection
   placements: TilePlacement[]
   errorMessage: string | null
-  lastTurnSummary: {
-    words: string[]
-    score: number
-  } | null
 }
 
 export type UIAction =

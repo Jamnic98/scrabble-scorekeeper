@@ -14,7 +14,8 @@ export const ScrabbleGameUI: React.FC = () => {
     remainingLetters,
     placements,
     players,
-    wordDirection
+    wordDirection,
+    errorMessage
   } = state
 
   // Retrieve active player's rack
@@ -43,7 +44,8 @@ export const ScrabbleGameUI: React.FC = () => {
     onSetDirection: (direction) => dispatch({ type: 'SET_WORD_DIRECTION', direction }),
     onPlaceTile: (placement) => dispatch({ type: 'PLACE_TILE', placement }),
     onRemoveTile: ({ row, col }) => dispatch({ type: 'REMOVE_TILE', row, col }),
-    onSubmitTurn: handleSubmitTurn
+    onSubmitTurn: handleSubmitTurn,
+    errorMessage
   })
 
   if (state.status === 'LOBBY') return <PlayerEntry />
@@ -58,7 +60,7 @@ export const ScrabbleGameUI: React.FC = () => {
           wordDirection={wordDirection}
           setWordDirection={(direction) => dispatch({ type: 'SET_WORD_DIRECTION', direction })}
           onUndo={() => dispatch({ type: 'UNDO_MOVE', playerId: activePlayer.id })}
-          onSkip={() => dispatch({ type: 'PASS_TURN', playerId: activePlayer.id })}
+          onSkip={() => dispatch({ type: 'SKIP_TURN', playerId: activePlayer.id })}
         />
       </div>
       <Table />

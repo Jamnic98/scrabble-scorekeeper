@@ -105,6 +105,10 @@ export function validatePlacement(
     }
   }
 
+  if (isFirstTurn && !touchesExistingTile) {
+    return { isValid: false, reason: 'Placed word must connect to existing tiles on the board.' }
+  }
+
   // Or check if it bridges existing tiles along its span
   if (!touchesExistingTile) {
     if (isHorizontal) {
@@ -124,10 +128,6 @@ export function validatePlacement(
         }
       }
     }
-  }
-
-  if (!touchesExistingTile) {
-    return { isValid: false, reason: 'Placed word must connect to existing tiles on the board.' }
   }
 
   return { isValid: true }

@@ -58,22 +58,26 @@ export const Square: React.FC<SquareProps> = ({
   const {
     state: { placements }
   } = useGame()
-  // Driven directly by engine state
-  const isActive = square.isFocused
 
+  // 1. Find pending typed placement for this square
+  const pendingPlacement = placements.find((p) => p.row === coords.row && p.col === coords.col)
+
+  // 2. Fall back to permanent board tile
+  const displayTile = pendingPlacement?.tile ?? square?.tile ?? null
+  const hasTile = Boolean(displayTile)
+
+  const isActive = square.isFocused
   const scoreMultiplier = square?.scoreMultiplier ?? ''
   const isStarSquare = scoreMultiplier.toLowerCase() === 'star'
 
   const flashClass = isActive ? getFlashClass(scoreMultiplier) : ''
   const bgClass = flashClass || getMultiplierBg(scoreMultiplier)
 
-  const hasTile = square?.tile !== null && square?.tile !== undefined
-
   const handleMouseDown = () => {
-    // Only block if the square already has a tile
-    if (hasTile || placements.length > 0) return
+    // Only prevent selection click if a PERMANENT board tile exists
+    const isPermanentlyOccupied = square?.tile !== null && square?.tile !== undefined
+    if (isPermanentlyOccupied) return
 
-    // Trigger the selection update
     onSelectSquare?.(coords)
   }
 
@@ -91,9 +95,9 @@ export const Square: React.FC<SquareProps> = ({
     >
       <Arrow square={square} wordDirection={wordDirection || null} />
 
-      {/* Render tile if placed, using w-full h-full to automatically fit the square */}
-      {hasTile && square.tile ? (
-        <Tile tile={square.tile} isBlank={square.tile.isBlank} />
+      {/* Render Tile cleanly with identical props as rack/board tiles */}
+      {hasTile && displayTile ? (
+        <Tile tile={displayTile} isBlank={Boolean(displayTile.isBlank)} />
       ) : (
         isStarSquare && <Star size={28} className="fill-black" strokeWidth={1} />
       )}

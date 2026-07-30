@@ -1,6 +1,13 @@
 import { createInitialBoard, type LetterSpec } from '../features'
 import { LETTER_DISTRIBUTION, MAX_PLAYERS } from '../constants'
-import type { GameAction, GameState, Player, MoveHistoryItem, LetterCounts } from '../types'
+import type {
+  GameAction,
+  GameState,
+  Player,
+  MoveHistoryItem,
+  LetterCounts,
+  BoardState
+} from '../types'
 
 function getInitialLetterCounts(letterBag: Record<string, LetterSpec>): LetterCounts {
   const counts: LetterCounts = {}
@@ -83,7 +90,6 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     // 3. PLAY_WORD
     // ==========================================
     case 'PLAY_WORD': {
-      // Guard against playing moves after game end
       if (state.status === 'COMPLETED') {
         throw new Error('Game is already completed')
       }
@@ -97,19 +103,25 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       const newBoard = state.board.map((row) => [...row])
 
       action.placements.forEach(({ row, col, tile }) => {
-        // Check if board square is occupied
         if (newBoard[row][col].tile !== null) {
           throw new Error(`Square at (${row}, ${col}) is already occupied`)
         }
-
-        // Look up square and update tile
         newBoard[row][col] = {
           ...newBoard[row][col],
           tile
         }
       })
 
-      // 2. Extract calculated score & words from turnResult
+      // 2. Deduct placed tiles from remainingLetters
+      const updatedRemainingLetters = { ...state.remainingLetters }
+      action.placements.forEach(({ tile }) => {
+        const letterKey = tile.isBlank ? 'BLANK' : tile.letter.toUpperCase()
+        if (updatedRemainingLetters[letterKey] !== undefined) {
+          updatedRemainingLetters[letterKey] = Math.max(0, updatedRemainingLetters[letterKey] - 1)
+        }
+      })
+
+      // 3. Extract calculated score & words from turnResult
       const turnScore = action.turnResult?.totalScore ?? 0
       const formedWords = action.turnResult?.words ?? []
 
@@ -124,14 +136,14 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         playedAt: Date.now()
       }
 
-      // 3. Update player total score, turnScores history array, and rotate turn
+      // 4. Update player score & turn history
       const updatedPlayers = state.players.map((p, idx) => {
         if (idx !== state.activePlayerIndex) return p
 
         return {
           ...p,
-          score: p.score + turnScore, // ✅ Add calculated turn score to total
-          turnScores: [...(p.turnScores || []), turnScore] // ✅ Track individual turn history
+          score: p.score + turnScore,
+          turnScores: [...(p.turnScores || []), turnScore]
         }
       })
 
@@ -140,6 +152,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         board: newBoard,
         players: updatedPlayers,
         history: [...state.history, historyItem],
+        remainingLetters: updatedRemainingLetters, // ✅ Bag counts updated
         activePlayerIndex: (state.activePlayerIndex + 1) % state.players.length
       }
     }
@@ -176,7 +189,8 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         playerId: action.playerId,
         actionType: 'SKIP_TURN',
         words: [],
-        totalScore: newTurnScores.reduce((a, b) => a + b, 0),
+        totalScore: 0,
+        boardState: state.board,
         placements: [],
         playedAt: Date.now()
       }
@@ -193,40 +207,49 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     // 5. UNDO_MOVE
     // ==========================================
     case 'UNDO_MOVE': {
-      // if (state.history.length === 0) return state
+      if (state.history.length === 0) return state
 
       const lastMove = state.history[state.history.length - 1]
-      const prevPlayerIndex =
-        (state.activePlayerIndex - 1 + state.players.length) % state.players.length
 
-      // const prevPlayer = state.players[prevPlayerIndex]
+      // 1. Identify exact player who made this move from history
+      const targetPlayerIndex = state.players.findIndex((p) => p.id === lastMove.playerId)
+      const prevPlayerIndex = targetPlayerIndex !== -1 ? targetPlayerIndex : state.activePlayerIndex
 
-      // // Verify that the person requesting undo matches the last player
-      // if (action.playerId !== prevPlayer.id) {
-      //   throw new Error('Can only undo your own turn')
-      // }
+      // 2. Remove last move from history
+      const newHistory = state.history.slice(0, -1)
 
-      // Clear placed tiles from board if last turn was a PLAY_WORD
-      const restoredBoard = state.board.map((row) => [...row])
-      if (lastMove.actionType === 'PLAY_WORD') {
-        lastMove.placements.forEach(({ row, col }) => {
-          restoredBoard[row][col] = {
-            ...restoredBoard[row][col],
-            tile: null
-          }
+      // 3. Extract previous board snapshot safely
+      const previousHistoryItem = newHistory[newHistory.length - 1] as MoveHistoryItem | undefined
+      const restoredBoard: BoardState = previousHistoryItem?.boardState ?? createInitialBoard()
+
+      // 4. Revert player's total score and turnScores
+      const restoredPlayers = state.players.map((p, idx) => {
+        if (idx !== prevPlayerIndex) return p
+        return {
+          ...p,
+          score: Math.max(0, p.score - lastMove.totalScore),
+          turnScores: (p.turnScores || []).slice(0, -1)
+        }
+      })
+
+      // 5. Restore tile counts back into remainingLetters
+      const restoredLetters = { ...state.remainingLetters }
+
+      if (lastMove.actionType === 'PLAY_WORD' && lastMove.placements) {
+        lastMove.placements.forEach(({ tile }) => {
+          // Normalize key to match bag distribution (uppercase letter or ' ')
+          const letterKey = tile.isBlank ? ' ' : tile.letter.toLowerCase()
+          const currentVal = restoredLetters[letterKey] ?? 0
+          restoredLetters[letterKey] = currentVal + 1
         })
       }
-
-      // Revert player's score
-      const restoredPlayers = state.players.map((p, idx) =>
-        idx === prevPlayerIndex ? { ...p, turnScores: p.turnScores.slice(0, -1) } : p
-      )
 
       return {
         ...state,
         board: restoredBoard,
         players: restoredPlayers,
-        history: state.history.slice(0, -1),
+        history: newHistory,
+        remainingLetters: restoredLetters,
         activePlayerIndex: prevPlayerIndex
       }
     }
@@ -237,27 +260,43 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     case 'END_GAME': {
       let totalDeductedPoints = 0
 
-      const updatedPlayers = state.players.map((player) => {
-        const rackInput = action.finalRacks.find((r) => r.playerId === player.id)
-        const unplayedPoints = rackInput
-          ? rackInput.unplayedTiles.reduce((sum, t) => sum + t.points, 0)
-          : 0
+      // 1. Calculate unplayed tile point penalties
+      const playerDeductions = state.players.map((player) => {
+        const rackInput = action.finalRacks.find((r) => String(r.playerId) === String(player.id))
+        const unplayedTiles = rackInput?.unplayedTiles ?? []
+
+        // Compute point sum for this player's unplayed tiles
+        const unplayedPoints = unplayedTiles.reduce((sum, t) => sum + (Number(t.points) || 0), 0)
 
         totalDeductedPoints += unplayedPoints
 
         return {
-          ...player,
-          score: player.score - unplayedPoints,
+          playerId: player.id,
           unplayedPoints
         }
       })
 
-      // Award deducted sum to player who emptied rack first
-      const finalPlayers = updatedPlayers.map((player) => {
-        if (player.unplayedPoints === 0 && totalDeductedPoints > 0) {
-          return { ...player, score: player.score + totalDeductedPoints }
+      // 2. Determine if anyone emptied their rack cleanly (0 unplayed tiles)
+      const hasFinisher = playerDeductions.some((d) => d.unplayedPoints === 0)
+
+      // 3. Immutably update players array
+      const finalPlayers = state.players.map((player) => {
+        const deduction = playerDeductions.find((d) => String(d.playerId) === String(player.id))
+        const unplayedPoints = deduction?.unplayedPoints ?? 0
+
+        // If a player went out first and others had unplayed tiles, award total deducted points
+        const isFinishingPlayer = unplayedPoints === 0 && hasFinisher && totalDeductedPoints > 0
+
+        const adjustmentScore = isFinishingPlayer ? totalDeductedPoints : -unplayedPoints
+        const currentTurnScores = Array.isArray(player.turnScores) ? player.turnScores : []
+        const currentScore = Number(player.score) || 0
+
+        return {
+          ...player,
+          score: currentScore + adjustmentScore,
+          unplayedPoints,
+          turnScores: [...currentTurnScores, adjustmentScore]
         }
-        return player
       })
 
       return {

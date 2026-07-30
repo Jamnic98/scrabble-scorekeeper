@@ -6,7 +6,8 @@ import { usePreventArrowScroll } from 'hooks'
 
 export const ScrabbleGameUI: React.FC = () => {
   const { state, dispatch } = useGame()
-  const { dictionary } = useDictionary()
+  const { dictionary, isLoaded } = useDictionary()
+
   const {
     activePlayerIndex,
     activeSquareCoords,
@@ -24,9 +25,12 @@ export const ScrabbleGameUI: React.FC = () => {
 
   // Function to handle submitting the turn
   const handleSubmitTurn = () => {
+    if (!isLoaded) {
+      alert('Dictionary is still loading...')
+      return
+    }
     // Pass your dictionary object/set if required by SUBMIT_TURN action payload
     dispatch({ type: 'SUBMIT_TURN', dictionary })
-    dispatch({ type: 'CLEAR_PLACEMENTS' })
   }
 
   // Global keydown handler for Arrow keys, Spacebar, Typing, and Backspace

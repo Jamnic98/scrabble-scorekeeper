@@ -5,20 +5,26 @@ import {
   initialGameState,
   validatePlacement,
   calculateTurnScore,
-  INITIAL_BOARD,
   createInitialBoard,
   validateWordsInDictionary
 } from '@scrabble/engine'
-import type { GameAction, GameState, MoveHistoryItem, TileLetter } from '@scrabble/engine'
+import type {
+  BoardState,
+  GameAction,
+  GameState,
+  MoveHistoryItem,
+  TileLetter
+} from '@scrabble/engine'
 
 import { GameContext, UIAction, UIState } from './GameContext'
 
 const overrides: Partial<GameState> = {
-  status: 'IN_PROGRESS',
-  players: [
-    { id: '1', name: 'Player 1', turnScores: [], score: 0 },
-    { id: '2', name: 'Player 2', turnScores: [], score: 0 }
-  ]
+  // TODO: remove
+  // status: 'IN_PROGRESS',
+  // players: [
+  //   { id: '1', name: 'Player 1', turnScores: [], score: 0 },
+  //   { id: '2', name: 'Player 2', turnScores: [], score: 0 }
+  // ]
 }
 
 function makeInitialUIState(base = createInitialState('LOCAL', overrides)): UIState {
@@ -68,21 +74,18 @@ function combinedGameReducer(state: UIState, action: UIAction): UIState {
     case 'PLACE_TILE': {
       const { row, col, tile } = action.placement
 
-      // 1. Replace existing placement at coords
-      const filteredPlacements = state.placements.filter((p) => !(p.row === row && p.col === col))
+      // 1. Check if the PERMANENT board grid already has a committed tile from a past turn
+      const square = state.board[row]?.[col]
+      if (square?.tile !== null && square?.tile !== undefined) {
+        return {
+          ...state,
+          errorMessage: 'Square is already occupied by a committed tile'
+        }
+      }
 
-      // 2. Immutably update the board grid
-      const updatedBoard = state.board.map((r, rowIndex) => {
-        if (rowIndex !== row) return r
-        return r.map((cell, colIndex) => {
-          if (colIndex !== col) return cell
-          return {
-            ...cell,
-            tile,
-            letter: tile?.letter || cell?.tile?.letter // Extra fallback for custom UI cells
-          }
-        })
-      })
+      // 2. Replace any pending placement at these same coordinates (staging only)
+      const filteredPlacements = state.placements.filter((p) => !(p.row === row && p.col === col))
+      const updatedPlacements = [...filteredPlacements, action.placement]
 
       // 3. Update remaining letters
       const letterKey = (tile.isBlank ? ' ' : tile.letter.toLowerCase()) as TileLetter
@@ -94,12 +97,12 @@ function combinedGameReducer(state: UIState, action: UIAction): UIState {
 
       return {
         ...state,
-        placements: [...filteredPlacements, action.placement],
-        board: updatedBoard,
+        placements: updatedPlacements,
         remainingLetters: {
           ...state.remainingLetters,
           [letterKey]: currentCount - 1
-        }
+        },
+        errorMessage: null
       }
     }
 
@@ -140,6 +143,8 @@ function combinedGameReducer(state: UIState, action: UIAction): UIState {
       return {
         ...state,
         placements: [],
+        activeSquareCoords: null,
+        wordDirection: null,
         errorMessage: null
       }
     }
@@ -149,15 +154,43 @@ function combinedGameReducer(state: UIState, action: UIAction): UIState {
         return { ...state, errorMessage: 'No tiles placed on the board.' }
       }
 
+      // 🛡️ Guard against empty or uninitialized dictionary
+      const isDictEmpty =
+        !action.dictionary ||
+        (action.dictionary instanceof Set
+          ? action.dictionary.size === 0
+          : Array.isArray(action.dictionary)
+            ? action.dictionary.length === 0
+            : Object.keys(action.dictionary).length === 0)
+
+      if (isDictEmpty) {
+        return {
+          ...state,
+          errorMessage: 'Dictionary not loaded.'
+        }
+      }
+
       const activePlayer = state.players[state.activePlayerIndex]
       const isFirstTurn = state.history.length === 0
 
-      const placementResult = validatePlacement(state.board, state.placements, isFirstTurn)
+      const previousHistoryItem = state.history[state.history.length - 1]
+      const previousBoard: BoardState = previousHistoryItem?.boardState ?? state.board
+
+      // 1. Validate placement rules
+      const placementResult = validatePlacement(previousBoard, state.placements, isFirstTurn)
       if (!placementResult.isValid) {
-        return { ...state, errorMessage: placementResult.reason || 'Invalid tile placement' }
+        return {
+          ...state,
+          errorMessage: placementResult.reason || 'Invalid tile placement'
+        }
       }
 
-      const dictResult = validateWordsInDictionary(state.board, state.placements, action.dictionary)
+      // 2. Validate dictionary words
+      const dictResult = validateWordsInDictionary(
+        previousBoard,
+        state.placements,
+        action.dictionary
+      )
       if (!dictResult.isValid) {
         return {
           ...state,
@@ -166,10 +199,10 @@ function combinedGameReducer(state: UIState, action: UIAction): UIState {
       }
 
       try {
-        const turnResult = calculateTurnScore(state.board, state.placements)
+        const turnResult = calculateTurnScore(previousBoard, state.placements)
 
         const engineNextState = engineGameReducer(
-          { ...state, board: state.history[state.history.length - 1].boardState || INITIAL_BOARD },
+          { ...state, board: previousBoard },
           {
             type: 'PLAY_WORD',
             playerId: activePlayer.id,
@@ -183,14 +216,12 @@ function combinedGameReducer(state: UIState, action: UIAction): UIState {
           ...engineNextState,
           placements: [],
           errorMessage: null,
-          activeSquareCoords: state.activeSquareCoords,
+          activeSquareCoords: null,
           wordDirection: null
         }
       } catch (err) {
         return {
           ...state,
-          wordDirection: null,
-          activeSquareCoords: null,
           errorMessage: err instanceof Error ? err.message : 'Failed to commit move'
         }
       }

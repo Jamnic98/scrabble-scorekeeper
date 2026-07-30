@@ -28,7 +28,14 @@ describe('Tile should render correctly', () => {
   test('should render correct data when passed as props', () => {
     const testLetter = 'a'
     const testIsBlank = true
-    drawTile({ letter: testLetter, isBlank: testIsBlank })
+    drawTile({
+      tile: {
+        letter: testLetter,
+        isBlank: testIsBlank,
+        id: '',
+        points: 0
+      }
+    })
     expect(screen.getByText(testLetter.toUpperCase())).toBeInTheDocument()
   })
 })

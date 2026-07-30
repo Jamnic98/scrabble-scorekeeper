@@ -1,31 +1,32 @@
-import { useGame } from 'context'
-import { Square as BoardSquare } from '.'
-import type { Row, Square } from '@scrabble/engine'
+import React from 'react'
 
-export const Board = () => {
-  const {
-    state: { board }
-  } = useGame()
+import type { Row, Square as SquareType } from '@scrabble/engine'
+import { Square as BoardSquare } from '.'
+import { useGame } from 'hooks'
+
+export const Board: React.FC = () => {
+  const { state, dispatch } = useGame()
+  const { board, activeSquareCoords, wordDirection } = state
 
   return (
-    <div id="board" className="border-8 border-black float-left">
+    <div id="board" className="float-left border-8 border-black">
       {board.map((row: Row, rowIndex: number) => (
-        <div key={rowIndex} id="board-row">
-          {row.map((square: Square, colIndex: number) => {
-            return <BoardSquare key={rowIndex * 15 + colIndex} />
-            // return (
-            //   <BoardSquare
-            //     key={y * 15 + x}
-            //     coords={{ x, y }}
-            //     square={square}
-            //     wordDirection={wordDirection}
-            //     setWordDirection={setWordDirection}
-            //     activeSquareCoords={activeSquareCoords}
-            //     setActiveSquareCoords={setActiveSquareCoords}
-            //     letters={letters}
-            //     boardState={boardState}
-            //   />
-            // )
+        <div key={rowIndex} id="board-row" className="flex flex-nowrap">
+          {row.map((square: SquareType, colIndex: number) => {
+            const isFocused =
+              activeSquareCoords?.row === rowIndex && activeSquareCoords?.col === colIndex
+
+            return (
+              <BoardSquare
+                key={`${rowIndex}-${colIndex}`}
+                // TODO: fix coords selection via Square vs passed coords
+                square={{ ...square, isFocused }}
+                coords={{ row: rowIndex, col: colIndex }}
+                wordDirection={wordDirection}
+                setWordDirection={(dir) => dispatch({ type: 'SET_WORD_DIRECTION', direction: dir })}
+                onSelectSquare={(coords) => dispatch({ type: 'SELECT_SQUARE', coords })}
+              />
+            )
           })}
         </div>
       ))}

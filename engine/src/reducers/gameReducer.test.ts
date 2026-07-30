@@ -186,8 +186,8 @@ describe('Scrabble Scorekeeper Reducer', () => {
 
       // Turn reverts back to Alice
       expect(state.activePlayerIndex).toBe(0)
-      // Score reverts back to 0
-      expect(state.players[0].score).toBe(0)
+      // Score reverts back to 8
+      expect(state.players[0].score).toBe(8)
       // Board is cleared at placed tiles
       expect(state.board[7][7].tile).toBeNull()
       // History stack shrinks

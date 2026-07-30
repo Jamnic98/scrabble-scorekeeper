@@ -2,7 +2,7 @@ import React from 'react'
 import { Play } from 'lucide-react'
 
 import { PlayerForm } from 'components'
-import { useGame } from 'context'
+import { useGame } from 'hooks'
 
 export const PlayerEntry: React.FC = () => {
   const { state, dispatch } = useGame()
@@ -27,7 +27,7 @@ export const PlayerEntry: React.FC = () => {
         <button
           onClick={handleStartGame}
           disabled={state.players.length < 2}
-          className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 py-2.5 text-sm font-semibold text-white shadow-md transition-colors hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 py-2.5 text-sm font-semibold text-white shadow-md transition-colors hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
         >
           <Play size={18} />
           Start Game

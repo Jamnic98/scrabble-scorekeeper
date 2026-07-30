@@ -1,39 +1,41 @@
-import { createInitialBoard } from '../features'
-import { MAX_PLAYERS } from '../constants'
-import type { GameAction, GameState, Player, MoveHistoryItem } from '../types'
+import { createInitialBoard, type LetterSpec } from '../features'
+import { LETTER_DISTRIBUTION, MAX_PLAYERS } from '../constants'
+import type { GameAction, GameState, Player, MoveHistoryItem, LetterCounts } from '../types'
+
+function getInitialLetterCounts(letterBag: Record<string, LetterSpec>): LetterCounts {
+  const counts: LetterCounts = {}
+
+  for (const [letter, spec] of Object.entries(letterBag)) {
+    counts[letter] = typeof spec === 'number' ? spec : spec.count
+  }
+
+  return counts
+}
 
 export const initialGameState: GameState = {
-  players: [
-    {
-      name: 'Player 1',
-      turnScores: [],
-      id: '1',
-      score: 0,
-      isHost: true
-    },
-    {
-      name: 'Player 2',
-      turnScores: [],
-      id: '2',
-      score: 0
-    }
-  ],
+  remainingLetters: getInitialLetterCounts(LETTER_DISTRIBUTION),
+  players: [],
   activePlayerIndex: 0,
   history: [],
   roomCode: '',
   board: [],
-  status: 'IN_PROGRESS',
+  status: 'LOBBY',
   gameMode: 'scorekeeper'
 }
 
-export const createInitialState = (roomCode = ''): GameState => ({
+export const createInitialState = (
+  roomCode = '', // Default to seeding if in dev/testing, or pass custom initial state
+  overrides: Partial<GameState> = {}
+): GameState => ({
+  remainingLetters: getInitialLetterCounts(LETTER_DISTRIBUTION),
   roomCode,
   status: initialGameState.status,
   gameMode: 'scorekeeper',
   board: createInitialBoard(),
-  players: initialGameState.players,
+  players: [],
   activePlayerIndex: 0,
-  history: []
+  history: [],
+  ...overrides
 })
 
 export function gameReducer(state: GameState, action: GameAction): GameState {
@@ -94,7 +96,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       // 1. Apply placements to board
       const newBoard = state.board.map((row) => [...row])
 
-      action.placements.forEach(({ row, col, id, letter, points, isBlank }) => {
+      action.placements.forEach(({ row, col, tile }) => {
         // Check if board square is occupied
         if (newBoard[row][col].tile !== null) {
           throw new Error(`Square at (${row}, ${col}) is already occupied`)
@@ -103,17 +105,15 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         // Look up square and update tile
         newBoard[row][col] = {
           ...newBoard[row][col],
-          tile: {
-            id,
-            letter,
-            points,
-            isBlank
-          }
+          tile
         }
       })
 
       // 2. Placeholder scoring (integrate calculateWordScore / cross-words here)
-      const rawPoints = action.placements.reduce((sum, p) => sum + (p.isBlank ? 0 : p.points), 0)
+      const rawPoints = action.placements.reduce(
+        (sum, { tile: { isBlank, points } }) => sum + (isBlank ? 0 : points),
+        0
+      )
       const hitsCenterStar = action.placements.some((p) => p.row === 7 && p.col === 7)
       const turnScore = hitsCenterStar ? rawPoints * 2 : rawPoints
 
@@ -125,9 +125,12 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         totalScore: turnScore,
         placements: action.placements.map((p) => ({
           ...p,
-          letter: p.letter ?? 'A',
-          points: 1,
-          isBlank: !!p.isBlank
+          tile: {
+            ...p.tile,
+            letter: p.tile.letter ?? 'A',
+            points: 1,
+            isBlank: !!p.tile.isBlank
+          }
         })),
         playedAt: Date.now()
       }
@@ -160,18 +163,32 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         throw new Error('Not your turn')
       }
 
+      const newTurnScores = [...activePlayer.turnScores, 0]
+
+      const updatedPlayers = state.players.map((p) => {
+        if (p.id === activePlayer.id) {
+          return {
+            ...p,
+            turnScores: newTurnScores
+          }
+        }
+
+        return p
+      })
+
       const historyItem: MoveHistoryItem = {
         id: `move-${Date.now()}`,
         playerId: action.playerId,
         actionType: 'PASS_TURN',
         words: [],
-        totalScore: 0,
+        totalScore: newTurnScores.reduce((a, b) => a + b, 0),
         placements: [],
         playedAt: Date.now()
       }
 
       return {
         ...state,
+        players: updatedPlayers,
         history: [...state.history, historyItem],
         activePlayerIndex: (state.activePlayerIndex + 1) % state.players.length
       }
@@ -181,18 +198,18 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     // 5. UNDO_MOVE
     // ==========================================
     case 'UNDO_MOVE': {
-      if (state.history.length === 0) return state
+      // if (state.history.length === 0) return state
 
       const lastMove = state.history[state.history.length - 1]
       const prevPlayerIndex =
         (state.activePlayerIndex - 1 + state.players.length) % state.players.length
 
-      const prevPlayer = state.players[prevPlayerIndex]
+      // const prevPlayer = state.players[prevPlayerIndex]
 
-      // Verify that the person requesting undo matches the last player
-      if (action.playerId !== prevPlayer.id) {
-        throw new Error('Can only undo your own turn')
-      }
+      // // Verify that the person requesting undo matches the last player
+      // if (action.playerId !== prevPlayer.id) {
+      //   throw new Error('Can only undo your own turn')
+      // }
 
       // Clear placed tiles from board if last turn was a PLAY_WORD
       const restoredBoard = state.board.map((row) => [...row])
@@ -207,7 +224,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
 
       // Revert player's score
       const restoredPlayers = state.players.map((p, idx) =>
-        idx === prevPlayerIndex ? { ...p, score: p.score - lastMove.totalScore } : p
+        idx === prevPlayerIndex ? { ...p, turnScores: p.turnScores.slice(0, -1) } : p
       )
 
       return {

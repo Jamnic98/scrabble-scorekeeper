@@ -13,7 +13,7 @@ export type Row = Square[]
 
 export type BoardState = Row[]
 
-export type Coords = { x: number; y: number }
+export type Coords = { row: number; col: number }
 
 export type ScoreMultiplier = 'tw' | 'tl' | 'dw' | 'dl' | ''
 

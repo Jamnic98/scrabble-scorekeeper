@@ -1,4 +1,4 @@
-import type { BoardState, Player, Tile } from '.'
+import type { BoardState, LetterCounts, Player, Tile } from '.'
 
 export type WordDirection = 'horizontal' | 'vertical' | null
 export type ScoreMultiplier = 'tw' | 'tl' | 'dw' | 'dl' | 'star' | null
@@ -10,7 +10,8 @@ export type FormedWord = {
 }
 
 // Extends base Tile with board position and its assigned letter on the board
-export interface TilePlacement extends Tile {
+export type TilePlacement = {
+  tile: Tile
   row: number
   col: number
 }
@@ -37,6 +38,7 @@ export type GameState = {
   status: GameStatus // Tracks current phase (LOBBY -> IN_PROGRESS -> COMPLETED)
   gameMode: GameMode // 'scorekeeper' | 'full'
   board: BoardState
+  remainingLetters: LetterCounts
   players: Player[]
   activePlayerIndex: number
   history: MoveHistoryItem[]

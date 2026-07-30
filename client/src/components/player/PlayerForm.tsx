@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { UserPlus, Trash2, GripVertical } from 'lucide-react'
 
-import { useGame } from 'context'
+import { useGame } from 'hooks'
 
 const MAX_PLAYERS = 4
 
@@ -18,8 +18,8 @@ export const PlayerForm: React.FC = () => {
 
     dispatch({
       type: 'ADD_PLAYER',
-      name: playerName.trim(),
-      isHost: state.players.length === 0
+      name: playerName.trim()
+      // isHost: state.players.length === 0
     })
 
     setPlayerName('')
@@ -72,7 +72,7 @@ export const PlayerForm: React.FC = () => {
         <button
           type="submit"
           disabled={!playerName.trim() || isFull}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-blue-600/50 disabled:opacity-50 hover:disabled:bg-blue-600/50"
+          className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-blue-600/50 disabled:opacity-50 hover:disabled:bg-blue-600/50 cursor-pointer"
         >
           <UserPlus size={16} />
           Add
@@ -125,9 +125,9 @@ export const PlayerForm: React.FC = () => {
                   type="button"
                   onClick={() => handleRemovePlayer(player.id)}
                   aria-label={`Remove ${player.name}`}
-                  className="rounded p-1 text-slate-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/50 dark:hover:text-red-400"
+                  className="rounded p-1 text-slate-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/50 dark:hover:text-red-400 cursor-pointer"
                 >
-                  <Trash2 size={16} className="cursor-pointer" />
+                  <Trash2 size={16} />
                 </button>
               </li>
             ))}

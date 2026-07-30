@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from 'react'
+import React, { createContext, useState, useEffect } from 'react'
 
-import { WordDictionary } from '@scrabble/engine/src/features/dictionary'
+import { WordDictionary } from '@scrabble/engine'
 
 export type DictionaryContextType = {
   dictionary: WordDictionary

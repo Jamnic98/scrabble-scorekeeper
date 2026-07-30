@@ -24,9 +24,10 @@ export function validatePlacement(
     if (p.row < 0 || p.row >= BOARD_SIZE || p.col < 0 || p.col >= BOARD_SIZE) {
       return { isValid: false, reason: 'Tile placement is out of bounds.' }
     }
-    if (board[p.row][p.col].tile !== null) {
-      return { isValid: false, reason: 'Cannot place tile on an already occupied square.' }
-    }
+
+    // if (board[p.row][p.col].tile !== null) {
+    //   return { isValid: false, reason: 'Cannot place tile on an already occupied square.' }
+    // }
   }
 
   // 2. Single Tile Placement Handling
@@ -146,12 +147,7 @@ export function getFormedWords(board: BoardState, placements: TilePlacement[]): 
   // Create a temporary representation of the board after applying placements
   const tempBoard = board.map((row) => row.map((cell) => cell.tile))
   for (const p of placements) {
-    tempBoard[p.row][p.col] = {
-      id: p.id,
-      letter: p.letter.toUpperCase(),
-      points: p.points,
-      isBlank: p.isBlank
-    }
+    tempBoard[p.row][p.col] = p.tile
   }
 
   const words: string[] = []
@@ -288,10 +284,10 @@ export function calculateTilePlacements(
     placements.push({
       row: currRow,
       col: currCol,
-      id: `tile-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
-      letter: inputTile.letter,
-      points: inputTile.isBlank ? 0 : inputTile.points,
-      isBlank: inputTile.isBlank
+      tile: {
+        id: `tile-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+        ...inputTile
+      }
     })
 
     // Advance both the letter index and board coordinate

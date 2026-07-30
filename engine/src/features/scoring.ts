@@ -74,14 +74,7 @@ export function calculateTurnScore(board: BoardState, placements: TilePlacement[
       if (placement) {
         return {
           ...sq,
-          tile: {
-            id: placement.id,
-            letter: placement.letter,
-            points: placement.isBlank
-              ? 0
-              : (placement.points ?? getLetterPoints(placement.letter, placement.isBlank)),
-            isBlank: placement.isBlank
-          }
+          tile: placement.tile
         }
       }
       return sq

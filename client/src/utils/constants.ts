@@ -1,3 +1,4 @@
+import { createInitialBoard, MoveHistoryItem } from '@scrabble/engine'
 import type { BoardState, ScoreMultiplier } from 'types/global'
 
 export const scoreMultiplierArrays: ScoreMultiplier[][] = [
@@ -315,3 +316,15 @@ export const STARTING_LETTER_COUNTS = {
   z: 1,
   ' ': 2
 } as const
+
+export const initialBoard = createInitialBoard()
+export const gameStartHistoryItem: MoveHistoryItem = {
+  id: 'game-start',
+  playerId: '',
+  actionType: 'GAME_START',
+  words: [],
+  totalScore: 0,
+  placements: [],
+  boardState: initialBoard,
+  playedAt: Date.now()
+}

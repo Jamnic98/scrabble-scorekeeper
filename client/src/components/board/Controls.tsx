@@ -69,6 +69,7 @@ export const Controls: React.FC<ControlsProps> = ({
   // Triggered by the "End Game" icon button
   const handleOpenEndGame = () => {
     if (window.confirm('Are you sure you want to end the game?')) {
+      dispatch({ type: 'SELECT_SQUARE', coords: null })
       setIsEndGameOpen(true)
     }
   }

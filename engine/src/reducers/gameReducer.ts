@@ -79,10 +79,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
 
       return {
         ...state,
-        status: 'IN_PROGRESS',
-        activePlayerIndex: 0,
-        board: createInitialBoard(),
-        history: []
+        status: 'IN_PROGRESS'
       }
     }
 

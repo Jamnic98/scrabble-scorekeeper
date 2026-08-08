@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react'
 import type { Player } from '@scrabble/engine'
+import { useGame } from 'hooks'
 
 export interface ColumnProps {
   player: Player
@@ -14,6 +15,7 @@ export const Column: React.FC<ColumnProps> = ({
   columnWidth,
   totalRows
 }) => {
+  const { state } = useGame()
   const moves: number[] = player.turnScores ?? []
 
   const cumulativeScores = useMemo(() => {
@@ -35,7 +37,7 @@ export const Column: React.FC<ColumnProps> = ({
           <th
             colSpan={2}
             className={`h-[1em] max-w-[5em] border border-black text-center text-xl transition-colors ${
-              isCurrentPlayer ? 'bg-yellow-300' : 'bg-neutral-200'
+              state.status !== 'COMPLETED' && isCurrentPlayer ? 'bg-yellow-300' : 'bg-neutral-200'
             }`}
           >
             {player.name}

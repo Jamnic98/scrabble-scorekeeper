@@ -43,9 +43,10 @@ export const PlayerForm: React.FC = () => {
     updatedPlayers.splice(targetIdx, 0, draggedPlayer)
 
     // Update host tag if position 0 changes
-    const reorderedPlayers = updatedPlayers.map((player, index) => ({
-      ...player,
-      isHost: index === 0
+    const reorderedPlayers = updatedPlayers.map((player /* index */) => ({
+      ...player
+      // TODO: remove
+      // isHost: index === 0
     }))
 
     setDraggedIdx(targetIdx)

@@ -1,45 +1,31 @@
-import React, { useReducer } from 'react'
+import React, { useEffect, useReducer } from 'react'
 import {
   gameReducer as engineGameReducer,
   createInitialState,
-  initialGameState,
   validatePlacement,
   calculateTurnScore,
-  createInitialBoard,
   validateWordsInDictionary
 } from '@scrabble/engine'
-import type {
-  BoardState,
-  GameAction,
-  GameState,
-  MoveHistoryItem,
-  TileLetter
-} from '@scrabble/engine'
+import type { BoardState, GameAction, TileLetter } from '@scrabble/engine'
 
 import { GameContext, UIAction, UIState } from './GameContext'
+import { gameStartHistoryItem, initialBoard } from 'utils'
 
-const overrides: Partial<GameState> = {
-  // TODO: remove
-  // status: 'IN_PROGRESS',
-  // players: [
-  //   { id: '1', name: 'Player 1', turnScores: [], score: 0 },
-  //   { id: '2', name: 'Player 2', turnScores: [], score: 0 }
-  // ]
+const STORAGE_KEY = 'scrabble_game_state_v1'
+
+// Helper to safely load persisted state
+function loadPersistedState(): UIState | null {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY)
+    if (!saved) return null
+    return JSON.parse(saved) as UIState
+  } catch (err) {
+    console.error('Failed to load saved game state from localStorage:', err)
+    return null
+  }
 }
 
-function makeInitialUIState(base = createInitialState('LOCAL', overrides)): UIState {
-  const initialBoard = base.board || createInitialBoard()
-  const gameStartHistoryItem: MoveHistoryItem = {
-    id: 'game-start',
-    playerId: '',
-    actionType: 'GAME_START',
-    words: [],
-    totalScore: 0,
-    placements: [],
-    boardState: initialBoard,
-    playedAt: Date.now()
-  }
-
+function makeInitialUIState(base = createInitialState('LOCAL')): UIState {
   return {
     ...base,
     placements: [],
@@ -49,9 +35,8 @@ function makeInitialUIState(base = createInitialState('LOCAL', overrides)): UISt
     roomCode: '',
     status: 'LOBBY',
     gameMode: 'scorekeeper',
-    board: initialBoard,
-    history: [gameStartHistoryItem],
-    ...overrides
+    board: base.board || initialBoard,
+    history: [gameStartHistoryItem]
   }
 }
 
@@ -273,15 +258,21 @@ function combinedGameReducer(state: UIState, action: UIAction): UIState {
   }
 }
 
-declare const process: { env?: { NODE_ENV?: string } } | undefined
-const DEV_SEED_STATE =
-  typeof process !== 'undefined' && process.env?.NODE_ENV === 'development'
-    ? initialGameState
-    : undefined
-
 export function GameProvider({ children }: { children: React.ReactNode }) {
-  const initial = DEV_SEED_STATE ? makeInitialUIState(DEV_SEED_STATE) : makeInitialUIState()
-  const [state, dispatch] = useReducer(combinedGameReducer, initial)
+  const [state, dispatch] = useReducer(
+    combinedGameReducer,
+    null,
+    () => loadPersistedState() ?? makeInitialUIState()
+  )
+
+  // 2. Persist state to localStorage every time it updates
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+    } catch (err) {
+      console.error('Failed to save game state to localStorage:', err)
+    }
+  }, [state])
 
   return <GameContext.Provider value={{ state, dispatch }}>{children}</GameContext.Provider>
 }

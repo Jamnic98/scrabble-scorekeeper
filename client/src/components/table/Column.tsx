@@ -1,44 +1,36 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import type { Player } from '@scrabble/engine'
 
 export interface ColumnProps {
   player: Player
   isCurrentPlayer: boolean
   columnWidth: number
-  /** Number of blank turn rows to render in advance (default: 15) */
-  minRows?: number
+  totalRows: number
 }
 
 export const Column: React.FC<ColumnProps> = ({
   player,
   isCurrentPlayer,
   columnWidth,
-  minRows = 15
+  totalRows
 }) => {
-  // Extract move scores or fallback to empty array
   const moves: number[] = player.turnScores ?? []
 
-  // Ensure table displays at least `minRows` rows or expands if game goes longer
-  const totalRowsCount = Math.max(minRows, moves.length)
-
-  // Calculate cumulative score up to a given turn index
-  const getCumulativeScore = (turnIndex: number): number | null => {
-    if (turnIndex >= moves.length) return null
-    let sum = 0
-    for (let i = 0; i <= turnIndex; i++) {
-      const score = moves[i]
-      if (score === null || score === undefined) return null
-      sum += score
-    }
-    return sum
-  }
+  const cumulativeScores = useMemo(() => {
+    let runningTotal = 0
+    return moves.map((score) => {
+      runningTotal += Number(score) || 0
+      return runningTotal
+    })
+  }, [moves])
 
   return (
     <table
       style={{ width: columnWidth }}
       className="inline-table content-center items-center border-collapse border border-black text-center text-2xl font-bold"
     >
-      <thead>
+      {/* Pinned top header during scroll */}
+      <thead className="sticky top-0 z-10">
         <tr className="h-[1.2em]">
           <th
             colSpan={2}
@@ -50,18 +42,18 @@ export const Column: React.FC<ColumnProps> = ({
           </th>
         </tr>
         <tr className="h-[1.2em]">
-          <th className="h-[1em] max-w-[5em] border border-black text-center text-base bg-neutral-100">
+          <th className="h-[1em] max-w-[5em] border border-black bg-neutral-100 text-center text-base">
             Turn
           </th>
-          <th className="h-[1em] max-w-[5em] border border-black text-center text-base bg-neutral-100">
+          <th className="h-[1em] max-w-[5em] border border-black bg-neutral-100 text-center text-base">
             Sum
           </th>
         </tr>
       </thead>
       <tbody>
-        {Array.from({ length: totalRowsCount }).map((_, turnIndex) => {
+        {Array.from({ length: totalRows }).map((_, turnIndex) => {
           const points = moves[turnIndex]
-          const cumulativeScore = getCumulativeScore(turnIndex)
+          const cumulativeScore = cumulativeScores[turnIndex]
           const hasPlayed = points !== undefined && points !== null
 
           return (

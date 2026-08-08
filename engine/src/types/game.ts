@@ -32,7 +32,7 @@ export type MoveHistoryItem = {
   playedAt: number
 }
 
-export type GameStatus = 'LOBBY' | 'IN_PROGRESS' | 'COMPLETED'
+export type GameStatus = 'LOBBY' | 'IN_PROGRESS' | 'END_GAME_PROMPT' | 'COMPLETED'
 
 export type GameState = {
   roomCode: string
@@ -58,4 +58,6 @@ export type GameAction =
   | { type: 'PLAY_WORD'; playerId: string; placements: TilePlacement[]; turnResult: ScoreResult }
   | { type: 'SKIP_TURN'; playerId: string }
   | { type: 'UNDO_MOVE'; playerId: string }
+  | { type: 'INITIATE_END_GAME' }
+  | { type: 'CANCEL_END_GAME' }
   | { type: 'END_GAME'; finalRacks: RemainingTileInput[] }

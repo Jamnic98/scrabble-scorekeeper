@@ -20,11 +20,11 @@ import { GameContext, UIAction, UIState } from './GameContext'
 
 const overrides: Partial<GameState> = {
   // TODO: remove
-  // status: 'IN_PROGRESS',
-  // players: [
-  //   { id: '1', name: 'Player 1', turnScores: [], score: 0 },
-  //   { id: '2', name: 'Player 2', turnScores: [], score: 0 }
-  // ]
+  status: 'IN_PROGRESS',
+  players: [
+    { id: '1', name: 'Player 1', turnScores: [], score: 0 },
+    { id: '2', name: 'Player 2', turnScores: [], score: 0 }
+  ]
 }
 
 function makeInitialUIState(base = createInitialState('LOCAL', overrides)): UIState {
@@ -140,12 +140,21 @@ function combinedGameReducer(state: UIState, action: UIAction): UIState {
     }
 
     case 'CLEAR_PLACEMENTS': {
+      if (state.placements.length === 0) {
+        return { ...state, activeSquareCoords: null, wordDirection: null, errorMessage: null }
+      }
+
+      // Restore placed tiles from remainingLetters
+      const remainingLetters = { ...state.remainingLetters }
+      state.placements.forEach((p) => (state.remainingLetters[p.tile.letter.toLowerCase()] += 1))
+
       return {
         ...state,
         placements: [],
         activeSquareCoords: null,
         wordDirection: null,
-        errorMessage: null
+        errorMessage: null,
+        remainingLetters
       }
     }
 

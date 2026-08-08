@@ -8,6 +8,7 @@ import {
   getLetterPoints
 } from '@scrabble/engine'
 import { Coords } from 'types/global'
+import { useGame } from 'hooks'
 
 interface BoardKeyboardControlsProps {
   enabled?: boolean
@@ -44,7 +45,11 @@ export function usePreventArrowScroll({
   onSubmitTurn,
   errorMessage
 }: BoardKeyboardControlsProps) {
+  const { dispatch } = useGame()
+
+  // TODO: remove
   errorMessage && console.log(errorMessage)
+
   useEffect(() => {
     if (!enabled || !activeSquareCoords) return
 
@@ -157,6 +162,9 @@ export function usePreventArrowScroll({
           e.preventDefault()
           onSelectSquare(null)
           onSetDirection(null)
+          if (placements.length > 0) {
+            dispatch({ type: 'CLEAR_PLACEMENTS' })
+          }
           return
         }
         case 'Backspace': {

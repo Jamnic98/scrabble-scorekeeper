@@ -1,5 +1,6 @@
 import { ScrabbleGameUI } from 'components'
-import { DictionaryProvider, GameProvider } from 'context'
+import { GameProvider } from 'context'
+import { DictionaryProvider } from 'context/DictionaryContext'
 
 export const App = () => {
   return (

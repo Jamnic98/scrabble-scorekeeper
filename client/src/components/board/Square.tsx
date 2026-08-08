@@ -56,9 +56,8 @@ export const Square: React.FC<SquareProps> = ({
   onSelectSquare
 }) => {
   const {
-    state: { placements }
+    state: { placements, status }
   } = useGame()
-
   // 1. Find pending typed placement for this square
   const pendingPlacement = placements.find((p) => p.row === coords.row && p.col === coords.col)
 
@@ -74,6 +73,7 @@ export const Square: React.FC<SquareProps> = ({
   const bgClass = flashClass || getMultiplierBg(scoreMultiplier)
 
   const handleMouseDown = () => {
+    if (status === 'COMPLETED') return
     if (placements.length > 0) return
 
     // Only prevent selection click if a PERMANENT board tile exists

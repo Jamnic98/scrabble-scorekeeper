@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 
 import { gameReducer, createInitialState } from './gameReducer'
-import { type GameState } from '../types'
+import { TilePlacement, type GameState } from '../types'
 
 describe('Scrabble Scorekeeper Reducer', () => {
   let initialState: GameState
@@ -77,16 +77,17 @@ describe('Scrabble Scorekeeper Reducer', () => {
       const aliceId = inGameState.players[0].id
 
       // Place "CAT" horizontally at center (7,7)
-      const placements = [
-        { id: 't1', row: 7, col: 7, letter: 'C', points: 3, isBlank: false },
-        { id: 't2', row: 7, col: 8, letter: 'A', points: 1, isBlank: false },
-        { id: 't3', row: 7, col: 9, letter: 'T', points: 1, isBlank: false }
+      const placements: TilePlacement[] = [
+        { row: 7, col: 7, tile: { id: 't1', letter: 'C', points: 3, isBlank: false } },
+        { row: 7, col: 8, tile: { id: 't2', letter: 'A', points: 1, isBlank: false } },
+        { row: 7, col: 9, tile: { id: 't3', letter: 'T', points: 1, isBlank: false } }
       ]
 
       const state = gameReducer(inGameState, {
         type: 'PLAY_WORD',
         playerId: aliceId,
-        placements
+        placements,
+        turnResult: { words: [], isBingo: true, totalScore: 0 }
       })
 
       // Turn rotates to Bob (index 1)
@@ -111,7 +112,10 @@ describe('Scrabble Scorekeeper Reducer', () => {
       const state = gameReducer(inGameState, {
         type: 'PLAY_WORD',
         playerId: aliceId,
-        placements: [{ id: 't1', row: 7, col: 7, letter: 'A', points: 1, isBlank: false }]
+        placements: [
+          { row: 7, col: 7, tile: { id: 't1', letter: 'A', points: 1, isBlank: false } }
+        ],
+        turnResult: { words: [], isBingo: true, totalScore: 0 }
       })
 
       // Bob attempts to overwrite (7, 7)
@@ -119,7 +123,10 @@ describe('Scrabble Scorekeeper Reducer', () => {
         gameReducer(state, {
           type: 'PLAY_WORD',
           playerId: bobId,
-          placements: [{ id: 't2', row: 7, col: 7, letter: 'B', points: 3, isBlank: false }]
+          placements: [
+            { row: 7, col: 7, tile: { id: 't2', letter: 'B', points: 3, isBlank: false } }
+          ],
+          turnResult: { words: [], isBingo: true, totalScore: 0 }
         })
       }).toThrow()
     })
@@ -152,7 +159,8 @@ describe('Scrabble Scorekeeper Reducer', () => {
       const state = gameReducer(inGameState, {
         type: 'PLAY_WORD',
         playerId: aliceId,
-        placements: [{ id: 'b1', row: 7, col: 7, letter: 'E', points: 0, isBlank: true }]
+        placements: [{ row: 7, col: 7, tile: { id: 'b1', letter: 'E', points: 0, isBlank: true } }],
+        turnResult: { words: [], isBingo: true, totalScore: 0 }
       })
 
       // On center star (2x word), (0 * 2) = 0
@@ -171,13 +179,18 @@ describe('Scrabble Scorekeeper Reducer', () => {
       state = gameReducer(state, { type: 'START_GAME' })
 
       const aliceId = state.players[0].id
-      const placements = [
-        { id: 't1', row: 7, col: 7, letter: 'C', points: 3, isBlank: false },
-        { id: 't2', row: 7, col: 8, letter: 'A', points: 1, isBlank: false }
+      const placements: TilePlacement[] = [
+        { row: 7, col: 7, tile: { id: 't1', letter: 'C', points: 3, isBlank: false } },
+        { row: 7, col: 8, tile: { id: 't2', letter: 'A', points: 1, isBlank: false } }
       ]
 
       // Alice plays move
-      state = gameReducer(state, { type: 'PLAY_WORD', playerId: aliceId, placements })
+      state = gameReducer(state, {
+        type: 'PLAY_WORD',
+        playerId: aliceId,
+        placements,
+        turnResult: { words: [], isBingo: true, totalScore: 0 }
+      })
       expect(state.activePlayerIndex).toBe(1)
       expect(state.players[0].score).toBeGreaterThan(0)
 
@@ -205,7 +218,10 @@ describe('Scrabble Scorekeeper Reducer', () => {
       state = gameReducer(state, {
         type: 'PLAY_WORD',
         playerId: alice.id,
-        placements: [{ id: 't1', row: 7, col: 7, letter: 'A', points: 1, isBlank: false }]
+        placements: [
+          { row: 7, col: 7, tile: { id: 't1', letter: 'A', points: 1, isBlank: false } }
+        ],
+        turnResult: { words: [], isBingo: true, totalScore: 0 }
       })
 
       // Bob passes turn 2

@@ -255,6 +255,30 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     }
 
     // ==========================================
+    // INITIATE_END_GAME
+    // ==========================================
+    case 'INITIATE_END_GAME': {
+      if (state.status !== 'IN_PROGRESS') return state
+
+      return {
+        ...state,
+        status: 'END_GAME_PROMPT'
+      }
+    }
+
+    // ==========================================
+    // CANCEL_END_GAME
+    // ==========================================
+    case 'CANCEL_END_GAME': {
+      if (state.status !== 'END_GAME_PROMPT') return state
+
+      return {
+        ...state,
+        status: 'IN_PROGRESS'
+      }
+    }
+
+    // ==========================================
     // 6. END_GAME
     // ==========================================
     case 'END_GAME': {

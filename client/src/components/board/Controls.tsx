@@ -1,8 +1,8 @@
-import React from 'react'
-import { ArrowRight, ArrowDown, SkipForward, Undo2 } from 'lucide-react'
+import React, { useState } from 'react'
+import { ArrowRight, ArrowDown, SkipForward, Undo2, SendHorizontal } from 'lucide-react'
 
 import { LETTER_DISTRIBUTION, type Tile as TileType, type WordDirection } from '@scrabble/engine'
-import { Tile } from 'components'
+import { EndGameModal, Tile } from 'components'
 import { useGame } from 'hooks'
 import { Coords } from 'types/global'
 
@@ -52,12 +52,26 @@ export const Controls: React.FC<ControlsProps> = ({
 }) => {
   const { state, dispatch } = useGame()
   const { placements = [], history = [], remainingLetters = {} } = state || {}
+  const [isEndGameOpen, setIsEndGameOpen] = useState(false)
 
   const hasPendingPlacements = placements.length > 0
   const turnCount = history.length
 
-  // Enable undo if user has typed tiles to recall OR if committed turns exist to revert
-  const isUndoDisabled = !hasPendingPlacements && turnCount < 1
+  const isGameOver = state.status === 'COMPLETED'
+  const isDownArrowButtonDisabled =
+    isGameOver || !activeSquareCoords || hasPendingPlacements || wordDirection === 'vertical'
+  const isRightArrowButtonDisabled =
+    isGameOver || !activeSquareCoords || hasPendingPlacements || wordDirection === 'horizontal'
+  const isUndoDisabled = isGameOver || (!hasPendingPlacements && turnCount <= 1)
+  const isSkipDisabled = isGameOver || hasPendingPlacements
+  const isEndGameDisabled = isGameOver || hasPendingPlacements
+
+  // Triggered by the "End Game" icon button
+  const handleOpenEndGame = () => {
+    if (window.confirm('Are you sure you want to end the game?')) {
+      setIsEndGameOpen(true)
+    }
+  }
 
   const handleDownArrow = () => setWordDirection?.('vertical')
   const handleRightArrow = () => setWordDirection?.('horizontal')
@@ -76,33 +90,6 @@ export const Controls: React.FC<ControlsProps> = ({
     }
   }
 
-  // const handleEndGamePrompt = () => {
-  //   // 🛡️ Require explicit confirmation before initiating end-game prompts
-  //   const confirmed = window.confirm('Are you sure you want to end the game?')
-  //   if (!confirmed) return
-
-  //   const finalRacks: Array<{ playerId: string; unplayedTiles: TileType[] }> = []
-
-  //   for (const player of state.players) {
-  //     // Prompt each player for their unplayed tiles
-  //     const rawInput = window.prompt(
-  //       `Enter remaining tiles for ${player.name} (e.g. "azb q" or press Enter/Cancel if empty):`,
-  //       ''
-  //     )
-
-  //     if (rawInput && rawInput.trim().length > 0) {
-  //       const unplayedTiles = parseTilesFromInput(rawInput)
-  //       finalRacks.push({ playerId: player.id, unplayedTiles })
-  //     } else {
-  //       // Empty string means 0 unplayed tiles left
-  //       finalRacks.push({ playerId: player.id, unplayedTiles: [] })
-  //     }
-  //   }
-
-  //   // Dispatch END_GAME with calculated final racks
-  //   dispatch({ type: 'END_GAME', finalRacks })
-  // }
-
   const handleSkip = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
     onSkip()
@@ -115,7 +102,7 @@ export const Controls: React.FC<ControlsProps> = ({
         <button
           type="button"
           onClick={handleDownArrow}
-          disabled={!activeSquareCoords || hasPendingPlacements || wordDirection === 'vertical'}
+          disabled={isDownArrowButtonDisabled}
           className="flex w-1/2 cursor-pointer items-center justify-center rounded-md border-2 border-black bg-[rgb(255,218,163)] py-2.5 transition hover:brightness-95 disabled:cursor-default disabled:opacity-30 disabled:hover:brightness-100"
         >
           <ArrowDown size={18} strokeWidth={2.5} />
@@ -124,7 +111,7 @@ export const Controls: React.FC<ControlsProps> = ({
         <button
           type="button"
           onClick={handleRightArrow}
-          disabled={!activeSquareCoords || hasPendingPlacements || wordDirection === 'horizontal'}
+          disabled={isRightArrowButtonDisabled}
           className="flex w-1/2 cursor-pointer items-center justify-center rounded-md border-2 border-black bg-[rgb(255,218,163)] py-2.5 transition hover:brightness-95 disabled:cursor-default disabled:opacity-30 disabled:hover:brightness-100"
         >
           <ArrowRight size={18} strokeWidth={2.5} />
@@ -160,37 +147,47 @@ export const Controls: React.FC<ControlsProps> = ({
           disabled={isUndoDisabled}
           title={hasPendingPlacements ? 'Recall typed tiles' : 'Undo last move'}
           aria-label="Undo move"
-          className="flex w-1/2 cursor-pointer items-center justify-center gap-1 rounded-md border-2 border-black bg-[rgb(255,218,163)] py-2.5 text-sm font-bold uppercase tracking-wide transition hover:brightness-95 disabled:cursor-default disabled:opacity-30 disabled:hover:brightness-100"
+          className="flex w-1/3 cursor-pointer items-center justify-center gap-1 rounded-md border-2 border-black bg-[rgb(255,218,163)] py-2.5 text-sm font-bold uppercase tracking-wide transition hover:brightness-95 disabled:cursor-default disabled:opacity-30 disabled:hover:brightness-100"
         >
           <Undo2 size={16} strokeWidth={2.5} />
-          UNDO
+          {/* UNDO */}
         </button>
 
         <button
           id="skip-button"
           type="button"
           onClick={handleSkip}
-          disabled={hasPendingPlacements}
+          disabled={isSkipDisabled}
           title="Skip turn"
           aria-label="Skip turn"
-          className="flex w-1/2 cursor-pointer items-center justify-center gap-1 rounded-md border-2 border-black bg-[rgb(255,218,163)] py-2.5 text-sm font-bold uppercase tracking-wide transition hover:brightness-95 disabled:cursor-default disabled:opacity-30 disabled:hover:brightness-100"
+          className="flex w-1/3 cursor-pointer items-center justify-center gap-1 rounded-md border-2 border-black bg-[rgb(255,218,163)] py-2.5 text-sm font-bold uppercase tracking-wide transition hover:brightness-95 disabled:cursor-default disabled:opacity-30 disabled:hover:brightness-100"
         >
           <SkipForward size={16} strokeWidth={2.5} />
-          SKIP
+          {/* SKIP */}
         </button>
 
-        {/* <button
+        <button
           id="end-game-button"
           type="button"
-          onClick={handleEndGamePrompt}
-          disabled={hasPendingPlacements}
+          onClick={handleOpenEndGame}
+          disabled={isEndGameDisabled}
           title="End game"
           aria-label="End game"
           className="flex w-1/3 cursor-pointer items-center justify-center gap-1 rounded-md border-2 border-black bg-[rgb(255,218,163)] py-2.5 text-sm font-bold uppercase tracking-wide transition hover:brightness-95 disabled:cursor-default disabled:opacity-30 disabled:hover:brightness-100"
         >
           <SendHorizontal size={16} strokeWidth={2.5} />
-        </button> */}
+        </button>
       </div>
+
+      {/* 🏁 END GAME MODAL: Interactive rack prompt replacement */}
+      <EndGameModal
+        isOpen={isEndGameOpen}
+        players={state.players}
+        onClose={() => setIsEndGameOpen(false)}
+        onSubmit={(finalRacks) => {
+          dispatch({ type: 'END_GAME', finalRacks })
+        }}
+      />
     </div>
   )
 }

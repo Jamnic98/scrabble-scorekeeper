@@ -20,11 +20,11 @@ import { GameContext, UIAction, UIState } from './GameContext'
 
 const overrides: Partial<GameState> = {
   // TODO: remove
-  status: 'IN_PROGRESS',
-  players: [
-    { id: '1', name: 'Player 1', turnScores: [], score: 0 },
-    { id: '2', name: 'Player 2', turnScores: [], score: 0 }
-  ]
+  // status: 'IN_PROGRESS',
+  // players: [
+  //   { id: '1', name: 'Player 1', turnScores: [], score: 0 },
+  //   { id: '2', name: 'Player 2', turnScores: [], score: 0 }
+  // ]
 }
 
 function makeInitialUIState(base = createInitialState('LOCAL', overrides)): UIState {

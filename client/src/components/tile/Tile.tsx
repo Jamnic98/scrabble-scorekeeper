@@ -1,39 +1,37 @@
 import React from 'react'
-import { LETTER_DISTRIBUTION, Tile as TileModel } from '@scrabble/engine'
 
-type TileStyle = 'mono' | 'serif' | 'sans'
+import { LETTER_DISTRIBUTION, Tile as TileModel, TileStyle } from '@scrabble/engine'
+import { useGame } from 'hooks'
 
 export interface TileProps {
-  /** Optional full Tile object from state */
   tile?: TileModel
   isBlank?: boolean
-  /** Render style with reduced opacity */
   unavailable?: boolean
-  /** Font family styling option */
   style?: TileStyle
-  /** Custom additional styling / dimensions override (e.g., 'w-full h-full' or 'w-8 h-8') */
   className?: string
-  /** Click handler for selecting/moving tiles */
   onClick?: () => void
 }
 
 const fontStyles: Record<TileStyle, string> = {
-  mono: 'font-mono font-bold',
-  sans: 'font-sans font-bold',
-  serif: 'font-serif font-bold'
+  mono: 'font-mono font-bold top-[5px] left-[10px]',
+  serif: 'font-serif font-bold top-[2px] left-[7px]',
+  sans: 'font-sans font-bold top-[3px] left-[7px]'
 }
 
 const baseStyle =
-  'z-10 flex shrink-0 items-center justify-center relative rounded-sm border-2 box-border shadow-[inset_-1px_-1px_1px_2px_rgba(46,46,46,0.22)] select-none transition-opacity'
+  'z-10 flex shrink-0 items-center justify-center relative rounded-sm border-2 box-border shadow-[inset_-1px_-1px_1px_1.2px_rgba(46,46,46,0.25)]'
 
 export const Tile: React.FC<TileProps> = ({
   tile,
   isBlank: isBlankProp,
   unavailable = false,
-  style = 'mono',
-  className = 'w-9.5 h-9.5', // Default stand-alone size
+  style,
+  className = 'w-9.5 h-9.5',
   onClick
 }) => {
+  const { state } = useGame()
+  const resolvedStyle: TileStyle = style ?? state.tileStyle ?? 'mono'
+
   const char = (tile?.letter ?? '').trim()
   const isBlankTile = tile?.isBlank ?? isBlankProp ?? char === ''
 
@@ -54,12 +52,12 @@ export const Tile: React.FC<TileProps> = ({
       <div
         className={`flex w-full h-full items-center justify-center relative ${unavailable ? 'text-black/40' : 'text-black'}`}
       >
-        {/* Letter display centered inside tile */}
-        <span className={`${fontStyles[style]} text-2xl leading-none uppercase`}>{char}</span>
+        <span className={`${fontStyles[resolvedStyle]} text-2xl leading-none uppercase absolute`}>
+          {char}
+        </span>
 
-        {/* Point value on bottom right */}
         {!isBlankTile && (
-          <span className="absolute text-[8px] bottom-0.5 right-0.5 leading-none font-sans font-bold select-none">
+          <span className="absolute text-[8px] bottom-px right-px leading-none font-sans font-bold select-none">
             {derivedPoints}
           </span>
         )}
@@ -67,3 +65,5 @@ export const Tile: React.FC<TileProps> = ({
     </div>
   )
 }
+
+export default Tile

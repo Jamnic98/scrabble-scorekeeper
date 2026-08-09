@@ -9,5 +9,6 @@ export interface PlayerScoreState {
 export interface Player extends PlayerScoreState {
   name: string
   turnScores: number[] // Array of score for each individual turn [12, 0, 34, ...]
+  isWinner?: boolean
   isHost?: boolean // Optional flag for network host
 }

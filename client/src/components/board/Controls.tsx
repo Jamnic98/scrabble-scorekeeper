@@ -57,7 +57,7 @@ export const Controls: React.FC<ControlsProps> = ({
   const hasPendingPlacements = placements.length > 0
   const turnCount = history.length
 
-  const isGameOver = state.status === 'COMPLETED'
+  const isGameOver = state.status === 'COMPLETED' || state.status === 'END_GAME_PROMPT'
   const isDownArrowButtonDisabled =
     isGameOver || !activeSquareCoords || hasPendingPlacements || wordDirection === 'vertical'
   const isRightArrowButtonDisabled =
@@ -69,7 +69,7 @@ export const Controls: React.FC<ControlsProps> = ({
   // Triggered by the "End Game" icon button
   const handleOpenEndGame = () => {
     if (window.confirm('Are you sure you want to end the game?')) {
-      dispatch({ type: 'SELECT_SQUARE', coords: null })
+      dispatch({ type: 'INITIATE_END_GAME' })
       setIsEndGameOpen(true)
     }
   }
@@ -97,7 +97,7 @@ export const Controls: React.FC<ControlsProps> = ({
   }
 
   return (
-    <div className="flex h-146.25 w-54 flex-col justify-between border-b-8 border-r-8 border-t-8 border-black bg-neutral-400 p-2 shadow-inner">
+    <div className="flex h-146.5 w-54 flex-col justify-between border-b-8 border-r-8 border-t-8 border-black bg-neutral-400 p-2 shadow-inner">
       {/* Direction Controls */}
       <div id="arrows" className="flex flex-row gap-1">
         <button
@@ -184,7 +184,10 @@ export const Controls: React.FC<ControlsProps> = ({
       <EndGameModal
         isOpen={isEndGameOpen}
         players={state.players}
-        onClose={() => setIsEndGameOpen(false)}
+        onClose={() => {
+          dispatch({ type: 'CANCEL_END_GAME' })
+          setIsEndGameOpen(false)
+        }}
         onSubmit={(finalRacks) => {
           dispatch({ type: 'END_GAME', finalRacks })
         }}

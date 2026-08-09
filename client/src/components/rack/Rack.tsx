@@ -17,6 +17,8 @@ export interface RackProps {
   selectedIndex?: number | null
   /** Click callback for a specific tile */
   onTileClick?: (tile: TileModel, index: number) => void
+  /** Tiles already assigned elsewhere (e.g. other players' racks) that should count against availability */
+  reservedTiles?: TileModel[]
   className?: string
 }
 
@@ -27,6 +29,7 @@ const Rack: React.FC<RackProps> = ({
   onChange,
   selectedIndex,
   onTileClick,
+  reservedTiles = [],
   className = ''
 }) => {
   const rackRef = useRef<HTMLDivElement>(null)
@@ -71,7 +74,15 @@ const Rack: React.FC<RackProps> = ({
           }
         }
 
-        // 3. Check if requested tile is available
+        // 3. Subtract tiles already reserved by other players in this flow
+        for (const reservedTile of reservedTiles) {
+          const key = (reservedTile.isBlank ? ' ' : reservedTile.letter).toUpperCase()
+          if (availablePool[key]) {
+            availablePool[key] -= 1
+          }
+        }
+
+        // 4. Check if requested tile is available
         const countRemainingForChar = availablePool[letterToVerify] ?? 0
         if (countRemainingForChar <= 0) {
           // Block input if tile isn't available in remaining letters
@@ -94,7 +105,7 @@ const Rack: React.FC<RackProps> = ({
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [editable, onChange, tiles, maxTiles, state?.remainingLetters])
+  }, [editable, onChange, tiles, maxTiles, state?.remainingLetters, reservedTiles])
 
   // Click a tile to remove it (in editable mode) or select it
   const handleTileClick = (tile: TileModel, index: number) => {

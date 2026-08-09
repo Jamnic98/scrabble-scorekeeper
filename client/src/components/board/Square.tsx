@@ -44,6 +44,7 @@ const getMultiplierBg = (scoreMultiplier?: string): string => {
 export interface SquareProps {
   square: SquareType
   coords: Coords
+  isFocused?: boolean
   wordDirection?: WordDirection
   setWordDirection?: (dir: WordDirection) => void
   onSelectSquare?: (coords: Coords) => void
@@ -52,6 +53,7 @@ export interface SquareProps {
 export const Square: React.FC<SquareProps> = ({
   square,
   coords,
+  isFocused = false,
   wordDirection,
   onSelectSquare
 }) => {
@@ -65,7 +67,7 @@ export const Square: React.FC<SquareProps> = ({
   const displayTile = pendingPlacement?.tile ?? square?.tile ?? null
   const hasTile = Boolean(displayTile)
 
-  const isActive = square.isFocused
+  const isActive = isFocused
   const scoreMultiplier = square?.scoreMultiplier ?? ''
   const isStarSquare = scoreMultiplier.toLowerCase() === 'star'
 
@@ -95,7 +97,7 @@ export const Square: React.FC<SquareProps> = ({
       `}
       onMouseDown={handleMouseDown}
     >
-      <Arrow square={square} wordDirection={wordDirection || null} />
+      <Arrow square={square} isFocused={isActive} wordDirection={wordDirection || null} />
 
       {/* Render Tile cleanly with identical props as rack/board tiles */}
       {hasTile && displayTile ? (

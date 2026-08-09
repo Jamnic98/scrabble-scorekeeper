@@ -26,6 +26,8 @@ export const Column: React.FC<ColumnProps> = ({
     })
   }, [moves])
 
+  const isCompleted = state.status === 'COMPLETED'
+
   return (
     <table
       style={{ width: columnWidth }}
@@ -37,10 +39,11 @@ export const Column: React.FC<ColumnProps> = ({
           <th
             colSpan={2}
             className={`h-[1em] max-w-[5em] border border-black text-center text-xl transition-colors ${
-              state.status !== 'COMPLETED' && isCurrentPlayer ? 'bg-yellow-300' : 'bg-neutral-200'
+              !isCompleted && isCurrentPlayer ? 'bg-yellow-300' : 'bg-neutral-200'
             }`}
           >
             {player.name}
+            {isCompleted && player.isWinner && ' 🏆'}
           </th>
         </tr>
         <tr className="h-[1.2em]">

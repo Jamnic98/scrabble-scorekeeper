@@ -11,3 +11,5 @@ export interface Tile {
 export type TileLetter = keyof typeof LETTER_DISTRIBUTION
 
 export type LetterCounts = Record<TileLetter, number>
+
+export type TileStyle = 'mono' | 'serif' | 'sans'

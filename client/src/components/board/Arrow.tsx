@@ -6,19 +6,20 @@ import { useGame } from 'hooks'
 
 interface ArrowProps {
   square: Square
+  isFocused: boolean
   wordDirection: WordDirection
   /** Optional custom size, defaults to 16px */
   size?: number
 }
 
-export const Arrow: React.FC<ArrowProps> = ({ square, wordDirection, size = 16 }) => {
+export const Arrow: React.FC<ArrowProps> = ({ square, isFocused, wordDirection, size = 16 }) => {
   const {
     state: { activeSquareCoords }
   } = useGame()
 
   // Only render when the square is actively focused and doesn't contain a letter
   const isEmpty = !square.tile || square.tile.letter === ''
-  if (!square.isFocused || !isEmpty || !wordDirection) {
+  if (!isFocused || !isEmpty || !wordDirection) {
     return null
   }
 

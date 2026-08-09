@@ -1,8 +1,7 @@
 import React from 'react'
 
-import { useDictionary, useGame } from 'hooks'
+import { useDictionary, useGame, usePreventArrowScroll } from 'hooks'
 import { Board, Controls, PlayerEntry, Table } from 'components'
-import { usePreventArrowScroll } from 'hooks'
 
 export const ScrabbleGameUI: React.FC = () => {
   const {
@@ -52,8 +51,7 @@ export const ScrabbleGameUI: React.FC = () => {
     onSetDirection: (direction) => dispatch({ type: 'SET_WORD_DIRECTION', direction }),
     onPlaceTile: (placement) => dispatch({ type: 'PLACE_TILE', placement }),
     onRemoveTile: ({ row, col }) => dispatch({ type: 'REMOVE_TILE', row, col }),
-    onSubmitTurn: handleSubmitTurn,
-    errorMessage
+    onSubmitTurn: handleSubmitTurn
   })
 
   if (status === 'LOBBY') return <PlayerEntry />
@@ -63,12 +61,17 @@ export const ScrabbleGameUI: React.FC = () => {
       <div className="flex-none">
         <Board />
         <Controls
-          // TODO: get activeSquareCoords and wordDirection from useGame state
           activeSquareCoords={activeSquareCoords}
           wordDirection={wordDirection}
           setWordDirection={(direction) => dispatch({ type: 'SET_WORD_DIRECTION', direction })}
-          onUndo={() => dispatch({ type: 'UNDO_MOVE', playerId: activePlayer.id })}
-          onSkip={() => dispatch({ type: 'SKIP_TURN', playerId: activePlayer.id })}
+          onUndo={() => {
+            dispatch({ type: 'SELECT_SQUARE', coords: null })
+            dispatch({ type: 'UNDO_MOVE', playerId: activePlayer.id })
+          }}
+          onSkip={() => {
+            dispatch({ type: 'SELECT_SQUARE', coords: null })
+            dispatch({ type: 'SKIP_TURN', playerId: activePlayer.id })
+          }}
         />
       </div>
       <Table />

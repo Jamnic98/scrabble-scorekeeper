@@ -7,8 +7,6 @@ import type { BoardState } from '../types'
 export const createInitialBoard = (): BoardState => {
   return BOARD_MULTIPLIER_GRID.map((row, rowIndex) =>
     row.map((scoreMultiplier, colIndex) => ({
-      row: 0,
-      col: 0,
       tile: null,
       coords: { row: rowIndex, col: colIndex },
       scoreMultiplier,

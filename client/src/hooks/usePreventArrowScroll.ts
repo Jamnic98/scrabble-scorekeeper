@@ -25,7 +25,6 @@ interface BoardKeyboardControlsProps {
   onPlaceTile: (placement: TilePlacement) => void
   onRemoveTile: (coords: { row: number; col: number }) => void
   onSubmitTurn?: () => void
-  errorMessage: string | null
 }
 
 export function usePreventArrowScroll({
@@ -44,12 +43,17 @@ export function usePreventArrowScroll({
   onRemoveTile,
   onSubmitTurn
 }: BoardKeyboardControlsProps) {
-  const { dispatch } = useGame()
+  const { dispatch, state } = useGame()
 
   useEffect(() => {
     if (!enabled || !activeSquareCoords) return
 
     const handleKeyDown = (e: KeyboardEvent) => {
+      // 1. Block input if game is in an end-game modal state or completed
+      if (state.status === 'END_GAME_PROMPT' || state.status === 'COMPLETED') {
+        return
+      }
+
       // Ignore key events inside inputs/textareas
       const activeElement = document.activeElement
       const isTypingInput =
@@ -99,23 +103,13 @@ export function usePreventArrowScroll({
 
       // --- 1. ARROW KEYS & NAVIGATION ---
       switch (e.key) {
-        // TODO: fix
-        /* case 'ArrowLeft': {
-          e.preventDefault()
-          if (wordDirection !== 'horizontal') {
-            onSetDirection('horizontal')
-          }
-          const next = getCoordsInDirection(row, col, 'horizontal', -1)
-          if (next) onSelectSquare(next)
-          return
-        } */
-        //
         case 'ArrowRight': {
           e.preventDefault()
           if (placements.length > 0) {
             return
           }
           if (wordDirection !== 'horizontal') {
+            handleKeyDown
             onSetDirection('horizontal')
             return
           }
@@ -132,21 +126,8 @@ export function usePreventArrowScroll({
             onSetDirection('vertical')
             return
           }
-          // TODO: fix
-          // const next = getCoordsInDirection(row, col, 'vertical', 1)
-          // if (next) onSelectSquare(next)
           return
         }
-        // TODO: fix
-        /*         case 'ArrowUp': {
-          e.preventDefault()
-          if (wordDirection !== 'vertical') {
-            onSetDirection('vertical')
-          }
-          const next = getCoordsInDirection(row, col, 'vertical', -1)
-          if (next) onSelectSquare(next)
-          return
-        } */
         case 'Enter': {
           e.preventDefault()
           if (placements.length > 0) {
@@ -223,6 +204,10 @@ export function usePreventArrowScroll({
         let isBlankTile = false
 
         if (isSpace) {
+          // Skip if no remaining blank tiles left in bag/distribution
+          if (remainingLetters[' '] === 0) {
+            return
+          }
           // Trigger prompt for blank tile letter
           const input = window.prompt('Enter the letter to represent with your blank tile (A-Z):')
           if (!input) return // User cancelled or entered empty text
@@ -318,6 +303,7 @@ export function usePreventArrowScroll({
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [
+    state.status,
     enabled,
     activeSquareCoords,
     wordDirection,

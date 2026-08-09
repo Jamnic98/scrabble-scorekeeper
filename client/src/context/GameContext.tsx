@@ -4,6 +4,7 @@ import type {
   GameState,
   Player,
   TilePlacement,
+  TileStyle,
   WordDictionary,
   WordDirection
 } from '@scrabble/engine'
@@ -18,6 +19,7 @@ export interface UIState extends GameState {
 
 export type UIAction =
   | GameAction
+  | { type: 'SET_TILE_STYLE'; style: TileStyle }
   | { type: 'SELECT_SQUARE'; coords: Coords | null }
   | { type: 'SET_WORD_DIRECTION'; direction: WordDirection }
   | { type: 'PLACE_TILE'; placement: TilePlacement }

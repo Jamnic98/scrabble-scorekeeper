@@ -4,12 +4,13 @@ import {
   createInitialState,
   validatePlacement,
   calculateTurnScore,
-  validateWordsInDictionary
+  validateWordsInDictionary,
+  createInitialBoard
 } from '@scrabble/engine'
-import type { BoardState, GameAction, TileLetter } from '@scrabble/engine'
+import type { BoardState, GameAction, GameState, TileLetter } from '@scrabble/engine'
 
 import { GameContext, UIAction, UIState } from './GameContext'
-import { gameStartHistoryItem, initialBoard } from 'utils'
+import { gameStartHistoryItem } from 'utils'
 
 const STORAGE_KEY = 'scrabble_game_state_v1'
 
@@ -25,23 +26,43 @@ function loadPersistedState(): UIState | null {
   }
 }
 
-function makeInitialUIState(base = createInitialState('LOCAL')): UIState {
+const overrides: Partial<GameState> = {
+  // TODO: remove
+  // status: 'IN_PROGRESS',
+  // players: [
+  //   { id: '1', name: 'Player 1', turnScores: [], score: 0 },
+  //   { id: '2', name: 'Player 2', turnScores: [], score: 0 }
+  // ]
+}
+
+function makeInitialUIState(base = createInitialState('LOCAL', overrides)): UIState {
+  const fullBoard = base.board?.length ? base.board : createInitialBoard()
+
   return {
     ...base,
+    roomCode: '',
+    status: base.status || 'LOBBY',
+    gameMode: 'scorekeeper',
+    board: fullBoard,
+    history: [gameStartHistoryItem],
+    players: base.players || [],
     placements: [],
     errorMessage: null,
     activeSquareCoords: null,
     wordDirection: null,
-    roomCode: '',
-    status: 'LOBBY',
-    gameMode: 'scorekeeper',
-    board: base.board || initialBoard,
-    history: [gameStartHistoryItem]
+    ...overrides
   }
 }
 
 function combinedGameReducer(state: UIState, action: UIAction): UIState {
   switch (action.type) {
+    case 'SET_TILE_STYLE': {
+      return {
+        ...state,
+        tileStyle: action.style
+      }
+    }
+
     case 'SELECT_SQUARE': {
       return {
         ...state,
@@ -255,15 +276,33 @@ function combinedGameReducer(state: UIState, action: UIAction): UIState {
         }
       }
     }
+
+    case 'INITIATE_END_GAME': {
+      if (state.status !== 'IN_PROGRESS') return state
+
+      return {
+        ...state,
+        status: 'END_GAME_PROMPT',
+        placements: [],
+        activeSquareCoords: null,
+        wordDirection: null,
+        errorMessage: null
+      }
+    }
   }
 }
 
 export function GameProvider({ children }: { children: React.ReactNode }) {
-  const [state, dispatch] = useReducer(
-    combinedGameReducer,
-    null,
-    () => loadPersistedState() ?? makeInitialUIState()
-  )
+  const [state, dispatch] = useReducer(combinedGameReducer, null, () => {
+    const hasDevOverrides = Object.keys(overrides).length > 0
+
+    // 🛡️ Skip localStorage completely if active dev overrides are configured
+    if (hasDevOverrides) {
+      return makeInitialUIState()
+    }
+
+    return loadPersistedState() ?? makeInitialUIState()
+  })
 
   // 2. Persist state to localStorage every time it updates
   useEffect(() => {

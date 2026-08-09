@@ -27,7 +27,8 @@ export const initialGameState: GameState = {
   roomCode: '',
   board: [],
   status: 'LOBBY',
-  gameMode: 'scorekeeper'
+  gameMode: 'scorekeeper',
+  tileStyle: 'mono'
 }
 
 export const createInitialState = (
@@ -42,6 +43,7 @@ export const createInitialState = (
   players: [],
   activePlayerIndex: 0,
   history: [],
+  tileStyle: 'mono',
   ...overrides
 })
 
@@ -252,18 +254,6 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     }
 
     // ==========================================
-    // INITIATE_END_GAME
-    // ==========================================
-    case 'INITIATE_END_GAME': {
-      if (state.status !== 'IN_PROGRESS') return state
-
-      return {
-        ...state,
-        status: 'END_GAME_PROMPT'
-      }
-    }
-
-    // ==========================================
     // CANCEL_END_GAME
     // ==========================================
     case 'CANCEL_END_GAME': {
@@ -320,10 +310,17 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         }
       })
 
+      // 4. Determine winner(s) by final score (handles ties)
+      const highestScore = Math.max(...finalPlayers.map((p) => Number(p.score) || 0))
+      const playersWithWinnerFlag = finalPlayers.map((player) => ({
+        ...player,
+        isWinner: (Number(player.score) || 0) === highestScore
+      }))
+
       return {
         ...state,
         status: 'COMPLETED',
-        players: finalPlayers
+        players: playersWithWinnerFlag
       }
     }
 

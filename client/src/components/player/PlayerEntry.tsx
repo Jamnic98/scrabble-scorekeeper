@@ -1,7 +1,7 @@
 import React from 'react'
 import { Play } from 'lucide-react'
 
-import { PlayerForm } from 'components'
+import { PlayerForm, TileStyleSelector } from 'components'
 import { useGame } from 'hooks'
 
 export const PlayerEntry: React.FC = () => {
@@ -17,9 +17,12 @@ export const PlayerEntry: React.FC = () => {
         <h1 className="mb-1 text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
           Scrabble Scorekeeper
         </h1>
-        <p className="mb-6 text-sm text-slate-500 dark:text-slate-400">
-          Add at least 2 players to start the game.
-        </p>
+        <div className="my-6 border-t border-slate-200 pt-6 dark:border-slate-800">
+          <TileStyleSelector
+            selected={state.tileStyle}
+            onChange={(style) => dispatch({ type: 'SET_TILE_STYLE', style })}
+          />
+        </div>
 
         <PlayerForm />
 

@@ -34,17 +34,11 @@ export const Table: React.FC = () => {
       id="table"
       className="
         flex max-h-146 min-w-115 overflow-y-auto border-8 border-black bg-neutral-50 shadow-md scroll-smooth
-        
-        /* 🎨 Firefox standard thin scrollbar */
-        scrollbar-thin 
-        [scrollbar-color:#a3a3a3_transparent]
-
-        /* 🎨 WebKit (Chrome, Safari, Edge) sleek scrollbar */
         [&::-webkit-scrollbar]:w-1.5
         [&::-webkit-scrollbar-track]:bg-transparent
+        [&::-webkit-scrollbar-thumb]:bg-gray-400
         [&::-webkit-scrollbar-thumb]:rounded-full
-        [&::-webkit-scrollbar-thumb]:bg-neutral-400
-        hover:[&::-webkit-scrollbar-thumb]:bg-neutral-600
+        hover:[&::-webkit-scrollbar-thumb]:bg-gray-500
       "
     >
       {players.map((player, index) => (

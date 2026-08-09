@@ -19,9 +19,9 @@ export const Board: React.FC = () => {
             return (
               <BoardSquare
                 key={`${rowIndex}-${colIndex}`}
-                // TODO: fix coords selection via Square vs passed coords
-                square={{ ...square, isFocused }}
+                square={square}
                 coords={{ row: rowIndex, col: colIndex }}
+                isFocused={isFocused}
                 wordDirection={wordDirection}
                 setWordDirection={(dir) => dispatch({ type: 'SET_WORD_DIRECTION', direction: dir })}
                 onSelectSquare={(coords) => dispatch({ type: 'SELECT_SQUARE', coords })}
@@ -33,3 +33,5 @@ export const Board: React.FC = () => {
     </div>
   )
 }
+
+export default Board

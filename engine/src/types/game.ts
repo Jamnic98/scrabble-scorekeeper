@@ -1,4 +1,4 @@
-import type { BoardState, LetterCounts, Player, Tile } from '.'
+import type { BoardState, LetterCounts, Player, Tile, TileStyle } from '.'
 import type { ScoreResult } from '../features'
 
 export type WordDirection = 'horizontal' | 'vertical' | null
@@ -43,6 +43,7 @@ export type GameState = {
   players: Player[]
   activePlayerIndex: number
   history: MoveHistoryItem[]
+  tileStyle: TileStyle
 }
 
 export type GameMode = 'scorekeeper' | 'full'

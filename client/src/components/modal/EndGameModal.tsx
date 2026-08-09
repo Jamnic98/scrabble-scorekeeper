@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import type { Player, Tile as TileModel } from '@scrabble/engine'
 import { Rack } from 'components'
@@ -13,6 +13,21 @@ interface EndGameModalProps {
 const EndGameModal: React.FC<EndGameModalProps> = ({ isOpen, players, onClose, onSubmit }) => {
   const [currentPlayerIdx, setCurrentPlayerIdx] = useState(0)
   const [playerRacks, setPlayerRacks] = useState<Record<string, TileModel[]>>({})
+
+  useEffect(() => {
+    if (!isOpen) return
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== 'Enter') return
+      if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement)?.tagName)) return
+
+      e.preventDefault()
+      handleNext()
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isOpen, currentPlayerIdx, playerRacks, players])
 
   if (!isOpen || players.length === 0) return null
 
@@ -66,6 +81,9 @@ const EndGameModal: React.FC<EndGameModalProps> = ({ isOpen, players, onClose, o
             editable
             maxTiles={7}
             onChange={handleRackChange}
+            reservedTiles={Object.entries(playerRacks)
+              .filter(([playerId]) => playerId !== currentPlayer.id)
+              .flatMap(([, tiles]) => tiles)}
             className="w-full"
           />
           <p className="text-xs text-neutral-500 text-center font-medium">

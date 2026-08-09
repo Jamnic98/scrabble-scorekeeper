@@ -45,7 +45,7 @@ export const PlayerForm: React.FC = () => {
     // Update host tag if position 0 changes
     const reorderedPlayers = updatedPlayers.map((player /* index */) => ({
       ...player
-      // TODO: remove
+      // TODO: fix isHost
       // isHost: index === 0
     }))
 

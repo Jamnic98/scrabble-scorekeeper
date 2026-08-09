@@ -42,13 +42,9 @@ export function usePreventArrowScroll({
   onSetDirection,
   onPlaceTile,
   onRemoveTile,
-  onSubmitTurn,
-  errorMessage
+  onSubmitTurn
 }: BoardKeyboardControlsProps) {
   const { dispatch } = useGame()
-
-  // TODO: remove
-  errorMessage && console.log(errorMessage)
 
   useEffect(() => {
     if (!enabled || !activeSquareCoords) return
@@ -170,8 +166,7 @@ export function usePreventArrowScroll({
         case 'Backspace': {
           e.preventDefault()
           if (placements.length === 0) {
-            onSelectSquare(null)
-            onSetDirection(null)
+            dispatch({ type: 'CLEAR_PLACEMENTS' })
             return
           }
 

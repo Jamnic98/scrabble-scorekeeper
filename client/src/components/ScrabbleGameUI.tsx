@@ -5,19 +5,23 @@ import { Board, Controls, PlayerEntry, Table } from 'components'
 import { usePreventArrowScroll } from 'hooks'
 
 export const ScrabbleGameUI: React.FC = () => {
-  const { state, dispatch } = useGame()
+  const {
+    state: {
+      activePlayerIndex,
+      activeSquareCoords,
+      board,
+      remainingLetters,
+      placements,
+      players,
+      wordDirection,
+      errorMessage,
+      status
+    },
+    dispatch
+  } = useGame()
   const { dictionary, isLoaded } = useDictionary()
 
-  const {
-    activePlayerIndex,
-    activeSquareCoords,
-    board,
-    remainingLetters,
-    placements,
-    players,
-    wordDirection,
-    errorMessage
-  } = state
+  errorMessage && console.log(errorMessage)
 
   // Retrieve active player's rack
   const activePlayer = players?.[activePlayerIndex]
@@ -52,7 +56,7 @@ export const ScrabbleGameUI: React.FC = () => {
     errorMessage
   })
 
-  if (state.status === 'LOBBY') return <PlayerEntry />
+  if (status === 'LOBBY') return <PlayerEntry />
 
   return (
     <div className="flex flex-wrap gap-4 p-4">

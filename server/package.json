@@ -14,7 +14,8 @@
   },
   "dependencies": {
     "@scrabble/engine": "*",
-    "express": "^5.1.0"
+    "express": "^5.2.1",
+    "mongodb": "^7.5.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",

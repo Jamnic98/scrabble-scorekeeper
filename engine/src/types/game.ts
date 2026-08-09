@@ -35,6 +35,7 @@ export type MoveHistoryItem = {
 export type GameStatus = 'LOBBY' | 'IN_PROGRESS' | 'END_GAME_PROMPT' | 'COMPLETED'
 
 export type GameState = {
+  gameId: string
   roomCode: string
   status: GameStatus // Tracks current phase (LOBBY -> IN_PROGRESS -> COMPLETED)
   gameMode: GameMode // 'scorekeeper' | 'full'

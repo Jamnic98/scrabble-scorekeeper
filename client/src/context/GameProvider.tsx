@@ -35,12 +35,18 @@ const overrides: Partial<GameState> = {
   // ]
 }
 
+function generateRoomCode(): string {
+  return 'game_' + Math.random().toString(36).substring(2, 9)
+}
+
 function makeInitialUIState(base = createInitialState('LOCAL', overrides)): UIState {
+  const roomCode = base.roomCode || generateRoomCode()
+
   const fullBoard = base.board?.length ? base.board : createInitialBoard()
 
   return {
     ...base,
-    roomCode: '',
+    roomCode,
     status: base.status || 'LOBBY',
     gameMode: 'scorekeeper',
     board: fullBoard,

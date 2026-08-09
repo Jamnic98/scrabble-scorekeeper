@@ -20,6 +20,7 @@ function getInitialLetterCounts(letterBag: Record<string, LetterSpec>): LetterCo
 }
 
 export const initialGameState: GameState = {
+  gameId: '',
   remainingLetters: getInitialLetterCounts(LETTER_DISTRIBUTION),
   players: [],
   activePlayerIndex: 0,
@@ -35,6 +36,7 @@ export const createInitialState = (
   roomCode = '', // Default to seeding if in dev/testing, or pass custom initial state
   overrides: Partial<GameState> = {}
 ): GameState => ({
+  gameId: '',
   remainingLetters: getInitialLetterCounts(LETTER_DISTRIBUTION),
   roomCode,
   status: initialGameState.status,
@@ -81,6 +83,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
 
       return {
         ...state,
+        gameId: crypto.randomUUID(),
         status: 'IN_PROGRESS'
       }
     }

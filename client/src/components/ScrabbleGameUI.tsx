@@ -1,26 +1,22 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 
 import { useDictionary, useGame, usePreventArrowScroll } from 'hooks'
 import { Board, Controls, PlayerEntry, Table } from 'components'
 
 export const ScrabbleGameUI: React.FC = () => {
-  const {
-    state: {
-      activePlayerIndex,
-      activeSquareCoords,
-      board,
-      remainingLetters,
-      placements,
-      players,
-      wordDirection,
-      errorMessage,
-      status
-    },
-    dispatch
-  } = useGame()
+  const { state, dispatch } = useGame()
   const { dictionary, isLoaded } = useDictionary()
+  const hasSavedRef = useRef(false)
 
-  errorMessage && console.log(errorMessage)
+  const {
+    activePlayerIndex,
+    activeSquareCoords,
+    board,
+    remainingLetters,
+    placements,
+    players,
+    wordDirection
+  } = state
 
   // Retrieve active player's rack
   const activePlayer = players?.[activePlayerIndex]
@@ -32,9 +28,38 @@ export const ScrabbleGameUI: React.FC = () => {
       alert('Dictionary is still loading...')
       return
     }
-    // Pass your dictionary object/set if required by SUBMIT_TURN action payload
     dispatch({ type: 'SUBMIT_TURN', dictionary })
   }
+
+  // 💾 Save completed game to the backend once, when status flips to COMPLETED
+  useEffect(() => {
+    if (state.status !== 'COMPLETED' || hasSavedRef.current) return
+
+    hasSavedRef.current = true
+
+    const saveGame = async () => {
+      try {
+        const response = await fetch('/api/games', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(state)
+        })
+
+        if (!response.ok) {
+          const errorBody = await response.json().catch(() => null)
+          console.error('Failed to save game:', errorBody?.error ?? response.statusText)
+          return
+        }
+
+        const result = await response.json()
+        console.log('Game saved:', result.id)
+      } catch (err) {
+        console.error('Failed to save game:', err)
+      }
+    }
+
+    saveGame()
+  }, [state.status])
 
   // Global keydown handler for Arrow keys, Spacebar, Typing, and Backspace
   usePreventArrowScroll({
@@ -54,7 +79,7 @@ export const ScrabbleGameUI: React.FC = () => {
     onSubmitTurn: handleSubmitTurn
   })
 
-  if (status === 'LOBBY') return <PlayerEntry />
+  if (state.status === 'LOBBY') return <PlayerEntry />
 
   return (
     <div className="flex flex-wrap gap-4 p-4">

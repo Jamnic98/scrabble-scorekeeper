@@ -1,14 +1,28 @@
-import express from "express";
+import express from 'express'
 
-const app = express();
-const PORT = process.env.PORT ?? 8080;
+import { connectDB } from './db'
+import gamesRouter from './routes/games.route'
 
-app.use(express.json());
+const app = express()
+const PORT = process.env.PORT ?? 8080
 
-app.get("/health", (_req, res) => {
-  res.json({ status: "ok" });
-});
+app.use(express.json())
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+app.get('/health', (_req, res) => {
+  res.json({ status: 'ok' })
+})
+
+app.use('/api', gamesRouter)
+
+async function start() {
+  await connectDB()
+
+  app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`)
+  })
+}
+
+start().catch((err) => {
+  console.error('Failed to start server:', err)
+  process.exit(1)
+})

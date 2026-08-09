@@ -1,6 +1,6 @@
 import { Router, type Request, type Response } from 'express'
 
-import { getDB } from '../db'
+import { getDB } from '../db.js'
 import type { GameState } from '@scrabble/engine'
 
 const router = Router()

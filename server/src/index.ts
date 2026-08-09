@@ -1,7 +1,7 @@
 import express from 'express'
 
-import { connectDB } from './db'
-import gamesRouter from './routes/games.route'
+import { connectDB } from './db.js'
+import gamesRouter from './routes/games.route.js'
 
 const app = express()
 const PORT = process.env.PORT ?? 8080

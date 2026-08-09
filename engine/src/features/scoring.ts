@@ -64,9 +64,6 @@ export function calculateTurnScore(board: BoardState, placements: TilePlacement[
   const isHorizontal =
     placements.length === 1 || placements.every((p) => p.row === placements[0].row)
 
-  // Quick lookup set for coordinates of NEWLY placed tiles
-  const newTileCoords = new Set(placements.map((p) => `${p.row},${p.col}`))
-
   // Merge placements into a temporary board state representation
 
   const tempBoard: BoardState = board.map((rowArr, r) =>
@@ -99,7 +96,7 @@ export function calculateTurnScore(board: BoardState, placements: TilePlacement[
   )
 
   if (mainWordObj && mainWordObj.squares.length > 1) {
-    const score = calculateWordPoints(mainWordObj.squares, newTileCoords)
+    const score = calculateWordPoints(mainWordObj.squares)
     formedWords.push({
       word: mainWordObj.word,
       score,
@@ -117,7 +114,7 @@ export function calculateTurnScore(board: BoardState, placements: TilePlacement[
     )
 
     if (crossWordObj && crossWordObj.squares.length > 1) {
-      const score = calculateWordPoints(crossWordObj.squares, newTileCoords)
+      const score = calculateWordPoints(crossWordObj.squares)
       formedWords.push({
         word: crossWordObj.word,
         score,
@@ -140,22 +137,19 @@ export function calculateTurnScore(board: BoardState, placements: TilePlacement[
 /**
  * Calculates points for a word sequence, applying multipliers ONLY to new tiles.
  */
-function calculateWordPoints(squares: Square[], newTileCoords: Set<string>): number {
+function calculateWordPoints(squares: Square[]): number {
   let wordScore = 0
   let wordMultiplier = 1
 
   squares.forEach((sq) => {
     if (!sq.tile) return
 
-    const key = `${sq.row},${sq.col}`
-    const isNewTile = newTileCoords.has(key)
-
     const basePoints =
       typeof sq.tile.points === 'number'
         ? sq.tile.points
         : getLetterPoints(sq.tile.letter, sq.tile.isBlank)
 
-    if (isNewTile && sq.scoreMultiplier) {
+    if (sq.scoreMultiplier) {
       switch (sq.scoreMultiplier) {
         case 'dl':
           wordScore += basePoints * 2
@@ -212,11 +206,7 @@ function extractWordAt(
     if (!sq.tile) break
 
     // ✅ FIX: Explicitly assign row and col so sq.row and sq.col are never undefined!
-    squares.push({
-      ...sq,
-      row: isHoriz ? row : curr,
-      col: isHoriz ? curr : col
-    })
+    squares.push(sq)
     curr++
   }
 

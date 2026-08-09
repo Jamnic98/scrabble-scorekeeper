@@ -189,7 +189,7 @@ export const Controls: React.FC<ControlsProps> = ({
           setIsEndGameOpen(false)
         }}
         onSubmit={(finalRacks) => {
-          dispatch({ type: 'END_GAME', finalRacks })
+          dispatch({ type: 'END_GAME', finalRacks, finishingPlayerId: state.activePlayerIndex })
         }}
       />
     </div>

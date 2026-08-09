@@ -271,34 +271,25 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     case 'END_GAME': {
       let totalDeductedPoints = 0
 
-      // 1. Calculate unplayed tile point penalties
       const playerDeductions = state.players.map((player) => {
         const rackInput = action.finalRacks.find((r) => String(r.playerId) === String(player.id))
         const unplayedTiles = rackInput?.unplayedTiles ?? []
-
-        // Compute point sum for this player's unplayed tiles
         const unplayedPoints = unplayedTiles.reduce((sum, t) => sum + (Number(t.points) || 0), 0)
-
         totalDeductedPoints += unplayedPoints
-
-        return {
-          playerId: player.id,
-          unplayedPoints
-        }
+        return { playerId: player.id, unplayedPoints }
       })
 
-      // 2. Determine if anyone emptied their rack cleanly (0 unplayed tiles)
-      const hasFinisher = playerDeductions.some((d) => d.unplayedPoints === 0)
-
-      // 3. Immutably update players array
       const finalPlayers = state.players.map((player) => {
         const deduction = playerDeductions.find((d) => String(d.playerId) === String(player.id))
         const unplayedPoints = deduction?.unplayedPoints ?? 0
 
-        // If a player went out first and others had unplayed tiles, award total deducted points
-        const isFinishingPlayer = unplayedPoints === 0 && hasFinisher && totalDeductedPoints > 0
+        // Explicit check against the known finishing player, not inferred from rack state
+        const isFinishingPlayer =
+          action.finishingPlayerId != null && String(player.id) === String(action.finishingPlayerId)
 
-        const adjustmentScore = isFinishingPlayer ? totalDeductedPoints : -unplayedPoints
+        const adjustmentScore = isFinishingPlayer
+          ? totalDeductedPoints - unplayedPoints
+          : -unplayedPoints
         const currentTurnScores = Array.isArray(player.turnScores) ? player.turnScores : []
         const currentScore = Number(player.score) || 0
 

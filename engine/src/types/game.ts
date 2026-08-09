@@ -61,4 +61,4 @@ export type GameAction =
   | { type: 'UNDO_MOVE'; playerId: string }
   | { type: 'INITIATE_END_GAME' }
   | { type: 'CANCEL_END_GAME' }
-  | { type: 'END_GAME'; finalRacks: RemainingTileInput[] }
+  | { type: 'END_GAME'; finalRacks: RemainingTileInput[]; finishingPlayerId: number }

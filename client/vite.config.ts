@@ -7,6 +7,9 @@ export default defineConfig({
   resolve: {
     tsconfigPaths: true
   },
+  define: {
+    'import.meta.env.IS_NETLIFY': JSON.stringify(process.env.IS_NETLIFY === 'true')
+  },
   server: {
     host: true,
     proxy: {

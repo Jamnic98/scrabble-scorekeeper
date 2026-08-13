@@ -35,6 +35,8 @@ export const ScrabbleGameUI: React.FC = () => {
   useEffect(() => {
     if (state.status !== 'COMPLETED' || hasSavedRef.current) return
 
+    if (import.meta.env.NETLIFY) return
+
     hasSavedRef.current = true
 
     const saveGame = async () => {

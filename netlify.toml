@@ -1,0 +1,10 @@
+[build]
+  # Tell Netlify where the build output lives relative to the root
+  publish = "client/dist"
+  
+  # Command to run from the root directory
+  command = "npm run build"
+
+# Optional: Ensure Node features/dependencies are handled properly
+[build.environment]
+  NODE_VERSION = "24"

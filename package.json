@@ -6,6 +6,11 @@
     "engine",
     "server"
   ],
+  "scripts": {
+    "build:engine": "npm --prefix engine run build",
+    "build:client": "npm --prefix client run build",
+    "build": "npm run build:engine && npm run build:client"
+  },
   "dependencies": {
     "@scrabble/engine": "^0.0.0"
   }

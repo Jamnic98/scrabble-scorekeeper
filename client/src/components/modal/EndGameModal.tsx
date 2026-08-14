@@ -6,11 +6,18 @@ import { Rack } from 'components'
 interface EndGameModalProps {
   isOpen: boolean
   players: Player[]
+  onFinish: () => void
   onClose: () => void
   onSubmit: (finalRacks: Array<{ playerId: string; unplayedTiles: TileModel[] }>) => void
 }
 
-const EndGameModal: React.FC<EndGameModalProps> = ({ isOpen, players, onClose, onSubmit }) => {
+const EndGameModal: React.FC<EndGameModalProps> = ({
+  isOpen,
+  players,
+  onFinish,
+  onClose,
+  onSubmit
+}) => {
   const [currentPlayerIdx, setCurrentPlayerIdx] = useState(0)
   const [playerRacks, setPlayerRacks] = useState<Record<string, TileModel[]>>({})
 
@@ -52,7 +59,7 @@ const EndGameModal: React.FC<EndGameModalProps> = ({ isOpen, players, onClose, o
       }))
 
       onSubmit(finalRacks)
-      onClose()
+      onFinish()
     }
   }
 

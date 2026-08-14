@@ -32,13 +32,9 @@ export const LETTER_DISTRIBUTION: Record<string, LetterSpec> = {
   x: { count: 1, value: 8 },
   y: { count: 2, value: 4 },
   z: { count: 1, value: 10 },
-  ' ': { count: 2, value: 0 } // Blank tile
+  ' ': { count: 2, value: 0 }
 } as const
 
-/**
- * Derives score value from LETTER_DISTRIBUTION.
- * Blank tiles always yield 0 points regardless of what letter they represent.
- */
 export function getLetterPoints(letter: string, isBlank = false): number {
   if (isBlank || letter === ' ') return 0
   const key = letter.toLowerCase()
@@ -51,43 +47,26 @@ export interface ScoreResult {
   isBingo: boolean
 }
 
-/**
- * Calculates total turn score for newly placed tiles on the board,
- * including primary word, cross words, premium multipliers, and bingo bonuses.
- */
 export function calculateTurnScore(board: BoardState, placements: TilePlacement[]): ScoreResult {
   if (placements.length === 0) {
     return { totalScore: 0, words: [], isBingo: false }
   }
 
-  // 1. Determine orientation (horizontal vs vertical)
   const isHorizontal =
     placements.length === 1 || placements.every((p) => p.row === placements[0].row)
-
-  // Merge placements into a temporary board state representation
 
   const tempBoard: BoardState = board.map((rowArr, r) =>
     rowArr.map((sq, c) => {
       const placement = placements.find((p) => p.row === r && p.col === c)
       if (placement) {
-        return {
-          ...sq,
-          row: r,
-          col: c,
-          tile: placement.tile
-        }
+        return { ...sq, row: r, col: c, tile: placement.tile }
       }
-      return {
-        ...sq,
-        row: r,
-        col: c
-      }
+      return { ...sq, row: r, col: c }
     })
   )
 
   const formedWords: FormedWord[] = []
 
-  // 2. Extract Main Word
   const mainWordObj = extractWordAt(
     tempBoard,
     placements[0].row,
@@ -96,15 +75,10 @@ export function calculateTurnScore(board: BoardState, placements: TilePlacement[
   )
 
   if (mainWordObj && mainWordObj.squares.length > 1) {
-    const score = calculateWordPoints(mainWordObj.squares)
-    formedWords.push({
-      word: mainWordObj.word,
-      score,
-      isMainWord: true
-    })
+    const score = calculateWordPoints(mainWordObj.squares, placements)
+    formedWords.push({ word: mainWordObj.word, score, isMainWord: true })
   }
 
-  // 3. Extract Cross Words created by each newly placed tile
   placements.forEach((p) => {
     const crossWordObj = extractWordAt(
       tempBoard,
@@ -114,16 +88,11 @@ export function calculateTurnScore(board: BoardState, placements: TilePlacement[
     )
 
     if (crossWordObj && crossWordObj.squares.length > 1) {
-      const score = calculateWordPoints(crossWordObj.squares)
-      formedWords.push({
-        word: crossWordObj.word,
-        score,
-        isMainWord: false
-      })
+      const score = calculateWordPoints(crossWordObj.squares, placements)
+      formedWords.push({ word: crossWordObj.word, score, isMainWord: false })
     }
   })
 
-  // 4. Sum up points & apply 50-point Bingo Bonus (if all 7 rack tiles placed)
   let totalScore = formedWords.reduce((sum, w) => sum + w.score, 0)
   const isBingo = placements.length === 7
 
@@ -135,13 +104,17 @@ export function calculateTurnScore(board: BoardState, placements: TilePlacement[
 }
 
 /**
- * Calculates points for a word sequence, applying multipliers ONLY to new tiles.
+ * Calculates points for a word sequence. Premium multipliers only apply to
+ * squares that are part of THIS turn's placements — tiles already sitting
+ * on the board from a previous turn score their base value only.
  */
-function calculateWordPoints(squares: Square[]): number {
+function calculateWordPoints(squares: PositionedSquare[], placements: TilePlacement[]): number {
   let wordScore = 0
   let wordMultiplier = 1
 
-  squares.forEach((sq) => {
+  const newTileCoords = new Set(placements.map((p) => `${p.row},${p.col}`))
+
+  squares.forEach(({ square: sq, row, col }) => {
     if (!sq.tile) return
 
     const basePoints =
@@ -149,7 +122,9 @@ function calculateWordPoints(squares: Square[]): number {
         ? sq.tile.points
         : getLetterPoints(sq.tile.letter, sq.tile.isBlank)
 
-    if (sq.scoreMultiplier) {
+    const isNewTile = newTileCoords.has(`${row},${col}`)
+
+    if (sq.scoreMultiplier && isNewTile) {
       switch (sq.scoreMultiplier) {
         case 'dl':
           wordScore += basePoints * 2
@@ -158,7 +133,7 @@ function calculateWordPoints(squares: Square[]): number {
           wordScore += basePoints * 3
           break
         case 'dw':
-        case 'star': // Center star operates as double word multiplier on turn 1
+        case 'star':
           wordScore += basePoints
           wordMultiplier *= 2
           break
@@ -170,7 +145,6 @@ function calculateWordPoints(squares: Square[]): number {
           wordScore += basePoints
       }
     } else {
-      // Pre-existing tile on board: score base points with zero active multipliers
       wordScore += basePoints
     }
   })
@@ -178,40 +152,41 @@ function calculateWordPoints(squares: Square[]): number {
   return wordScore * wordMultiplier
 }
 
-/**
- * Traverses board left/right or up/down from a coordinate to extract a complete contiguous word.
- */
+interface PositionedSquare {
+  square: Square
+  row: number
+  col: number
+}
+
 function extractWordAt(
   board: BoardState,
   row: number,
   col: number,
   direction: 'horizontal' | 'vertical'
-): { word: string; squares: Square[] } | null {
+): { word: string; squares: PositionedSquare[] } | null {
   const isHoriz = direction === 'horizontal'
   let start = isHoriz ? col : row
 
-  // Walk backward to start of contiguous tile sequence
   while (start > 0) {
     const prevSq = isHoriz ? board[row][start - 1] : board[start - 1][col]
     if (!prevSq.tile) break
     start--
   }
 
-  const squares: Square[] = []
+  const squares: PositionedSquare[] = []
   let curr = start
 
-  // Walk forward to assemble full contiguous sequence
   while (curr < 15) {
-    const sq = isHoriz ? board[row][curr] : board[curr][col]
+    const r = isHoriz ? row : curr
+    const c = isHoriz ? curr : col
+    const sq = board[r][c]
     if (!sq.tile) break
-
-    // ✅ FIX: Explicitly assign row and col so sq.row and sq.col are never undefined!
-    squares.push(sq)
+    squares.push({ square: sq, row: r, col: c })
     curr++
   }
 
   if (squares.length <= 1) return null
 
-  const word = squares.map((s) => s.tile?.letter ?? '').join('')
+  const word = squares.map((s) => s.square.tile?.letter ?? '').join('')
   return { word, squares }
 }

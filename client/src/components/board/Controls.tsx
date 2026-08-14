@@ -188,8 +188,12 @@ export const Controls: React.FC<ControlsProps> = ({
           dispatch({ type: 'CANCEL_END_GAME' })
           setIsEndGameOpen(false)
         }}
+        onFinish={() => {
+          setIsEndGameOpen(false)
+        }}
         onSubmit={(finalRacks) => {
-          dispatch({ type: 'END_GAME', finalRacks, finishingPlayerId: state.activePlayerIndex })
+          const finishingPlayer = state.players[state.activePlayerIndex]
+          dispatch({ type: 'END_GAME', finalRacks, finishingPlayerId: finishingPlayer?.id })
         }}
       />
     </div>

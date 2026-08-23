@@ -156,9 +156,16 @@ function combinedGameReducer(state: UIState, action: UIAction): UIState {
         return { ...state, activeSquareCoords: null, wordDirection: null, errorMessage: null }
       }
 
-      // Restore placed tiles from remainingLetters
-      const remainingLetters = { ...state.remainingLetters }
-      state.placements.forEach((p) => (state.remainingLetters[p.tile.letter.toLowerCase()] += 1))
+      // 1. Create a shallow copy
+      const restoredLetters = { ...state.remainingLetters }
+
+      // 2. Modify the COPY, not the state, and handle blanks
+      state.placements.forEach(({ tile }) => {
+        const isBlank = tile.isBlank === true || tile.letter === ' ' || !tile.letter
+        const letterKey = isBlank ? ' ' : String(tile.letter).toLowerCase()
+
+        restoredLetters[letterKey] = (restoredLetters[letterKey] ?? 0) + 1
+      })
 
       return {
         ...state,
@@ -166,7 +173,7 @@ function combinedGameReducer(state: UIState, action: UIAction): UIState {
         activeSquareCoords: null,
         wordDirection: null,
         errorMessage: null,
-        remainingLetters
+        remainingLetters: restoredLetters // 3. Return the modified copy
       }
     }
 

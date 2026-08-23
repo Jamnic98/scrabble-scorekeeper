@@ -199,7 +199,7 @@ function combinedGameReducer(state: UIState, action: UIAction): UIState {
       }
 
       const activePlayer = state.players[state.activePlayerIndex]
-      const isFirstTurn = state.history.length === 0
+      const isFirstTurn = state.history.length === 1
 
       const previousHistoryItem = state.history[state.history.length - 1]
       const previousBoard: BoardState = previousHistoryItem?.boardState ?? state.board

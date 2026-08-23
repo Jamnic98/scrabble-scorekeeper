@@ -1,9 +1,9 @@
-import React, { useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 
 import { useDictionary, useGame, usePreventArrowScroll } from 'hooks'
 import { Board, Controls, PlayerEntry, Table } from 'components'
 
-export const ScrabbleGameUI: React.FC = () => {
+export default function ScrabbleGameUI() {
   const { state, dispatch } = useGame()
   const { dictionary, isLoaded } = useDictionary()
   const hasSavedRef = useRef(false)
@@ -12,6 +12,7 @@ export const ScrabbleGameUI: React.FC = () => {
     activePlayerIndex,
     activeSquareCoords,
     board,
+    errorMessage,
     remainingLetters,
     placements,
     players,
@@ -62,6 +63,12 @@ export const ScrabbleGameUI: React.FC = () => {
 
     saveGame()
   }, [state.status])
+
+  useEffect(() => {
+    if (errorMessage) {
+      alert(errorMessage)
+    }
+  }, [errorMessage])
 
   // Global keydown handler for Arrow keys, Spacebar, Typing, and Backspace
   usePreventArrowScroll({

@@ -7,13 +7,15 @@ export interface ColumnProps {
   isCurrentPlayer: boolean
   columnWidth: number
   totalRows: number
+  onCellClick: (turnIndex: number) => void
 }
 
 export const Column: React.FC<ColumnProps> = ({
   player,
   isCurrentPlayer,
   columnWidth,
-  totalRows
+  totalRows,
+  onCellClick
 }) => {
   const { state } = useGame()
   const moves: number[] = player.turnScores ?? []
@@ -33,7 +35,6 @@ export const Column: React.FC<ColumnProps> = ({
       style={{ width: columnWidth }}
       className="inline-table content-center items-center border-collapse border border-black text-center text-2xl font-bold"
     >
-      {/* Pinned top header during scroll */}
       <thead className="sticky top-0 z-10">
         <tr className="h-[1.2em]">
           <th
@@ -63,7 +64,13 @@ export const Column: React.FC<ColumnProps> = ({
 
           return (
             <tr key={turnIndex} className="h-[1.2em]">
-              <td className="h-[1em] max-w-[5em] border border-black bg-[rgb(224,255,224)] text-center text-base">
+              <td
+                className={`h-[1em] max-w-[5em] border border-black bg-[rgb(224,255,224)] text-center text-base ${
+                  hasPlayed ? 'cursor-pointer hover:bg-emerald-200 transition-colors' : ''
+                }`}
+                onClick={() => hasPlayed && onCellClick(turnIndex)}
+                title={hasPlayed ? 'Click for score breakdown' : undefined}
+              >
                 {hasPlayed ? points : ''}
               </td>
               <td className="h-[1em] max-w-[5em] border border-black bg-[rgb(160,229,160)] text-center text-base">
@@ -76,3 +83,5 @@ export const Column: React.FC<ColumnProps> = ({
     </table>
   )
 }
+
+export default Column

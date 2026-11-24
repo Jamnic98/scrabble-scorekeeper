@@ -1,21 +1,12 @@
-import express from 'express'
-
 import { connectDB } from './db.js'
-import gamesRouter from './routes/games.route.js'
+import { createApp } from './app.js'
 
-const app = express()
 const PORT = process.env.PORT ?? 8080
-
-app.use(express.json())
-
-app.get('/health', (_req, res) => {
-  res.json({ status: 'ok' })
-})
-
-app.use('/api', gamesRouter)
 
 async function start() {
   await connectDB()
+
+  const app = createApp()
 
   app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`)

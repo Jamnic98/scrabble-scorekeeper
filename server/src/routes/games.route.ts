@@ -1,13 +1,17 @@
 import { Router, type Request, type Response } from 'express'
 
 import { getDB } from '../db.js'
-import type { GameState } from '@scrabble/engine'
+import type { BoardState, GameState } from '@scrabble/engine'
 
 const router = Router()
 
-// Fields persisted from a completed GameState. `boardState` snapshots inside
-// history can get large — kept as-is here, but consider trimming/omitting
-// per-move boardState snapshots if storage size becomes a concern.
+// Strip transient UI flags from a stored board snapshot — the client marks
+// the focused square on every square of every history entry, which bloats
+// long games without adding replay value.
+function sanitizeBoard(board: BoardState) {
+  return board.map((row) => row.map(({ isFocused, ...rest }) => rest))
+}
+
 router.post('/games', async (req: Request, res: Response) => {
   try {
     const game = req.body as GameState
@@ -32,17 +36,28 @@ router.post('/games', async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Game must include a gameId' })
     }
 
+    if (!Array.isArray(game.board) || game.board.length === 0) {
+      return res.status(400).json({ error: 'Game must include a board' })
+    }
+
+    if (!Array.isArray(game.history)) {
+      return res.status(400).json({ error: 'Game must include a history array' })
+    }
+
     const db = getDB()
     const collection = db.collection('games')
 
-    const finalBoard = game.board.map((row) => row.map(({ isFocused, ...rest }) => rest))
+    const finalBoard = sanitizeBoard(game.board)
+    const history = game.history.map((item) =>
+      item.boardState ? { ...item, boardState: sanitizeBoard(item.boardState) } : item
+    )
 
     const document = {
       gameId: game.gameId,
       roomCode: game.roomCode,
       gameMode: game.gameMode,
       players: game.players,
-      history: game.history,
+      history,
       finalBoard,
       playerCount: game.players.length,
       winnerIds: game.players.filter((p) => p.isWinner).map((p) => p.name),

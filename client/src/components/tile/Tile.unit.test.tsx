@@ -1,56 +1,58 @@
 import React from 'react'
-import type { Tile as TileType } from '@scrabble/engine'
+import { describe, it, expect, vi } from 'vitest'
+import { render, screen, fireEvent } from '@testing-library/react'
 
-export interface TileProps {
-  tile?: TileType | null
-  letter?: string
-  points?: number
-  isBlank?: boolean
-  unavailable?: boolean
-  className?: string
-}
+import { Tile } from './Tile'
+import { GameProvider } from '../../context/GameProvider'
 
-export const Tile: React.FC<TileProps> = ({
-  tile,
-  letter: letterProp = '',
-  points: pointsProp = 0,
-  isBlank: isBlankProp = false,
-  unavailable = false,
-  className = ''
-}) => {
-  // 1. Fallback order: object prop -> individual direct prop -> empty string
-  const rawLetter = tile?.letter ?? letterProp ?? ''
+const renderTile = (ui: React.ReactElement) => render(<GameProvider>{ui}</GameProvider>)
 
-  // 2. Transform to uppercase in JS so RTL DOM node matches uppercase queries
-  const displayLetter = rawLetter.toUpperCase()
+describe('Tile component', () => {
+  it('renders the letter uppercase with its point value', () => {
+    renderTile(<Tile tile={{ id: 't1', letter: 'q', points: 10, isBlank: false }} />)
 
-  const points = tile?.points ?? pointsProp ?? 0
-  const isBlank = tile?.isBlank ?? isBlankProp ?? false
+    const el = screen.getByTestId('application-tile')
+    // The letter is uppercased visually via CSS, so DOM text stays as-is
+    expect(el.textContent).toMatch(/q/i)
+    expect(el).toHaveTextContent('10')
+  })
 
-  return (
-    <div
-      data-testid="application-tile"
-      className={`
-        z-10 flex shrink-0 items-center justify-center relative rounded-sm border-2 box-border shadow-[inset_-1px_-1px_1px_2px_rgba(46,46,46,0.22)] select-none transition-opacity
-        w-9.5 h-9.5
-        bg-[rgb(255,218,163)] border-black
-        ${unavailable ? 'opacity-30' : 'opacity-100'}
-        ${className}
-      `}
-    >
-      <div className="flex w-full h-full items-center justify-center relative text-black">
-        <span className="font-mono font-bold text-2xl leading-none uppercase">
-          {isBlank ? '' : displayLetter}
-        </span>
+  it('hides letter and points for a blank tile', () => {
+    renderTile(<Tile tile={{ id: 'b1', letter: ' ', points: 0, isBlank: true }} />)
 
-        {!isBlank && (
-          <span className="absolute text-[8px] bottom-0.5 right-0.5 leading-none font-sans font-bold select-none">
-            {points}
-          </span>
-        )}
-      </div>
-    </div>
-  )
-}
+    expect(screen.getByTestId('application-tile')).toHaveTextContent('')
+  })
 
-export default Tile
+  it('derives points from LETTER_DISTRIBUTION when the tile has none', () => {
+    renderTile(
+      <Tile
+        tile={{ id: 't2', letter: 'K', points: undefined as unknown as number, isBlank: false }}
+      />
+    )
+
+    expect(screen.getByTestId('application-tile')).toHaveTextContent('5')
+  })
+
+  it('applies the dimmed style when unavailable', () => {
+    renderTile(<Tile tile={{ id: 't3', letter: 'A', points: 1, isBlank: false }} unavailable />)
+
+    expect(screen.getByTestId('application-tile').className).toContain('/30')
+  })
+
+  it('calls onClick when clicked', () => {
+    const onClick = vi.fn()
+    renderTile(
+      <Tile tile={{ id: 't4', letter: 'A', points: 1, isBlank: false }} onClick={onClick} />
+    )
+
+    fireEvent.click(screen.getByTestId('application-tile'))
+    expect(onClick).toHaveBeenCalledTimes(1)
+  })
+
+  it('uses the mono font style from the default game state', () => {
+    renderTile(<Tile tile={{ id: 't5', letter: 'A', points: 1, isBlank: false }} />)
+
+    expect(screen.getByTestId('application-tile').textContent).toContain('A')
+    expect(screen.getByTestId('application-tile').innerHTML).toContain('font-mono')
+  })
+})

@@ -87,7 +87,7 @@ describe('Scrabble Scorekeeper Reducer', () => {
         type: 'PLAY_WORD',
         playerId: aliceId,
         placements,
-        turnResult: { words: [], isBingo: true, totalScore: 0 }
+        turnResult: { words: [{ word: 'CAT', score: 10, isMainWord: true }], isBingo: false, totalScore: 10 }
       })
 
       // Turn rotates to Bob (index 1)
@@ -184,23 +184,23 @@ describe('Scrabble Scorekeeper Reducer', () => {
         { row: 7, col: 8, tile: { id: 't2', letter: 'A', points: 1, isBlank: false } }
       ]
 
-      // Alice plays move
+      // Alice plays move ("CA" across the center star => (3+1)*2 = 8)
       state = gameReducer(state, {
         type: 'PLAY_WORD',
         playerId: aliceId,
         placements,
-        turnResult: { words: [], isBingo: true, totalScore: 0 }
+        turnResult: { words: [{ word: 'CA', score: 8, isMainWord: true }], isBingo: false, totalScore: 8 }
       })
       expect(state.activePlayerIndex).toBe(1)
-      expect(state.players[0].score).toBeGreaterThan(0)
+      expect(state.players[0].score).toBe(8)
 
       // Undo the move
       state = gameReducer(state, { type: 'UNDO_MOVE', playerId: aliceId })
 
       // Turn reverts back to Alice
       expect(state.activePlayerIndex).toBe(0)
-      // Score reverts back to 8
-      expect(state.players[0].score).toBe(8)
+      // Score reverts back to 0
+      expect(state.players[0].score).toBe(0)
       // Board is cleared at placed tiles
       expect(state.board[7][7].tile).toBeNull()
       // History stack shrinks
@@ -271,7 +271,7 @@ describe('Scrabble Scorekeeper Reducer', () => {
         }
       ]
 
-      state = gameReducer(state, { type: 'END_GAME', finalRacks })
+      state = gameReducer(state, { type: 'END_GAME', finalRacks, finishingPlayerId: bobId })
 
       expect(state.status).toBe('COMPLETED')
       // Alice: 100 - 20 = 80
@@ -285,12 +285,172 @@ describe('Scrabble Scorekeeper Reducer', () => {
       state = gameReducer(state, { type: 'ADD_PLAYER', name: 'Bob' })
       state = gameReducer(state, { type: 'START_GAME' })
 
-      state = gameReducer(state, { type: 'END_GAME', finalRacks: [] })
+      state = gameReducer(state, {
+        type: 'END_GAME',
+        finalRacks: [],
+        finishingPlayerId: state.players[0].id
+      })
       expect(state.status).toBe('COMPLETED')
 
       expect(() => {
         gameReducer(state, { type: 'SKIP_TURN', playerId: state.players[0].id })
       }).toThrow()
     })
+  })
+})
+
+describe('Tile bag accounting', () => {
+  const sumLetters = (state: GameState) =>
+    Object.values(state.remainingLetters).reduce((sum, n) => sum + Number(n), 0)
+
+  const startedState = () => {
+    let state = gameReducer(createInitialState('ROOM123'), { type: 'ADD_PLAYER', name: 'Alice' })
+    state = gameReducer(state, { type: 'ADD_PLAYER', name: 'Bob' })
+    return gameReducer(state, { type: 'START_GAME' })
+  }
+
+  it('should start with a full 100-tile bag', () => {
+    expect(sumLetters(createInitialState('ROOM123'))).toBe(100)
+    expect(sumLetters(startedState())).toBe(100)
+  })
+
+  it('should deduct placed tiles (including blanks) from remainingLetters on PLAY_WORD', () => {
+    let state = startedState()
+    const aliceId = state.players[0].id
+
+    const placements: TilePlacement[] = [
+      { row: 7, col: 7, tile: { id: 't1', letter: 'Q', points: 10, isBlank: false } },
+      { row: 7, col: 8, tile: { id: 'b1', letter: 'E', points: 0, isBlank: true } }
+    ]
+
+    state = gameReducer(state, {
+      type: 'PLAY_WORD',
+      playerId: aliceId,
+      placements,
+      turnResult: { words: [], isBingo: false, totalScore: 20 }
+    })
+
+    expect(state.remainingLetters['q']).toBe(0) // 1 - 1
+    expect(state.remainingLetters[' ']).toBe(1) // blanks key into ' '
+    expect(sumLetters(state)).toBe(98)
+  })
+
+  it('should restore bag counts on UNDO_MOVE so the tile total stays conserved', () => {
+    let state = startedState()
+    const aliceId = state.players[0].id
+
+    const placements: TilePlacement[] = [
+      { row: 7, col: 7, tile: { id: 't1', letter: 'Q', points: 10, isBlank: false } },
+      { row: 7, col: 8, tile: { id: 'b1', letter: 'E', points: 0, isBlank: true } }
+    ]
+
+    state = gameReducer(state, {
+      type: 'PLAY_WORD',
+      playerId: aliceId,
+      placements,
+      turnResult: { words: [], isBingo: false, totalScore: 20 }
+    })
+    expect(sumLetters(state)).toBe(98)
+
+    state = gameReducer(state, { type: 'UNDO_MOVE', playerId: aliceId })
+
+    expect(state.remainingLetters['q']).toBe(1)
+    expect(state.remainingLetters[' ']).toBe(2)
+    expect(sumLetters(state)).toBe(100)
+    expect(state.board[7][7].tile).toBeNull()
+    expect(state.board[7][8].tile).toBeNull()
+  })
+
+  it('should return the same state when UNDO_MOVE is called with empty history', () => {
+    const state = startedState()
+    expect(gameReducer(state, { type: 'UNDO_MOVE', playerId: state.players[0].id })).toBe(state)
+  })
+})
+
+describe('Lobby limits & game lifecycle', () => {
+  it('should throw when adding more than MAX_PLAYERS players', () => {
+    let state = createInitialState('ROOM123')
+    for (let i = 0; i < 4; i++) {
+      state = gameReducer(state, { type: 'ADD_PLAYER', name: `P${i + 1}` })
+    }
+    expect(state.players).toHaveLength(4)
+    expect(() => gameReducer(state, { type: 'ADD_PLAYER', name: 'P5' })).toThrow(
+      'Maximum of 4 players allowed'
+    )
+  })
+
+  it('should assign a gameId on START_GAME', () => {
+    let state = gameReducer(createInitialState('ROOM123'), { type: 'ADD_PLAYER', name: 'Alice' })
+    state = gameReducer(state, { type: 'ADD_PLAYER', name: 'Bob' })
+    state = gameReducer(state, { type: 'START_GAME' })
+    expect(state.gameId).toMatch(/^[0-9a-f-]{36}$/)
+  })
+
+  it('should reject PLAY_WORD once the game is COMPLETED', () => {
+    let state = gameReducer(createInitialState('ROOM123'), { type: 'ADD_PLAYER', name: 'Alice' })
+    state = gameReducer(state, { type: 'ADD_PLAYER', name: 'Bob' })
+    state = gameReducer(state, { type: 'START_GAME' })
+    state = gameReducer(state, {
+      type: 'END_GAME',
+      finalRacks: [],
+      finishingPlayerId: state.players[0].id
+    })
+
+    expect(() =>
+      gameReducer(state, {
+        type: 'PLAY_WORD',
+        playerId: state.players[0].id,
+        placements: [{ row: 7, col: 7, tile: { id: 't1', letter: 'A', points: 1, isBlank: false } }],
+        turnResult: { words: [], isBingo: false, totalScore: 0 }
+      })
+    ).toThrow('Game is already completed')
+  })
+})
+
+describe('END_GAME results', () => {
+  const startedWithScores = (a: number, b: number) => {
+    let state = gameReducer(createInitialState('ROOM123'), { type: 'ADD_PLAYER', name: 'Alice' })
+    state = gameReducer(state, { type: 'ADD_PLAYER', name: 'Bob' })
+    state = gameReducer(state, { type: 'START_GAME' })
+    state = {
+      ...state,
+      players: state.players.map((p, i) => ({ ...p, score: i === 0 ? a : b }))
+    }
+    return state
+  }
+
+  it('should flag the highest scorer as winner and record the end-game adjustment in turnScores', () => {
+    let state = startedWithScores(100, 80)
+    const [aliceId, bobId] = state.players.map((p) => p.id)
+
+    state = gameReducer(state, {
+      type: 'END_GAME',
+      finalRacks: [
+        { playerId: aliceId, unplayedTiles: [] },
+        { playerId: bobId, unplayedTiles: [{ id: 'q1', letter: 'Q', points: 10, isBlank: false }] }
+      ],
+      finishingPlayerId: aliceId
+    })
+
+    expect(state.status).toBe('COMPLETED')
+    expect(state.players[0].score).toBe(110) // 100 + 10 bonus
+    expect(state.players[1].score).toBe(70) // 80 - 10
+    expect(state.players[0].isWinner).toBe(true)
+    expect(state.players[1].isWinner).toBe(false)
+    expect(state.players[0].turnScores).toEqual([10])
+    expect(state.players[1].turnScores).toEqual([-10])
+  })
+
+  it('should flag multiple winners on a tie', () => {
+    let state = startedWithScores(50, 50)
+
+    state = gameReducer(state, {
+      type: 'END_GAME',
+      finalRacks: [],
+      finishingPlayerId: state.players[0].id
+    })
+
+    expect(state.players[0].isWinner).toBe(true)
+    expect(state.players[1].isWinner).toBe(true)
   })
 })

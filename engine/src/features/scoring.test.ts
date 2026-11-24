@@ -296,3 +296,40 @@ describe('Scrabble Scoring System', () => {
     })
   })
 })
+
+describe('Scoring edge cases', () => {
+  let board: BoardState
+
+  beforeEach(() => {
+    board = createTestBoard()
+  })
+
+  it('should return a zero score for empty placements', () => {
+    expect(calculateTurnScore(board, [])).toEqual({ totalScore: 0, words: [], isBingo: false })
+  })
+
+  it('should return zero when a single tile forms no word of length >= 2', () => {
+    const placements: TilePlacement[] = [
+      { row: 0, col: 4, tile: { id: '1', letter: 'A', points: 1, isBlank: false } }
+    ]
+    const result = calculateTurnScore(board, placements)
+    expect(result.totalScore).toBe(0)
+    expect(result.words).toHaveLength(0)
+    expect(result.isBingo).toBe(false)
+  })
+
+  it('should not award the bingo bonus for fewer than 7 tiles', () => {
+    const placements: TilePlacement[] = [
+      { row: 7, col: 4, tile: { id: '1', letter: 'S', points: 1, isBlank: false } },
+      { row: 7, col: 5, tile: { id: '2', letter: 'C', points: 3, isBlank: false } },
+      { row: 7, col: 6, tile: { id: '3', letter: 'R', points: 1, isBlank: false } },
+      { row: 7, col: 7, tile: { id: '4', letter: 'A', points: 1, isBlank: false } },
+      { row: 7, col: 8, tile: { id: '5', letter: 'M', points: 3, isBlank: false } },
+      { row: 7, col: 9, tile: { id: '6', letter: 'B', points: 3, isBlank: false } }
+    ]
+    const result = calculateTurnScore(board, placements)
+    expect(result.isBingo).toBe(false)
+    // (1+3+1+1+3+3) * 2 (star) = 24, no +50
+    expect(result.totalScore).toBe(24)
+  })
+})

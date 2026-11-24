@@ -1,6 +1,12 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 
-import { validatePlacement, getFormedWords, calculateEndGamePenalties } from './scrabbleLogic'
+import {
+  validatePlacement,
+  getFormedWords,
+  calculateEndGamePenalties,
+  calculateFinalGameScores,
+  parseRackString
+} from './scrabbleLogic'
 import { BOARD_MULTIPLIER_GRID } from '../constants'
 import type { BoardState, TilePlacement } from '../types'
 
@@ -180,5 +186,148 @@ describe('Scrabble Placement & Validation Logic', () => {
       // Q(10) + A(1) + Blank(0) = 11 pts deduction
       expect(penalty).toBe(11)
     })
+  })
+})
+
+describe('Additional placement edge cases', () => {
+  let board: BoardState
+
+  beforeEach(() => {
+    board = createEmptyBoard()
+  })
+
+  it('should PASS a single-tile first move on the center star', () => {
+    const placements: TilePlacement[] = [
+      { row: 7, col: 7, tile: { id: '1', letter: 'A', points: 1, isBlank: false } }
+    ]
+    expect(validatePlacement(board, placements, true).isValid).toBe(true)
+  })
+
+  it('should FAIL a single-tile first move away from the center star', () => {
+    const placements: TilePlacement[] = [
+      { row: 7, col: 8, tile: { id: '1', letter: 'A', points: 1, isBlank: false } }
+    ]
+    const result = validatePlacement(board, placements, true)
+    expect(result.isValid).toBe(false)
+    expect(result.reason).toMatch(/center/i)
+  })
+
+  it('should FAIL a single tile on a later turn that is not adjacent to any existing tile', () => {
+    board[7][7].tile = { id: 'a', letter: 'A', points: 1, isBlank: false }
+    const placements: TilePlacement[] = [
+      { row: 0, col: 0, tile: { id: '1', letter: 'N', points: 1, isBlank: false } }
+    ]
+    const result = validatePlacement(board, placements, false)
+    expect(result.isValid).toBe(false)
+    expect(result.reason).toMatch(/connect/i)
+  })
+
+  it('should FAIL a vertical placement with an un-bridged gap', () => {
+    board[7][7].tile = { id: 'a', letter: 'A', points: 1, isBlank: false }
+    const placements: TilePlacement[] = [
+      { row: 8, col: 7, tile: { id: '1', letter: 'B', points: 3, isBlank: false } },
+      { row: 10, col: 7, tile: { id: '2', letter: 'C', points: 3, isBlank: false } }
+    ]
+    const result = validatePlacement(board, placements, false)
+    expect(result.isValid).toBe(false)
+    expect(result.reason).toMatch(/continuous/i)
+  })
+
+  it('should PASS a vertical word adjacent to existing tiles', () => {
+    board[7][7].tile = { id: 'a', letter: 'A', points: 1, isBlank: false }
+    const placements: TilePlacement[] = [
+      { row: 8, col: 7, tile: { id: '1', letter: 'B', points: 3, isBlank: false } },
+      { row: 9, col: 7, tile: { id: '2', letter: 'C', points: 3, isBlank: false } }
+    ]
+    expect(validatePlacement(board, placements, false).isValid).toBe(true)
+  })
+
+  it('should FAIL an empty placement list', () => {
+    const result = validatePlacement(board, [], false)
+    expect(result.isValid).toBe(false)
+    expect(result.reason).toMatch(/no tiles/i)
+  })
+})
+
+describe('getFormedWords', () => {
+  let board: BoardState
+
+  beforeEach(() => {
+    board = createEmptyBoard()
+  })
+
+  it('should extract a vertical main word', () => {
+    const placements: TilePlacement[] = [
+      { row: 7, col: 7, tile: { id: '1', letter: 'C', points: 3, isBlank: false } },
+      { row: 8, col: 7, tile: { id: '2', letter: 'A', points: 1, isBlank: false } }
+    ]
+    expect(getFormedWords(board, placements)).toEqual(['CA'])
+  })
+
+  it('should return no words for a single isolated tile', () => {
+    const placements: TilePlacement[] = [
+      { row: 0, col: 0, tile: { id: '1', letter: 'A', points: 1, isBlank: false } }
+    ]
+    expect(getFormedWords(board, placements)).toEqual([])
+  })
+
+  it('should return an empty array for no placements', () => {
+    expect(getFormedWords(board, [])).toEqual([])
+  })
+})
+
+describe('calculateFinalGameScores', () => {
+  it('should return outBonus null when no player went out', () => {
+    const players = [
+      { id: 'p1', score: 100, rack: [{ id: '1', letter: 'A', points: 1, isBlank: false }] },
+      { id: 'p2', score: 90, rack: [] }
+    ]
+    const result = calculateFinalGameScores(players, null)
+    expect(result.outBonus).toBeNull()
+    expect(result.playerScores['p1']).toBe(99)
+    expect(result.playerScores['p2']).toBe(90)
+    expect(result.deductions['p1']).toBe(1)
+    expect(result.deductions['p2']).toBe(0)
+  })
+
+  it('should award the out player the sum of ALL opponents rack points', () => {
+    const players = [
+      { id: 'p1', score: 100, rack: [] },
+      { id: 'p2', score: 90, rack: [{ id: '1', letter: 'Q', points: 10, isBlank: false }] },
+      {
+        id: 'p3',
+        score: 80,
+        rack: [
+          { id: '2', letter: 'Z', points: 10, isBlank: false },
+          { id: '3', letter: ' ', points: 0, isBlank: true }
+        ]
+      }
+    ]
+    const result = calculateFinalGameScores(players, 'p1')
+    expect(result.outBonus).toEqual({ playerId: 'p1', bonusPoints: 20 })
+    expect(result.playerScores['p1']).toBe(120)
+    expect(result.playerScores['p2']).toBe(80)
+    expect(result.playerScores['p3']).toBe(70)
+  })
+
+  it('should handle players with no rack defined', () => {
+    const players = [{ id: 'p1', score: 50 }]
+    const result = calculateFinalGameScores(players)
+    expect(result.playerScores['p1']).toBe(50)
+    expect(result.deductions['p1']).toBe(0)
+  })
+})
+
+describe('parseRackString edge cases', () => {
+  it('should return an empty array for empty or invalid-only input', () => {
+    expect(parseRackString('')).toEqual([])
+    expect(parseRackString('123!?')).toEqual([])
+  })
+
+  it('should uppercase letters and mark spaces as blanks', () => {
+    const tiles = parseRackString('q ')
+    expect(tiles).toHaveLength(2)
+    expect(tiles[0]).toMatchObject({ letter: 'Q', points: 10, isBlank: false })
+    expect(tiles[1]).toMatchObject({ letter: ' ', points: 0, isBlank: true })
   })
 })

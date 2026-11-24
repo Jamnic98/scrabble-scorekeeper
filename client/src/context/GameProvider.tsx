@@ -39,7 +39,7 @@ function generateRoomCode(): string {
   return 'game_' + Math.random().toString(36).substring(2, 9)
 }
 
-function makeInitialUIState(base = createInitialState('LOCAL', overrides)): UIState {
+export function makeInitialUIState(base = createInitialState('LOCAL', overrides)): UIState {
   const roomCode = base.roomCode || generateRoomCode()
 
   const fullBoard = base.board?.length ? base.board : createInitialBoard()
@@ -60,7 +60,7 @@ function makeInitialUIState(base = createInitialState('LOCAL', overrides)): UISt
   }
 }
 
-function combinedGameReducer(state: UIState, action: UIAction): UIState {
+export function combinedGameReducer(state: UIState, action: UIAction): UIState {
   switch (action.type) {
     case 'SET_TILE_STYLE': {
       return {
@@ -229,8 +229,19 @@ function combinedGameReducer(state: UIState, action: UIAction): UIState {
       try {
         const turnResult = calculateTurnScore(previousBoard, state.placements)
 
+        // PLACE_TILE already deducted the staged tiles from remainingLetters.
+        // Add them back here so the engine's PLAY_WORD performs the single
+        // authoritative deduction (and UNDO_MOVE can restore it later).
+        const preSubmitRemainingLetters = { ...state.remainingLetters }
+        for (const { tile } of state.placements) {
+          const letterKey = (
+            tile.isBlank || tile.letter === ' ' ? ' ' : tile.letter.toLowerCase()
+          ) as TileLetter
+          preSubmitRemainingLetters[letterKey] = (preSubmitRemainingLetters[letterKey] ?? 0) + 1
+        }
+
         const engineNextState = engineGameReducer(
-          { ...state, board: previousBoard },
+          { ...state, board: previousBoard, remainingLetters: preSubmitRemainingLetters },
           {
             type: 'PLAY_WORD',
             playerId: activePlayer.id,

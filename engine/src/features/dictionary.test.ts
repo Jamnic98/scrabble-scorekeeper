@@ -66,8 +66,8 @@ describe('Dictionary Validation & Lookup System', () => {
 
       // Play "N O" at (1,3) and (1,4), creating horizontal "NO" and vertical "ON"
       const placements: TilePlacement[] = [
-        { id: '1', row: 1, col: 3, letter: 'N', points: 1, isBlank: false },
-        { id: '2', row: 1, col: 4, letter: 'O', points: 1, isBlank: false }
+        { row: 1, col: 3, tile: { id: '1', letter: 'N', points: 1, isBlank: false } },
+        { row: 1, col: 4, tile: { id: '2', letter: 'O', points: 1, isBlank: false } }
       ]
 
       const result = validateWordsInDictionary(board, placements, testDict)
@@ -84,8 +84,8 @@ describe('Dictionary Validation & Lookup System', () => {
 
       // Play "N O" at (1,3) and (1,4), forming main word "NO" and cross-word "OZ" (invalid)
       const placements: TilePlacement[] = [
-        { id: '1', row: 1, col: 3, letter: 'N', points: 1, isBlank: false },
-        { id: '2', row: 1, col: 4, letter: 'O', points: 1, isBlank: false }
+        { row: 1, col: 3, tile: { id: '1', letter: 'N', points: 1, isBlank: false } },
+        { row: 1, col: 4, tile: { id: '2', letter: 'O', points: 1, isBlank: false } }
       ]
 
       const result = validateWordsInDictionary(board, placements, testDict)
@@ -93,5 +93,23 @@ describe('Dictionary Validation & Lookup System', () => {
       expect(result.isValid).toBe(false)
       expect(result.invalidWords).toContain('OZ')
     })
+  })
+})
+
+describe('WordDictionary state', () => {
+  it('should expose size and ready state', () => {
+    const d = new WordDictionary()
+    expect(d.ready).toBe(false)
+    expect(d.size).toBe(0)
+    d.loadWords(['cat', 'dog', 'cat'])
+    expect(d.ready).toBe(true)
+    expect(d.size).toBe(2) // duplicates collapse
+  })
+
+  it('should trim and uppercase words on load', () => {
+    const d = new WordDictionary()
+    d.loadWords(['  Cat  ', 'DOG'])
+    expect(d.isValidWord('cat')).toBe(true)
+    expect(d.isValidWord('dog')).toBe(true)
   })
 })

@@ -24,6 +24,9 @@ export function validatePlacement(
     if (p.row < 0 || p.row >= BOARD_SIZE || p.col < 0 || p.col >= BOARD_SIZE) {
       return { isValid: false, reason: 'Tile placement is out of bounds.' }
     }
+    if (board[p.row][p.col].tile !== null) {
+      return { isValid: false, reason: `Square at (${p.row}, ${p.col}) is already occupied.` }
+    }
   }
 
   // 2. Single Tile Placement Handling
@@ -105,10 +108,6 @@ export function validatePlacement(
     }
   }
 
-  if (isFirstTurn && !touchesExistingTile) {
-    return { isValid: false, reason: 'Placed word must connect to existing tiles on the board.' }
-  }
-
   // Or check if it bridges existing tiles along its span
   if (!touchesExistingTile) {
     if (isHorizontal) {
@@ -128,6 +127,10 @@ export function validatePlacement(
         }
       }
     }
+  }
+
+  if (!touchesExistingTile) {
+    return { isValid: false, reason: 'Placed word must connect to existing tiles on the board.' }
   }
 
   return { isValid: true }

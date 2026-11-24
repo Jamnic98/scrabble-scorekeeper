@@ -117,7 +117,8 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       // 2. Deduct placed tiles from remainingLetters
       const updatedRemainingLetters = { ...state.remainingLetters }
       action.placements.forEach(({ tile }) => {
-        const letterKey = tile.isBlank ? 'BLANK' : tile.letter.toUpperCase()
+        // Keys in LETTER_DISTRIBUTION are lowercase letters, with ' ' for blanks
+        const letterKey = tile.isBlank || tile.letter === ' ' ? ' ' : tile.letter.toLowerCase()
         if (updatedRemainingLetters[letterKey] !== undefined) {
           updatedRemainingLetters[letterKey] = Math.max(0, updatedRemainingLetters[letterKey] - 1)
         }
@@ -239,8 +240,8 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
 
       if (lastMove.actionType === 'PLAY_WORD' && lastMove.placements) {
         lastMove.placements.forEach(({ tile }) => {
-          // Normalize key to match bag distribution (uppercase letter or ' ')
-          const letterKey = tile.isBlank ? ' ' : tile.letter.toLowerCase()
+          // Normalize key to match bag distribution (lowercase letter or ' ')
+          const letterKey = tile.isBlank || tile.letter === ' ' ? ' ' : tile.letter.toLowerCase()
           const currentVal = restoredLetters[letterKey] ?? 0
           restoredLetters[letterKey] = currentVal + 1
         })
